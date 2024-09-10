@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import Link from 'next/link';
 import type { SetStateAction } from 'react';
-import { useMemo } from 'react';
 import { useEffect, useState } from 'react';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type {
@@ -14,7 +13,7 @@ import type {
     TemplateVariable,
 } from 'src/utils/api/db';
 import { Button } from '../button';
-import { DeleteOutline, SendOutline, Retry, ReportOutline } from '../icons';
+import { DeleteOutline, Retry, ReportOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import type { EmailStatus } from './constants';
@@ -22,8 +21,6 @@ import { Instagram, Tiktok, Youtube } from 'src/components/icons';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { useUser } from 'src/hooks/use-user';
-import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { EmailPreviewModal } from './email-preview-modal';
 import type {
     SequenceInfluencerManagerPage,
@@ -37,7 +34,6 @@ import {
     updateSequenceInfluencerIfSocialProfileAvailable,
     wasFetchedWithinMinutes,
 } from './helpers';
-import { randomNumber } from 'src/utils/utils';
 import { checkForIgnoredEmails } from './check-for-ignored-emails';
 import { EmailStatusBadge } from './email-status-badge';
 import { InfluencerAvatarWithFallback } from '../library/influencer-avatar-with-fallback';
@@ -118,11 +114,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     lastStep,
     nextStep,
     currentTab,
-    missingVariables,
-    isMissingVariables,
-    setShowUpdateTemplateVariables,
     templateVariables,
-    handleStartSequence,
     onCheckboxChange,
     checked,
     handleReportIconTab,
@@ -175,15 +167,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         });
     }, [lastEmail, sequenceInfluencer, updateSequenceInfluencer]);
 
-    const { profile } = useUser();
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
-    const [sendingEmail, setSendingEmail] = useState(false);
     const { track } = useRudderstackTrack();
-    const sequenceId = sequence?.id ?? 0;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const batchId = useMemo(() => randomNumber(), [sequenceId]);
 
     const handleChange = () => {
         onCheckboxChange && onCheckboxChange(sequenceInfluencer.id);
@@ -218,55 +205,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         }
     };
 
-    const handleStart = async () => {
-        setSendingEmail(true);
-        try {
-            const results = await handleStartSequence([sequenceInfluencer]);
-            const failed = results.filter((result) => result.error);
-            const succeeded = results.filter((result) => !result.error);
-
-            track(StartSequenceForInfluencer, {
-                influencer_id: sequenceInfluencer.influencer_social_profile_id,
-                sequence_id: sequenceInfluencer.sequence_id,
-                sequence_name: sequence?.name ?? null,
-                sequence_influencer_id: sequenceInfluencer.id,
-                is_success: true,
-                sent_success: succeeded,
-                sent_success_count: succeeded.length,
-                sent_failed: failed,
-                sent_failed_count: failed.length,
-                batch_id: batchId,
-            });
-
-            if (succeeded.length > 0) {
-                toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
-            }
-            if (failed.length > 0) {
-                toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
-                track(StartSequenceForInfluencer, {
-                    influencer_id: sequenceInfluencer.influencer_social_profile_id,
-                    sequence_id: sequenceInfluencer.sequence_id,
-                    sequence_name: sequence?.name ?? null,
-                    sequence_influencer_id: sequenceInfluencer.id,
-                    is_success: false,
-                    extra_info: { error: 'sequence-row, sequences.number_emailsFailedToSchedule ' + failed.length },
-                    batch_id: batchId,
-                });
-            }
-        } catch (error: any) {
-            track(StartSequenceForInfluencer, {
-                influencer_id: sequenceInfluencer.influencer_social_profile_id,
-                sequence_id: sequenceInfluencer.sequence_id,
-                sequence_name: sequence?.name ?? null,
-                sequence_influencer_id: sequenceInfluencer.id,
-                is_success: false,
-                extra_info: { error: String(error) },
-                batch_id: batchId,
-            });
-            toast.error(error?.message ?? '');
-        }
-        setSendingEmail(false);
-    };
     const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
         try {
             await deleteSequenceInfluencers([sequenceInfluencerId]);
@@ -280,48 +218,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         }
     };
 
-    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
-
-    const sequenceSendTooltipTitle = errorMessage
-        ? errorMessage
-        : missingSocialProfileInfo
-        ? t('sequences.invalidSocialProfileTooltip')
-        : !sequenceInfluencer.email
-        ? t('sequences.missingEmail')
-        : isMissingSequenceSendEmail
-        ? t('sequences.outreachPlanUpgradeTooltip')
-        : isMissingVariables
-        ? t('sequences.missingRequiredTemplateVariables')
-        : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = errorMessage
-        ? errorMessage
-        : missingSocialProfileInfo
-        ? t('sequences.invalidSocialProfileTooltipDescription')
-        : !sequenceInfluencer.email
-        ? t('sequences.missingEmailTooltipDescription')
-        : isMissingSequenceSendEmail
-        ? t('sequences.outreachPlanUpgradeTooltipDescription')
-        : isMissingVariables
-        ? t('sequences.missingRequiredTemplateVariables_variables', {
-              variables: missingVariables,
-          })
-        : t('sequences.sequenceSendTooltipDescription');
-
-    const sequenceSendTooltipHighlight = missingSocialProfileInfo
-        ? t('sequences.invalidSocialProfileTooltipHighlight')
-        : undefined;
-
     const lastEmailStatus: EmailStatus =
         sequenceInfluencer.funnel_status === 'Ignored' ? 'Ignored' : getStatus(lastEmail);
 
-    const [submittingChangeEmail, setSubmittingChangeEmail] = useAtom(submittingChangeEmailAtom);
-
-    const disableSend =
-        submittingChangeEmail ||
-        isMissingSequenceSendEmail ||
-        !sequenceInfluencer.email ||
-        sendingEmail ||
-        missingSocialProfileInfo;
+    const [, setSubmittingChangeEmail] = useAtom(submittingChangeEmailAtom);
 
     return (
         <>
@@ -426,7 +326,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
-                            <Tooltip
+                            {/* <Tooltip
                                 content={sequenceSendTooltipTitle}
                                 detail={sequenceSendTooltipDescription}
                                 highlight={sequenceSendTooltipHighlight}
@@ -443,7 +343,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 >
                                     <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
-                            </Tooltip>
+                            </Tooltip> */}
                             {handleReportIconTab && (
                                 <div className="ml-5 cursor-pointer">
                                     <ReportOutline
