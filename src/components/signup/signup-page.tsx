@@ -17,6 +17,7 @@ import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { truncatedText } from 'src/utils/outreach/helpers';
+import { AxiosError } from 'axios';
 export interface SignUpValidationErrors {
     firstName: string;
     lastName: string;
@@ -204,6 +205,10 @@ const SignUpPage = ({
                     toast.error(t('login.emailDomainNotAllowed', { domain: email.split('@')[1] }));
                 } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
+                } else if (e instanceof AxiosError) {
+                    if (e.response?.status === 409) {
+                        toast.error(e.response.data.message);
+                    }
                 } else {
                     toast.error(`${t('login.oopsSomethingWentWrong')} ${truncatedText(e?.message, 40)}`);
                 }

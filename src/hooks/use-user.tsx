@@ -23,6 +23,7 @@ import awaitToError from 'src/utils/await-to-error';
 import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
 import { appCacheDBKey } from 'src/constants';
 import { useApiClient } from 'src/utils/api-client/request';
+import { type AxiosError } from 'axios';
 
 export type SignupData = {
     email: string;
@@ -291,8 +292,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const signup = useCallback(
         async (body: SignupPostBody) => {
-            const [err, result] = await awaitToError(apiClient.post<SignupPostResponse>(`/users`, body));
-            if (err) {
+            const [err, result] = await awaitToError<AxiosError, { data: SignupPostResponse }>(
+                apiClient.post<SignupPostResponse>(`/users`, body),
+            );
+            if (err.response?.status === 409) {
+                throw err;
+            } else if (err) {
                 throw new Error(err.message);
             }
             refreshProfile();
