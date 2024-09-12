@@ -1,5 +1,4 @@
 import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
@@ -13,6 +12,7 @@ import type { eventKeys } from 'src/utils/analytics/events';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 import { useRouter } from 'next/router';
 import { type Nullable } from 'types/nullable';
+import { useReportStore } from 'src/store/reducers/report';
 
 // reports that have `createdAt` older than 59 days are considered stale
 export const reportIsStale = (createdAt: string) => {
@@ -42,9 +42,8 @@ export type UseReport = ({
 };
 
 export const useReport: UseReport = ({ platform, creator_id, track, suppressFetch }) => {
-    const [errorMessage, setErrorMessage] = useState('');
-    const [errorStatus, setErrorStatus] = useState<Nullable<string>>(null);
-    const [usageExceeded, setUsageExceeded] = useState(false);
+    const { errorMessage, errorStatus, usageExceeded, setErrorMessage, setErrorStatus, setUsageExceeded } =
+        useReportStore();
     const { t } = useTranslation();
     const { profile } = useUser();
     const { company } = useCompany();
