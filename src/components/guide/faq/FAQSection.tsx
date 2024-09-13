@@ -1,9 +1,6 @@
 import CreatorSearchSection from './CreatorsSearchSection';
 import DiscoverSection from './DiscoverySection';
 import FreeTrialSection from './FreeTrialSection';
-import OutreachSection from './OutreachSection';
-import WarmSendingDomainSection from './WarmSendingDomainSection';
-import SendingCadenceSection from './SendingCadenceSection';
 
 const FAQSection = ({ locale = 'en' }) => {
     return (
@@ -28,9 +25,6 @@ const FAQSection = ({ locale = 'en' }) => {
             <FreeTrialSection locale={locale} />
             <CreatorSearchSection locale={locale} />
             <DiscoverSection locale={locale} />
-            <OutreachSection locale={locale} />
-            <WarmSendingDomainSection locale={locale} />
-            <SendingCadenceSection locale={locale} />
         </div>
     );
 };

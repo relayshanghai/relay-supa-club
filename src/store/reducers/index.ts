@@ -6,6 +6,7 @@ import sequence from './sequence';
 import sequenceTemplate from './sequence-template';
 import sequenceInfluencer from './sequence-influencer';
 import inboxFilter from './inbox-filter';
+import report from './report';
 
 const rootReducer = combineReducers({
     product,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     sequenceTemplate,
     sequenceInfluencer,
     inboxFilter,
+    report,
 });
 
 export default rootReducer;

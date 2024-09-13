@@ -300,10 +300,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             const [err, result] = await awaitToError<AxiosError, { data: SignupPostResponse }>(
                 apiClient.post<SignupPostResponse>(`/users`, body),
             );
-            if (err.response?.status === 409) {
-                throw err;
-            } else if (err) {
-                throw new Error(err.message);
+            if (err) {
+                if (err.response?.status === 409) {
+                    throw err;
+                } else {
+                    throw new Error(err.message);
+                }
             }
             refreshProfile();
             return result.data;

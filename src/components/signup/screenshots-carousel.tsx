@@ -4,23 +4,13 @@ import { screenshots } from 'public/assets/imgs/screenshots';
 
 export const ScreenshotsCarousel = () => {
     const { t } = useTranslation();
-    const { boostBot, inbox, sequence } = screenshots;
+    const { boostBot } = screenshots;
 
     const slides = [
         {
             url: boostBot,
             title: t('signup.carousel.title1'),
             description: t('signup.carousel.description1'),
-        },
-        {
-            url: inbox,
-            title: t('signup.carousel.title2'),
-            description: t('signup.carousel.description2'),
-        },
-        {
-            url: sequence,
-            title: t('signup.carousel.title3'),
-            description: t('signup.carousel.description3'),
         },
     ];
 
