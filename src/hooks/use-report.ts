@@ -54,6 +54,7 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
             : null,
         async ([path, platform, creator_id, company_id, user_id, pageUrl]) => {
             try {
+                if (!track) return;
                 const { createdAt, influencer, socialProfile, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
                     CreatorsReportGetResponse

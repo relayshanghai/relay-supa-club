@@ -120,4 +120,33 @@ export default class BalanceService {
     async scheduleAll() {
         await BalanceRepository.getRepository().resetBySchedule();
     }
+
+    @UseLogger()
+    async refundUsageInProcess({
+        companyId,
+        userId,
+        creatorId,
+        usageType,
+    }: {
+        companyId: string;
+        userId: string;
+        creatorId: string;
+        usageType: BalanceType;
+    }) {
+        const usage = await UsageRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+                profile: {
+                    id: userId,
+                },
+                itemId: creatorId,
+                type: usageType,
+            },
+        });
+        await UsageRepository.getRepository().delete({
+            id: usage?.id,
+        });
+    }
 }
