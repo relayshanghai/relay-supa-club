@@ -27,6 +27,7 @@ import BalanceRepository from 'src/backend/database/balance/balance-repository';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
 import { formatStripePrice } from 'src/utils/utils';
 import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
+import type { SubscriptionMigrationRequest } from 'pages/api/internal/subscriptions/request';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -712,6 +713,19 @@ export default class SubscriptionV2Service {
             request: { subscriptionId: subscription.providerSubscriptionId },
             resetBalance: false,
         });
+    }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async getCustomerOfAPlan() {
+        // subscriptions.data[0].plan
+        return null;
+    }
+
+    @CompanyIdRequired()
+    @UseLogger()
+    async migrateSubscription(request: SubscriptionMigrationRequest) {
+        return request;
     }
 
     private async getLoyalCompany(companyId: string) {
