@@ -426,24 +426,32 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
-                            <Tooltip
-                                content={sequenceSendTooltipTitle}
-                                detail={sequenceSendTooltipDescription}
-                                highlight={sequenceSendTooltipHighlight}
-                                position="left"
-                            >
-                                <Button
-                                    disabled={disableSend}
-                                    data-testid={`send-email-button-${sequenceInfluencer.email}`}
-                                    onClick={
-                                        isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
-                                    }
-                                    className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
-                                    id="sequence-send-button"
+                            {profile?.email_engine_account_id && profile.sequence_send_email ? (
+                                <Tooltip
+                                    content={sequenceSendTooltipTitle}
+                                    detail={sequenceSendTooltipDescription}
+                                    highlight={sequenceSendTooltipHighlight}
+                                    position="left"
                                 >
-                                    <SendOutline className="mx-2 h-5 text-white" />
-                                </Button>
-                            </Tooltip>
+                                    <Button
+                                        disabled={disableSend}
+                                        data-testid={`send-email-button-${sequenceInfluencer.email}`}
+                                        onClick={
+                                            isMissingVariables
+                                                ? () => setShowUpdateTemplateVariables(true)
+                                                : handleStart
+                                        }
+                                        className={
+                                            isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''
+                                        }
+                                        id="sequence-send-button"
+                                    >
+                                        <SendOutline className="mx-2 h-5 text-white" />
+                                    </Button>
+                                </Tooltip>
+                            ) : (
+                                <></>
+                            )}
                             {handleReportIconTab && (
                                 <div className="ml-5 cursor-pointer">
                                     <ReportOutline
