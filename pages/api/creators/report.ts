@@ -23,6 +23,8 @@ import {
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 import awaitToError from 'src/utils/await-to-error';
+import BalanceService from 'src/backend/domain/balance/balance-service';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -164,6 +166,17 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             data = await requestNewReport({ req, res, metadata: { pageUrl } })(platform, creator_id);
         }
     } catch (error: any) {
+        await awaitToError(
+            Promise.all([
+                BalanceService.getService().refundUsageInProcess({
+                    companyId: company_id,
+                    userId: user_id,
+                    creatorId: creator_id,
+                    usageType: BalanceType.PROFILE,
+                }),
+                BalanceService.getService().refundBalanceInProcess(BalanceType.PROFILE, 1),
+            ]),
+        );
         // catch the retry_later error from iqdata so front end can show a message, for other errors they will be caught by apiHandler
         if (error.message.includes('retry_later')) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'retry_later' });
