@@ -6,13 +6,13 @@ import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added
 import type { AllSequenceInfluencersBasicInfo } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 import type { CreatorAccount, CreatorPlatform } from 'types';
 import { AddToSequenceModal } from '../modal-add-to-sequence';
-import { useReport } from 'src/hooks/use-report';
 import Link from 'next/link';
 import { updateSequenceInfluencerIfSocialProfileAvailable } from '../sequences/helpers';
 import { useCompany } from 'src/hooks/use-company';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceInfluencer } from 'src/utils/api/db';
 import { useSequences } from 'src/hooks/use-sequences';
+import { useReportV2 } from 'src/hooks/v2/use-report';
 
 export interface AddToSequenceButtonProps {
     inMenu?: boolean;
@@ -51,7 +51,7 @@ export const AddToSequenceButton = ({
     const [suppressReportFetch, setSuppressReportFetch] = useState(true);
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
 
-    const { socialProfile, report, usageExceeded } = useReport({
+    const { socialProfile, report, usageExceeded } = useReportV2({
         platform,
         creator_id: creatorProfile.user_id || '',
         suppressFetch: suppressReportFetch,

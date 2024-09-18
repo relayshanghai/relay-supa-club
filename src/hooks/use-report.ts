@@ -41,6 +41,10 @@ export type UseReport = ({
     refreshReport: () => Promise<CreatorsReportGetResponse | undefined>;
 };
 
+/**
+ * @deprecated
+ * use useReportV2 instead
+ */
 export const useReport: UseReport = ({ platform, creator_id, track, suppressFetch }) => {
     const { errorMessage, errorStatus, usageExceeded, setErrorMessage, setErrorStatus, setUsageExceeded } =
         useReportStore();

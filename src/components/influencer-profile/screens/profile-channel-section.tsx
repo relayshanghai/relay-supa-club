@@ -21,8 +21,8 @@ import { Tooltip } from 'src/components/library';
 import { Question } from 'src/components/icons';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
 // import { UpdateInfluencerProfilePayload } from 'src/utils/analytics/events/outreach/update-influencer-profile';
-import { useReport } from 'src/hooks/use-report';
 import type { SearchTableInfluencer } from 'types';
+import { useReportV2 } from 'src/hooks/v2/use-report';
 
 export type ProfileChannelSection = {
     name: string;
@@ -44,7 +44,7 @@ type Props = {
 export const ChannelSection = ({ ...props }: Props) => {
     const { t, i18n } = useTranslation();
     const platform = props.profile?.url ? extractPlatformFromURL(props.profile?.url) : 'youtube';
-    const { report: _report } = useReport({ platform: platform ?? 'youtube', creator_id: props.profile?.iqdata_id });
+    const { report: _report } = useReportV2({ platform: platform ?? 'youtube', creator_id: props.profile?.iqdata_id });
 
     if (!props.profile) {
         return null;
