@@ -6,6 +6,7 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchProvider } from '../../hooks/use-search';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { rest } from 'msw';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 describe('<SearchPage />', () => {
     before(async () => {
@@ -14,18 +15,22 @@ describe('<SearchPage />', () => {
 
     it('renders default landing page results from mocks', () => {
         testMount(
-            <SearchProvider>
-                <SearchPageInner />
-            </SearchProvider>,
+            <StoreProvider>
+                <SearchProvider>
+                    <SearchPageInner />
+                </SearchProvider>
+            </StoreProvider>,
         );
         cy.contains('8.43M influencers matching your search and filters found.');
         cy.contains('T-Series');
     });
     it('can filter results and clear filters', () => {
         testMount(
-            <SearchProvider>
-                <SearchPageInner />
-            </SearchProvider>,
+            <StoreProvider>
+                <SearchProvider>
+                    <SearchPageInner />
+                </SearchProvider>
+            </StoreProvider>,
         );
         cy.findAllByTestId('filters-button').click();
         cy.contains('Filters');
@@ -53,9 +58,11 @@ describe('<SearchPage />', () => {
         worker.use(rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (_, res, ctx) => res(ctx.json(searchResult))));
 
         testMount(
-            <SearchProvider>
-                <SearchPageInner />
-            </SearchProvider>,
+            <StoreProvider>
+                <SearchProvider>
+                    <SearchPageInner />
+                </SearchProvider>
+            </StoreProvider>,
         );
         cy.contains('0 influencers matching your search and filters found.', { timeout: 6000 });
     });
@@ -63,7 +70,11 @@ describe('<SearchPage />', () => {
     it('renders error on search error', async () => {
         worker.use(rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (_, res, ctx) => res(ctx.status(500))));
 
-        testMount(<SearchPageInner />);
+        testMount(
+            <StoreProvider>
+                <SearchPageInner />
+            </StoreProvider>,
+        );
         cy.contains('Total Results');
         cy.contains('Failed to fetch search results');
     });
