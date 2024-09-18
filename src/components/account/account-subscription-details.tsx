@@ -25,6 +25,7 @@ import { SubscriptionStatus, type SubscriptionEntity } from 'src/backend/databas
 import type Stripe from 'stripe';
 import toast from 'react-hot-toast';
 import { Tooltip } from '../library';
+import { useBalance } from 'src/hooks/use-balance';
 
 const Tablet = ({
     children,
@@ -230,6 +231,7 @@ const PaymentTablets = ({
 
 export const SubscriptionDetails = () => {
     const { subscription, product, resumeSubscription, refreshSubscription } = useSubscription();
+    const { balance, loading: balanceLoading } = useBalance();
 
     const { company, refreshCompany } = useCompany();
     const { t } = useTranslation();
@@ -285,8 +287,9 @@ export const SubscriptionDetails = () => {
             });
     };
 
-    const usagesSearch = subscription?.status === SubscriptionStatus.CANCELLED ? 0 : usages.search.current;
-    const usagesProfiles = subscription?.status === SubscriptionStatus.CANCELLED ? 0 : usages.profile.current;
+    const canceledOrLoading = subscription?.status === SubscriptionStatus.CANCELLED || balanceLoading;
+    const usagesSearch = canceledOrLoading ? 0 : usages.search.limit - balance.search;
+    const usagesProfiles = canceledOrLoading ? 0 : usages.profile.limit - balance.profile;
     const subsStatusMustShowPopup = [
         SubscriptionStatus.CANCELLED,
         SubscriptionStatus.PASS_DUE,
