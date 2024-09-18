@@ -15,9 +15,9 @@ import { Button } from '../button';
 import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
 import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
-import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import { AxiosError } from 'axios';
+import { useLocalStorage } from 'src/hooks/use-localstorage';
 export interface SignUpValidationErrors {
     firstName: string;
     lastName: string;
@@ -54,6 +54,17 @@ const steps = [
     },
 ];
 
+const initialSignUpData = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phoneNumber: '+1',
+    companyName: '',
+    companyWebsite: '',
+};
+
 const SignUpPage = ({
     currentStep,
     setCurrentStep,
@@ -67,15 +78,79 @@ const SignUpPage = ({
     const router = useRouter();
     const { track } = useRudderstackTrack();
     const { login, logout, signup } = useUser();
-
-    const [firstName, setFirstName, removeFirstName] = usePersistentState('firstName', '');
-    const [lastName, setLastName, removeLastName] = usePersistentState('lastName', '');
-    const [email, setEmail, removeEmail] = usePersistentState('email', '');
-    const [password, setPassword, removePassword] = usePersistentState('password', '');
-    const [confirmPassword, setConfirmPassword, removeConfirmPassword] = usePersistentState('confirmPassword', '');
-    const [phoneNumber, setPhoneNumber, removePhoneNumber] = usePersistentState('phoneNumber', '');
-    const [companyName, setCompanyName, removeCompanyName] = usePersistentState('companyName', '');
-    const [companyWebsite, setCompanyWebsite, removeCompanyWebsite] = usePersistentState('companyWebsite', '');
+    const [signUpData, setSignUpData] = useLocalStorage('userSignUpData', initialSignUpData);
+    const { firstName, lastName, email, password, confirmPassword, phoneNumber, companyName, companyWebsite } =
+        signUpData;
+    const {
+        setFirstName,
+        setLastName,
+        setEmail,
+        setPassword,
+        setConfirmPassword,
+        setPhoneNumber,
+        setCompanyName,
+        setCompanyWebsite,
+    } = {
+        setFirstName: (value: string) => {
+            setSignUpData({ ...signUpData, firstName: value });
+        },
+        setLastName: (value: string) => {
+            setSignUpData({ ...signUpData, lastName: value });
+        },
+        setEmail: (value: string) => {
+            setSignUpData({ ...signUpData, email: value });
+        },
+        setPassword: (value: string) => {
+            setSignUpData({ ...signUpData, password: value });
+        },
+        setConfirmPassword: (value: string) => {
+            setSignUpData({ ...signUpData, confirmPassword: value });
+        },
+        setPhoneNumber: (value: string) => {
+            setSignUpData({ ...signUpData, phoneNumber: value });
+        },
+        setCompanyName: (value: string) => {
+            setSignUpData({ ...signUpData, companyName: value });
+        },
+        setCompanyWebsite: (value: string) => {
+            setSignUpData({ ...signUpData, companyWebsite: value });
+        },
+    };
+    const {
+        removeFirstName,
+        removeLastName,
+        removeEmail,
+        removePassword,
+        removeConfirmPassword,
+        removePhoneNumber,
+        removeCompanyName,
+        removeCompanyWebsite,
+    } = {
+        removeFirstName: () => {
+            setSignUpData({ ...signUpData, firstName: '' });
+        },
+        removeLastName: () => {
+            setSignUpData({ ...signUpData, lastName: '' });
+        },
+        removeEmail: () => {
+            setSignUpData({ ...signUpData, email: '' });
+        },
+        removePassword: () => {
+            setSignUpData({ ...signUpData, password: '' });
+        },
+        removeConfirmPassword: () => {
+            setSignUpData({ ...signUpData, confirmPassword: '' });
+        },
+        removePhoneNumber: () => {
+            setSignUpData({ ...signUpData, phoneNumber: '' });
+        },
+        removeCompanyName: () => {
+            setSignUpData({ ...signUpData, companyName: '' });
+        },
+        removeCompanyWebsite: () => {
+            setSignUpData({ ...signUpData, companyWebsite: '' });
+        },
+    };
     const [currency, setCurrency] = useState(!en ? 'cny' : 'usd');
     useEffect(() => {
         setCurrency(!en ? 'cny' : 'usd');
@@ -243,14 +318,27 @@ const SignUpPage = ({
             companyWebsite,
         });
     };
+
     useEffect(() => {
+        setSignUpData(initialSignUpData);
         (window as any).rewardful('ready', function () {
             setRewardfulReferral((window as any).Rewardful.referral);
         });
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            // Custom message for the user
+            const message = 'Are you sure you want to leave? Your changes may not be saved.';
+            event.returnValue = message; // Standard way to set the message
+            return message; // Some browsers require this
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
             (window as any).rewardful('destroy');
+            window.removeEventListener('beforeunload', handleBeforeUnload);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
     return (
         <div>
             {steps.map(

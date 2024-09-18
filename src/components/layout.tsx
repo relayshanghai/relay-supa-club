@@ -11,11 +11,10 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { useReport } from 'src/hooks/use-report';
-import type { CreatorPlatform } from 'types';
 import { VisitPage } from 'src/utils/analytics/events';
 import { ChatQuestion } from './icons';
 import { isInMaintenance } from 'src/utils/maintenance';
+import { useReportStore } from 'src/store/reducers/report';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -59,17 +58,7 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
     const { campaign } = useCampaigns({
         campaignId: routerPath.length > 1 && routerPath.includes('campaigns') ? routerPath[1] : '',
     });
-    const { influencer } = useReport(
-        routerPath.length > 1 && routerPath.includes('influencer')
-            ? {
-                  creator_id: routerPath[2],
-                  platform: routerPath[1] as CreatorPlatform,
-              }
-            : {
-                  creator_id: '',
-                  platform: 'youtube',
-              },
-    );
+    const { selectedInfluencer } = useReportStore();
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
     const accountMenuRef = useRef(null);
@@ -94,9 +83,9 @@ export const Layout = ({ children, titleFlag }: LayoutProps) => {
                         <p className="flex flex-row items-center gap-2 pl-4">
                             {routerPath.includes('influencer') ? (
                                 <p className="text-sm font-semibold text-gray-600">
-                                    {influencer &&
+                                    {selectedInfluencer &&
                                         !isMaintenancePage &&
-                                        t('navbar.report', { influencerName: influencer.name })}
+                                        t('navbar.report', { influencerName: selectedInfluencer.name })}
                                 </p>
                             ) : (
                                 routerPath.map((path, index) => {

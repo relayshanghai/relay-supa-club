@@ -5,10 +5,9 @@ import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorReport } from 'types';
-import { useUser } from './use-user';
+import { useUser } from '../use-user';
 import useSWR from 'swr';
-import { useCompany } from './use-company';
-import type { eventKeys } from 'src/utils/analytics/events';
+import { useCompany } from '../use-company';
 import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 import { useRouter } from 'next/router';
 import { type Nullable } from 'types/nullable';
@@ -21,13 +20,12 @@ export const reportIsStale = (createdAt: string) => {
     const diff = now.getTime() - createdAtDate.getTime();
     return diff > 59 * 24 * 60 * 60 * 1000;
 };
-export type UseReport = ({
+export type ReportV2 = ({
     platform,
     creator_id,
 }: {
     platform: CreatorPlatform;
     creator_id: string;
-    track?: eventKeys;
     suppressFetch?: boolean;
 }) => {
     loading: boolean;
@@ -41,11 +39,7 @@ export type UseReport = ({
     refreshReport: () => Promise<CreatorsReportGetResponse | undefined>;
 };
 
-/**
- * @deprecated
- * use useReportV2 instead
- */
-export const useReport: UseReport = ({ platform, creator_id, track, suppressFetch }) => {
+export const useReportV2: ReportV2 = ({ platform, creator_id, suppressFetch }) => {
     const { errorMessage, errorStatus, usageExceeded, setErrorMessage, setErrorStatus, setUsageExceeded } =
         useReportStore();
     const { t } = useTranslation();
@@ -56,7 +50,7 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
         !suppressFetch && platform && creator_id && company?.id && profile?.id
             ? ['creators/report', platform, creator_id, company?.id, profile?.id, router.pathname]
             : null,
-        async ([path, platform, creator_id, company_id, user_id, pageUrl]) => {
+        async ([path, platform, creator_id, company_id, user_id]) => {
             try {
                 const { createdAt, influencer, socialProfile, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
@@ -66,8 +60,6 @@ export const useReport: UseReport = ({ platform, creator_id, track, suppressFetc
                     creator_id,
                     company_id,
                     user_id,
-                    track,
-                    pageUrl,
                 });
 
                 /**

@@ -28,7 +28,6 @@ import type {
 } from 'pages/api/sequence/influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import { EnterInfluencerEmail } from 'src/utils/analytics/events/outreach/enter-influencer-email';
-import { useReport } from 'src/hooks/use-report';
 import {
     isMissingSocialProfileInfo,
     updateSequenceInfluencerIfSocialProfileAvailable,
@@ -43,6 +42,7 @@ import type { KeyedMutator } from 'swr';
 import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 import { type Nullable } from 'types/nullable';
 import { usageErrors } from 'src/errors/usages';
+import { useReportV2 } from 'src/hooks/v2/use-report';
 
 interface SequenceRowProps {
     sequence?: Sequence;
@@ -126,7 +126,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
     const shouldFetch = missingSocialProfileInfo && !wasFetchedWithin1Minute;
 
-    const { report, socialProfile, errorMessage, errorStatus, refreshReport, loading } = useReport({
+    const { report, socialProfile, errorMessage, errorStatus, refreshReport, loading } = useReportV2({
         platform: sequenceInfluencer.platform,
         creator_id: sequenceInfluencer.iqdata_id,
         suppressFetch: !shouldFetch,
