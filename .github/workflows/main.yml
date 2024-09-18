@@ -54,8 +54,7 @@ env:
     NEXT_PUBLIC_ENABLE_RUDDERSTACK: false
 jobs:
     component-test:
-        runs-on:
-            group: large-runner
+        runs-on: ubuntu-latest
         environment: preview
         env:
             # unit tests don't need the real keys, but they load some functions that check for them on init.
