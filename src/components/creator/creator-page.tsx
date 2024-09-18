@@ -6,7 +6,6 @@ import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
 import CreatorSkeleton from './creator-skeleton';
-import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';
 import { BOOSTBOT_DOMAIN, IQDATA_MAINTENANCE } from 'src/constants';
@@ -17,8 +16,6 @@ import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { AnalyzeAddToCampaign } from 'src/utils/analytics/events';
-import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
-import type { eventKeys } from 'src/utils/analytics/events';
 import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
 import { AddToSequenceModal } from '../modal-add-to-sequence';
 import { useSequences } from 'src/hooks/use-sequences';
@@ -31,6 +28,8 @@ import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added
 import { clientLogger } from 'src/utils/logger-client';
 import { isInMaintenance } from 'src/utils/maintenance';
 import MaintenanceComponent from '../maintenance/Component';
+import { useReportV2 } from 'src/hooks/v2/use-report';
+import { useReportStore } from 'src/store/reducers/report';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { sequences } = useSequences();
@@ -41,10 +40,9 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
 
     const { updateSequenceInfluencer } = useSequenceInfluencers();
-    const { loading, report, socialProfile, reportCreatedAt, errorMessage } = useReport({
+    const { loading, report, socialProfile, reportCreatedAt, errorMessage } = useReportV2({
         platform,
         creator_id,
-        track: SearchAnalyzeInfluencer.eventName as eventKeys,
     });
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
@@ -70,6 +68,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
     const { trackEvent } = useRudderstack();
     const { track } = useAnalytics();
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencer | null>(null);
+    const { setSelectedInfluencer } = useReportStore();
 
     useEffect(() => {
         updateSequenceInfluencerIfSocialProfileAvailable({
@@ -82,6 +81,13 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
             clientLogger(error);
         });
     }, [report, socialProfile, sequenceInfluencer, company, updateSequenceInfluencer]);
+
+    useEffect(() => {
+        setSelectedInfluencer({
+            name: report?.user_profile?.fullname as string,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [report?.user_profile]);
 
     const handleSetSequenceInfluencer = (sequenceInfluencer: SequenceInfluencer | null) => {
         if (!sequenceInfluencer) {
