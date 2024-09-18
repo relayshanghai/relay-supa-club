@@ -7,6 +7,7 @@ import { CreatorPage } from './creator-page';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { rest } from 'msw';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 describe('<CreatorPage />', () => {
     before(async () => {
@@ -14,10 +15,18 @@ describe('<CreatorPage />', () => {
     });
 
     it('renders', () => {
-        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
+        testMount(
+            <StoreProvider>
+                <CreatorPage creator_id="abc-creator" platform="youtube" />
+            </StoreProvider>,
+        );
     });
     it('shows loading state, then shows report', () => {
-        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
+        testMount(
+            <StoreProvider>
+                <CreatorPage creator_id="abc-creator" platform="youtube" />
+            </StoreProvider>,
+        );
         cy.contains('Generating influencer Report. Please wait');
         cy.contains('T-Series');
     });
@@ -28,7 +37,11 @@ describe('<CreatorPage />', () => {
                 return res(ctx.status(500), ctx.json({ error: 'retry_later' }));
             }),
         );
-        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
+        testMount(
+            <StoreProvider>
+                <CreatorPage creator_id="abc-creator" platform="youtube" />
+            </StoreProvider>,
+        );
         cy.contains('We are updating this influencer report. Please try again in 10-15 minutes');
     });
     it('shows error when cannot load report', () => {
@@ -38,7 +51,11 @@ describe('<CreatorPage />', () => {
                 return res(ctx.status(400), ctx.json({ error: 'error' }));
             }),
         );
-        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
+        testMount(
+            <StoreProvider>
+                <CreatorPage creator_id="abc-creator" platform="youtube" />
+            </StoreProvider>,
+        );
         cy.contains('Failed to fetch report');
     });
 });

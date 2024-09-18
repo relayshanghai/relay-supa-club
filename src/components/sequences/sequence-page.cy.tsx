@@ -8,6 +8,7 @@ import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { v4 } from 'uuid';
 import { randomString } from '../../../cypress/e2e/helpers';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 describe('<SequencePage />', () => {
     before(() => {
@@ -35,19 +36,31 @@ describe('<SequencePage />', () => {
     };
 
     it('Should render the mock sequences in a table', () => {
-        testMount(<SequencePage {...props} />);
+        testMount(
+            <StoreProvider>
+                <SequencePage {...props} />
+            </StoreProvider>,
+        );
 
         cy.contains('h1', "Joe's BoostBot Sequence");
         cy.contains('tr', 'Mario | Marketing & Motivation'); // Shows a sequence influencer
     });
     it('opens up FAQ when clicking "Need help?"', () => {
-        testMount(<SequencePage {...props} />);
+        testMount(
+            <StoreProvider>
+                <SequencePage {...props} />
+            </StoreProvider>,
+        );
         cy.contains('Need help?').click();
         cy.contains(faq.sequences[0].title);
         cy.contains(faq.sequencesGetMoreInfo);
     });
     it('shows invalid modal', () => {
-        testMount(<SequencePage {...props} />);
+        testMount(
+            <StoreProvider>
+                <SequencePage {...props} />
+            </StoreProvider>,
+        );
         cy.contains('Allegra - No Report');
         cy.getByTestId('send-email-button-allegraalynn-noreport@gmail.com').trigger('mouseover', { force: true });
         cy.contains('Updating influencer report');
@@ -73,7 +86,11 @@ describe('<SequencePage />', () => {
         ];
         worker.use(rest.post('/api/sequence/send', (_req, res, ctx) => res(ctx.status(200), ctx.json(mockSendResult))));
 
-        testMount(<SequencePage {...props} />);
+        testMount(
+            <StoreProvider>
+                <SequencePage {...props} />
+            </StoreProvider>,
+        );
         cy.contains('h1', "Joe's BoostBot Sequence");
 
         cy.contains('button', 'In sequence').within(() => {
@@ -128,7 +145,11 @@ describe('<SequencePage />', () => {
                 res(ctx.json(lotsOfInfluencers)),
             ),
         );
-        testMount(<SequencePage {...props} />);
+        testMount(
+            <StoreProvider>
+                <SequencePage {...props} />
+            </StoreProvider>,
+        );
         cy.contains('h1', "Joe's BoostBot Sequence"); // loaded
         // mario is in first page
         cy.contains('tr', mario.name ?? '');
