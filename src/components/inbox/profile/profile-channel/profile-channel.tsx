@@ -20,7 +20,7 @@ import { evaluateStat, processedAudienceDemoData } from 'src/utils/api/boostbot/
 import { Tooltip } from 'src/components/library';
 import { Question } from 'src/components/icons';
 import { extractPlatformFromURL } from 'src/utils/extract-platform-from-url';
-import { useReport } from 'src/hooks/use-report';
+import { useReportV2 } from 'src/hooks/v2/use-report';
 import type { SearchTableInfluencer } from 'types';
 import type { InfluencerSocialProfileEntity } from 'src/backend/database/influencer/influencer-social-profile-entity';
 
@@ -45,7 +45,7 @@ export default function ProfileChannel({ ...props }: Props) {
     const profile = props.influencerProfile.data as SearchTableInfluencer;
     const { t, i18n } = useTranslation();
     const platform = profile?.url ? extractPlatformFromURL(profile?.url) : 'youtube';
-    const { report: _report } = useReport({ platform: platform ?? 'youtube', creator_id: profile?.iqdata_id });
+    const { report: _report } = useReportV2({ platform: platform ?? 'youtube', creator_id: profile?.iqdata_id });
 
     const influencer = profile || {};
     const {
