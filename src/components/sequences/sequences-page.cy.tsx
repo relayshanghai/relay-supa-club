@@ -3,6 +3,7 @@ import { worker } from '../../mocks/browser';
 import { SequencesPage } from './sequences-page';
 import sequences from 'i18n/en/sequences';
 import faq from 'i18n/en/faq';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 describe('SequencesPage', () => {
     before(() => {
@@ -10,7 +11,11 @@ describe('SequencesPage', () => {
     });
 
     it('Should render the mock sequences in a table', () => {
-        testMount(<SequencesPage />);
+        testMount(
+            <StoreProvider>
+                <SequencesPage />
+            </StoreProvider>,
+        );
 
         cy.contains(sequences.sequences);
         cy.contains(sequences.subtitle);
@@ -19,7 +24,11 @@ describe('SequencesPage', () => {
         cy.contains('tr', "Joe's BoostBot Sequence"); // set in src/mocks/supabase/sequences/all-sequences-by-company.json
     });
     it('opens up FAQ when clicking "Need help?"', () => {
-        testMount(<SequencesPage />);
+        testMount(
+            <StoreProvider>
+                <SequencesPage />
+            </StoreProvider>,
+        );
 
         cy.contains('Need help?').click();
         cy.contains(faq.sequences[0].title);

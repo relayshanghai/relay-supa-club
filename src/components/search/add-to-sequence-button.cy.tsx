@@ -5,6 +5,7 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import type { AddToSequenceButtonProps } from './add-to-sequence-button';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import type * as types from '../../../types';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 const props: AddToSequenceButtonProps = {
     allSequenceInfluencersIqDataIdsAndSequenceNames: [
@@ -20,7 +21,11 @@ const props: AddToSequenceButtonProps = {
 
 describe('<AddToSequenceButton />', () => {
     it('shows add to sequence modal if creator profile user_id does not match list of already added sequence influencers', () => {
-        testMount(<AddToSequenceButton {...props} />);
+        testMount(
+            <StoreProvider>
+                <AddToSequenceButton {...props} />
+            </StoreProvider>,
+        );
         cy.contains('button', 'Add to sequence').click();
         cy.contains('No sequence created yet');
     });
@@ -31,7 +36,11 @@ describe('<AddToSequenceButton />', () => {
                 user_id: '123',
             } as types.CreatorAccount,
         };
-        testMount(<AddToSequenceButton {...alreadyAddedProps} />);
+        testMount(
+            <StoreProvider>
+                <AddToSequenceButton {...alreadyAddedProps} />
+            </StoreProvider>,
+        );
         cy.contains('button', 'Add to sequence').click();
         cy.contains('Influencer has already been added to sequence: test');
         cy.contains('button', 'Close').click();
