@@ -8,6 +8,7 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import { worker } from '../../mocks/browser';
 import InfluencerRow from './influencer-row';
 import type { TableColumns } from './campaign-influencers-table';
+import StoreProvider from 'src/store/Providers/StoreProvider';
 
 const creator: CampaignCreatorDB = {
     id: '175c7699-f53d-4c0c-bf04-e11deea7899e',
@@ -115,7 +116,11 @@ describe('<InfluencerRow />', () => {
             visibleColumns: testColumns,
         };
 
-        testMount(<InfluencerRow {...props} />);
+        testMount(
+            <StoreProvider>
+                <InfluencerRow {...props} />
+            </StoreProvider>,
+        );
         cy.contains('@tseries');
         cy.contains('To Contact');
     });
@@ -130,7 +135,11 @@ describe('<InfluencerRow />', () => {
             tabStatus: creator.status,
             visibleColumns: testColumns,
         };
-        testMount(<InfluencerRow {...props} />);
+        testMount(
+            <StoreProvider>
+                <InfluencerRow {...props} />
+            </StoreProvider>,
+        );
         cy.findByTestId('contacts-skeleton').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 
@@ -151,7 +160,11 @@ describe('<InfluencerRow />', () => {
             tabStatus: creator.status,
             visibleColumns: testColumns,
         };
-        testMount(<InfluencerRow {...props} />);
+        testMount(
+            <StoreProvider>
+                <InfluencerRow {...props} />
+            </StoreProvider>,
+        );
 
         cy.get('[data-testid="move-influencer-button"]').should('exist');
         cy.get('[data-testid="manage-button"]').should('exist');
