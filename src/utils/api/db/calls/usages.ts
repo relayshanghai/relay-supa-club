@@ -115,7 +115,13 @@ const recordUsage = async ({
     }
     if (usagesError) serverLogger(usagesError);
 
-    if (usagesError || (usagesData?.length && usagesData.length >= limit)) {
+    const [errBalanceData, balanceData] = await awaitToError(
+        BalanceService.getService().getBalance(type as BalanceType),
+    );
+    if (errBalanceData) serverLogger(errBalanceData);
+    const balance = balanceData?.amount || 0;
+
+    if (errBalanceData || balance >= limit) {
         return { error: usageErrors.limitExceeded };
     }
     await awaitToError(BalanceService.getService().deductBalanceInProcess(type as BalanceType, count || 1));
