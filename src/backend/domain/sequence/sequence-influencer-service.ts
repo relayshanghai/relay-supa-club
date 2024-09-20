@@ -14,12 +14,14 @@ import { logger } from 'src/backend/integration/logger';
 import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { findMostRecentPostWithTextOrTitle } from 'src/utils/api/iqdata/extract-influencer';
 import { NotFoundError } from 'src/utils/error/http-error';
+import type { FindOptionsWhere } from 'typeorm';
 import { type DeepPartial, IsNull, MoreThanOrEqual, Not, Between } from 'typeorm';
 import { type CreatorReport } from 'types';
 import BalanceService from '../balance/balance-service';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
+import { CompanyIdRequired } from '../decorators/company-id';
 
 export default class SequenceInfluencerService {
     public static readonly service: SequenceInfluencerService = new SequenceInfluencerService();
@@ -187,6 +189,7 @@ export default class SequenceInfluencerService {
             throw e;
         }
     }
+
     async syncSequenceInfluencer(sequenceInfluencer: SequenceInfluencerEntity, reportData: CreatorReport) {
         const tags = reportData.user_profile.relevant_tags?.map((tag) => tag.tag).slice(0, 3) || ([] as string[]);
         const email = reportData.user_profile.contacts?.filter((value) => value.type === 'email')[0]?.value || null;
@@ -207,6 +210,7 @@ export default class SequenceInfluencerService {
             toUpdate,
         );
     }
+
     async syncInfluencerProfile(reportData: CreatorReport, platform: string) {
         const email = reportData.user_profile.contacts?.filter((value) => value.type === 'email')[0]?.value || null;
         const toUpdate: DeepPartial<InfluencerSocialProfileEntity> = {
@@ -269,12 +273,30 @@ export default class SequenceInfluencerService {
 
         return socialProfile;
     }
+
     async getOne(id: string) {
         return SequenceInfluencerRepository.getRepository().findOne({
             where: {
                 id,
             },
             relations: ['influencerSocialProfile'],
+        });
+    }
+
+    @CompanyIdRequired()
+    async getOneOrFail({ creatorId }: { creatorId?: string }) {
+        const companyId = RequestContext.getContext().companyId;
+        const filter: FindOptionsWhere<SequenceInfluencerEntity> = {};
+        if (creatorId) {
+            filter.iqdataId = creatorId;
+        }
+        return SequenceInfluencerRepository.getRepository().findOneOrFail({
+            where: {
+                company: {
+                    id: companyId as string,
+                },
+                ...filter,
+            },
         });
     }
 }
