@@ -9,6 +9,7 @@ import { updateCompanySubscriptionStatus } from './company';
 import BalanceService from 'src/backend/domain/balance/balance-service';
 import { type BalanceType } from 'src/backend/database/balance/balance-entity';
 import awaitToError from 'src/utils/await-to-error';
+import SequenceInfluencerService from 'src/backend/domain/sequence/sequence-influencer-service';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
     let subscription = null;
@@ -82,7 +83,6 @@ const recordUsage = async ({
     if (!subscriptionLimit) {
         return { error: usageErrors.noSubscription };
     }
-    const limit = Number(subscriptionLimit);
     const now = new Date();
 
     let _subscriptionStartDate = startDate.toISOString();
@@ -115,13 +115,24 @@ const recordUsage = async ({
     }
     if (usagesError) serverLogger(usagesError);
 
+    if (type === 'profile' && creator_id) {
+        const [errSequenceInfluencer] = await awaitToError(
+            SequenceInfluencerService.getService().getOneOrFail({ creatorId: creator_id }),
+        );
+
+        // this means the influencer is on sequence, so we don't want to charge them
+        if (!errSequenceInfluencer) {
+            return { error: null };
+        }
+    }
+
     const [errBalanceData, balanceData] = await awaitToError(
         BalanceService.getService().getBalance(type as BalanceType),
     );
     if (errBalanceData) serverLogger(errBalanceData);
-    const balance = balanceData?.amount || 0;
+    const balance = +balanceData?.amount || 0;
 
-    if (errBalanceData || balance >= limit) {
+    if (errBalanceData || balance <= 0) {
         return { error: usageErrors.limitExceeded };
     }
     await awaitToError(BalanceService.getService().deductBalanceInProcess(type as BalanceType, count || 1));
