@@ -188,6 +188,7 @@ export interface UserProfile {
     avg_likes: number;
     avg_comments: number;
     avg_views: number;
+    avg_reels_plays: number;
     stat_history: StatHistory[];
     geo: Geo;
     contacts: CreatorReportContact[];
