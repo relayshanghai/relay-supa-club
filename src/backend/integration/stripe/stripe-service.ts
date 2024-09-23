@@ -319,6 +319,29 @@ export default class StripeService {
         return subscription.data;
     }
 
+    async getAllSubscriptions() {
+        const subscriptions: Stripe.Subscription[] = [];
+        const statuses: Stripe.SubscriptionListParams.Status[] = ['active', 'trialing', 'incomplete', 'canceled'];
+
+        let lastId: string | undefined = undefined;
+        for (const status of statuses) {
+            while (true) {
+                const subs = (await StripeService.client.subscriptions.list({
+                    limit: 100,
+                    starting_after: lastId,
+                    status,
+                })) as Stripe.ApiList<Stripe.Subscription>;
+                subscriptions.push(...subs.data);
+                if (!subs.has_more) {
+                    break;
+                } else {
+                    lastId = subs.data[subs.data.length - 1].id;
+                }
+            }
+        }
+        return subscriptions;
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,

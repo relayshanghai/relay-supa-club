@@ -725,7 +725,14 @@ export default class SubscriptionV2Service {
     @CompanyIdRequired()
     @UseLogger()
     async migrateSubscription(request: SubscriptionMigrationRequest) {
-        return request;
+        // 1 - get all subscriptions
+        const subscriptions = await StripeService.getService().getAllSubscriptions();
+
+        // 2 - filter subscription with old price from request.sourcePriceId
+        subscriptions.filter((sub) => sub.items.data[0].price.id === request.sourcePriceId);
+
+        // 3 - update subscription with new price from request.targetPriceId
+        return subscriptions;
     }
 
     private async getLoyalCompany(companyId: string) {
