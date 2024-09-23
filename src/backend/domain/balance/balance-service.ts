@@ -31,8 +31,16 @@ export default class BalanceService {
         const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
         const usage = await UsageRepository.getRepository().getCountUsages(companyId, startDate, endDate);
-        const searchLimit = parseInt(company.searchesLimit || company.trialSearchesLimit);
-        const profileLimit = parseInt(company.profilesLimit || company.trialProfilesLimit);
+        const searchLimit = parseInt(
+            ['trial', 'trialing'].includes(company.subscriptionStatus)
+                ? company.trialSearchesLimit
+                : company.searchesLimit,
+        );
+        const profileLimit = parseInt(
+            ['trial', 'trialing'].includes(company.subscriptionStatus)
+                ? company.trialProfilesLimit
+                : company.profilesLimit,
+        );
 
         await BalanceRepository.getRepository().upsert(
             [
