@@ -722,17 +722,76 @@ export default class SubscriptionV2Service {
         return null;
     }
 
-    @CompanyIdRequired()
-    @UseLogger()
+    async getListOfAllSubscriptions() {
+        const subscriptions = await StripeService.getService().getAllSubscriptions();
+
+        const activePrices = subscriptions
+            .map((sub) => sub.items.data[0].price.id)
+            .reduce((acc: { [key: string]: Record<string, any> }, priceId) => {
+                acc[priceId] = {
+                    price:
+                        (subscriptions.find((sub) => sub.items.data[0].price.id === priceId)?.items.data[0].price
+                            .unit_amount ?? 0) / 100,
+                    currency: subscriptions.find((sub) => sub.items.data[0].price.id === priceId)?.currency,
+                    interval: subscriptions.find((sub) => sub.items.data[0].price.id === priceId)?.items.data[0].plan
+                        .interval,
+                    total: subscriptions.filter((sub) => sub.items.data[0].price.id === priceId).length,
+                };
+                return acc;
+            }, {});
+
+        return { totalSubscriptions: subscriptions.length, activePrices };
+    }
+
     async migrateSubscription(request: SubscriptionMigrationRequest) {
+        const isDryRun = request.isDryRun ?? true;
         // 1 - get all subscriptions
         const subscriptions = await StripeService.getService().getAllSubscriptions();
 
         // 2 - filter subscription with old price from request.sourcePriceId
-        subscriptions.filter((sub) => sub.items.data[0].price.id === request.sourcePriceId);
+        const oldSubscriptions = subscriptions.filter((sub) =>
+            request.sourcePriceIds.includes(sub.items.data[0].price.id),
+        );
 
         // 3 - update subscription with new price from request.targetPriceId
-        return subscriptions;
+        type MustUpdated = { subscriptionId: string; priceId: string; quantity: number };
+        type FailedToUpdate = {
+            subscriptionId: string;
+            priceId: string;
+            quantity: number;
+            reason: Stripe.errors.StripeError;
+        };
+        const mustUpdated: MustUpdated[] = [];
+        const errorToUpdate: FailedToUpdate[] = [];
+        for (const sub of oldSubscriptions) {
+            if (!isDryRun) {
+                const [err] = await awaitToError<Stripe.errors.StripeError>(
+                    StripeService.getService().changeSubscription(sub.id, {
+                        priceId: request.targetPriceId,
+                        quantity: sub.items.data[0].quantity ?? 1,
+                    }),
+                );
+                errorToUpdate.push({
+                    subscriptionId: sub.id,
+                    priceId: request.targetPriceId,
+                    quantity: sub.items.data[0].quantity ?? 1,
+                    reason: err,
+                });
+            } else {
+                mustUpdated.push({
+                    subscriptionId: sub.id,
+                    priceId: request.targetPriceId,
+                    quantity: sub.items.data[0].quantity ?? 1,
+                });
+            }
+        }
+        return {
+            isDryRun,
+            result: mustUpdated,
+            resultCount: mustUpdated.length,
+            failed: errorToUpdate,
+            failedCount: errorToUpdate.length,
+        };
     }
 
     private async getLoyalCompany(companyId: string) {

@@ -321,7 +321,7 @@ export default class StripeService {
 
     async getAllSubscriptions() {
         const subscriptions: Stripe.Subscription[] = [];
-        const statuses: Stripe.SubscriptionListParams.Status[] = ['active', 'trialing', 'incomplete', 'canceled'];
+        const statuses: Stripe.SubscriptionListParams.Status[] = ['active', 'trialing', 'incomplete'];
 
         let lastId: string | undefined = undefined;
         for (const status of statuses) {
