@@ -140,25 +140,15 @@ export default class SequenceInfluencerService {
             } as SequenceInfluencerEntity;
         });
         const entities = await SequenceInfluencerRepository.getRepository().save(toInsert);
-        const dataFromUsages = await UsageRepository.getRepository().find({
-            where: {
-                itemId: In(request.map((r) => r.iqdataId)),
-            },
-        });
-
-        const notExistedInUsages = dataFromUsages
-            .map((d) => d.itemId)
-            .filter((id) => !request.map((r) => r.iqdataId).includes(id));
-
         // deduct balance in adding influencer to sequence
         await Promise.all([
-            BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE, notExistedInUsages.length),
+            BalanceService.getService().deductBalanceInProcess(BalanceType.PROFILE, request.length),
             UsageRepository.getRepository().insert(
-                notExistedInUsages.map((r) => {
+                request.map((r) => {
                     const entity = new UsageEntity();
                     entity.company = profile?.company;
                     entity.type = BalanceType.PROFILE;
-                    entity.itemId = r;
+                    entity.itemId = r.iqdataId;
                     entity.profile = profile;
                     return entity;
                 }),
