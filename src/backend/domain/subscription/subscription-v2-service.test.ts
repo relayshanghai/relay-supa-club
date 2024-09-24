@@ -127,6 +127,9 @@ describe(`src/backend/domain/subscription/subscription-v2-service.test.ts`, asyn
                         },
                     },
                 });
+                StripeGetPriceMock.mockResolvedValue({
+                    unit_amount: 300,
+                });
                 const result = await SubscriptionV2Service.getService().createSubscription({
                     priceId: 'price_1',
                     quantity: 1,

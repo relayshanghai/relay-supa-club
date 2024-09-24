@@ -3,7 +3,6 @@ import { render, fireEvent, waitFor, cleanup, act } from '@testing-library/react
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PriceCard } from './price-card';
 let createSubscriptionMock = vi.fn();
-const refreshPaymentMethodInfoMock = vi.fn();
 const pushMock = vi.fn();
 describe('PriceCard Component', () => {
     afterEach(() => {
@@ -103,7 +102,6 @@ describe('PriceCard Component', () => {
                     status: 'CANCELLED',
                 },
                 product: { name: 'Outreach' },
-                refreshPaymentMethodInfo: refreshPaymentMethodInfoMock,
             }),
             STRIPE_SUBSCRIBE_RESPONSE: 'boostbot_stripe_secret_response',
             stripeSubscribeResponseInitialValue: {},

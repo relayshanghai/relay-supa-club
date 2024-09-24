@@ -1,7 +1,7 @@
 import { loadStripe } from '@stripe/stripe-js';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
-import { useLocalStorageSelectedPrice } from 'src/hooks/use-prices';
+import { useLocalStoragePaymentPeriod, useLocalStorageSelectedPrice } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
 import { randomNumber } from 'src/utils/utils';
@@ -14,8 +14,17 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export const AddPaymentsSection = () => {
     const { i18n } = useTranslation();
     const [selectedPrice] = useLocalStorageSelectedPrice();
+    const [paymentPeriod] = useLocalStoragePaymentPeriod();
     const [couponId, setCouponId] = useState<string | undefined>(undefined);
     const batchId = useMemo(() => randomNumber(), []);
+
+    // prevent alipay for annually
+    const currentPrices = +selectedPrice.prices[paymentPeriod.period];
+    const paymentMethodTypes = ['card'];
+    if (selectedPrice.currency === 'cny' && currentPrices < 3000) {
+        paymentMethodTypes.push('alipay');
+    }
+
     const cardOptions: StripeElementsOptions = {
         mode: 'subscription',
         amount: parseInt(selectedPrice.prices.monthly) * 100, //amount in cents
@@ -27,7 +36,7 @@ export const AddPaymentsSection = () => {
             },
         },
         locale: i18n.language?.includes('en') ? 'en' : 'zh',
-        paymentMethodTypes: ['card'],
+        paymentMethodTypes,
     };
 
     return (
