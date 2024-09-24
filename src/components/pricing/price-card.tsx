@@ -41,7 +41,6 @@ const disableButton = (
     if (!subscription && company && allowedCompanyStatus.includes(company.subscription_status)) {
         return false;
     }
-
     if (!product?.name || !subscription?.status) {
         return true;
     }
@@ -55,7 +54,6 @@ const disableButton = (
     if (isCurrentPlan(tier, period, subscription, product)) {
         return true;
     }
-
     return false;
 };
 
