@@ -27,7 +27,7 @@ export const AddPaymentsSection = () => {
             },
         },
         locale: i18n.language?.includes('en') ? 'en' : 'zh',
-        paymentMethodTypes: ['card'],
+        paymentMethodTypes: ['card', 'alipay'],
     };
 
     return (
