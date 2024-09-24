@@ -16,7 +16,6 @@ import type { SubscriptionEntity } from 'src/backend/database/subcription/subscr
 import type Stripe from 'stripe';
 import { usePricesV2 } from 'src/hooks/v2/use-prices';
 import PriceCardSkeleton from './price-card-skeleton';
-import { useEffect } from 'react';
 import { type RelayPlanWithAnnual } from 'types';
 
 const isCurrentPlan = (
@@ -85,18 +84,10 @@ export const PriceCard = ({
         loading: subscriptionV2Loading,
         changeSubscription,
         refreshSubscription: refreshSubscriptionV2,
-        paymentMethods,
-        defaultPaymentMethod,
-        refreshPaymentMethodInfo,
     } = useSubscription();
     const [, setStripeSecretResponse] = useLocalStorageSubscribeResponse();
     const [, setSelectedPrice] = useLocalStorageSelectedPrice();
     const router = useRouter();
-
-    useEffect(() => {
-        refreshPaymentMethodInfo();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     if (priceLoading || !prices)
         return (
@@ -126,12 +117,7 @@ export const PriceCard = ({
 
     const shouldUpgrade = subscriptionStatus === 'ACTIVE' || companySubscriptionStatus === 'active';
 
-    const hasAlipayOnPaymentMethods = paymentMethods?.some((pm) => pm.type === 'alipay');
-    const defaultPaymentMethodIsAlipay = paymentMethods?.some(
-        (pm) => pm.id === defaultPaymentMethod && pm.type === 'alipay',
-    );
     const priceId = price.priceIdsForExistingUser ? price.priceIdsForExistingUser[period] : price.priceIds[period];
-
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
         createSubscription({ priceId, quantity: 1 })
@@ -156,27 +142,7 @@ export const PriceCard = ({
     };
 
     const triggerUpgradeSubscription = () => {
-        if (hasAlipayOnPaymentMethods || defaultPaymentMethodIsAlipay) {
-            // show error if alipay is not supported anymore
-            toast.error(t('pricing.haveAlipayError'));
-            setTimeout(() => {
-                router.push('/account#subscription-details');
-            }, 2000);
-            return;
-        } else if (!paymentMethods?.length) {
-            toast.error(t('pricing.noPaymentMethodFound'));
-            setTimeout(() => {
-                router.push('/account#subscription-details');
-            }, 2000);
-            return;
-        } else if (!defaultPaymentMethod) {
-            toast.error(t('pricing.noDefaultPaymentMethodFound'));
-            setTimeout(() => {
-                router.push('/account#subscription-details');
-            }, 2000);
-            return;
-        }
-        changeSubscription({ priceId, quantity: 1 })
+        changeSubscription({ priceId: price.priceIds[period], quantity: 1 })
             .then(() => {
                 toast.success(t('pricing.upgradeSuccess'));
                 refreshSubscription();

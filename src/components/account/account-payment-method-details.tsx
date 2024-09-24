@@ -8,7 +8,6 @@ import { Skeleton } from 'shadcn/components/ui/skeleton';
 import toast from 'react-hot-toast';
 import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '../library';
 
 const PaymentMethodInfo: React.FC<{ paymentMethod: Stripe.PaymentMethod }> = ({ paymentMethod }) => {
     let details = 'Unknown';
@@ -107,20 +106,6 @@ export const PaymentMethodDetails = () => {
                                     <section className="flex items-center gap-3">
                                         <PaymentMethodIcon paymentMethod={paymentMethod} />
                                         <PaymentMethodInfo paymentMethod={paymentMethod} />
-                                        {paymentMethod.type === 'alipay' && (
-                                            <Tooltip
-                                                content={t('pricing.deprecatedPaymentTitle')}
-                                                detail={t('pricing.deprecatedPaymentDescription', {
-                                                    method: paymentMethod.type,
-                                                })}
-                                                position={'top-left'}
-                                                className="w-fit"
-                                            >
-                                                <span className="text-sm font-medium text-red-500">
-                                                    {t('pricing.deprecatedLabel')}
-                                                </span>
-                                            </Tooltip>
-                                        )}
                                     </section>
                                     {paymentMethod.id === defaultPaymentMethod && (
                                         <p className="h-fit rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-sm font-medium text-blue-500">
@@ -155,14 +140,12 @@ export const PaymentMethodDetails = () => {
                                                     </div>
                                                 </DialogContent>
                                             </Dialog>
-                                            {paymentMethod.type !== 'alipay' && (
-                                                <button
-                                                    className="text-sm font-medium text-gray-400"
-                                                    onClick={() => handleSetDefaultPaymentMethod(paymentMethod.id)}
-                                                >
-                                                    Set as default
-                                                </button>
-                                            )}
+                                            <button
+                                                className="text-sm font-medium text-gray-400"
+                                                onClick={() => handleSetDefaultPaymentMethod(paymentMethod.id)}
+                                            >
+                                                Set as default
+                                            </button>
                                         </div>
                                     )}
                                 </div>
