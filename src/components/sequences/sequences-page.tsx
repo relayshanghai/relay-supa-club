@@ -20,8 +20,6 @@ import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
 import { DeleteSequence } from 'src/utils/analytics/events/outreach/sequence-delete';
-import { Banner } from '../library/banner';
-import { useUser } from 'src/hooks/use-user';
 import { calculateReplyRate } from './helpers';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { crmGuide } from 'src/guides/crm.guide';
@@ -38,7 +36,6 @@ export const SequencesPage = () => {
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selection, setSelection] = useState<string[]>([]);
-    const { profile } = useUser();
 
     const { push } = useRouter();
 
@@ -86,13 +83,6 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
-            {!profile?.email_engine_account_id && (
-                <Banner
-                    buttonText={t('banner.button') ?? ''}
-                    title={t('banner.outreach.title')}
-                    message={t('banner.outreach.descriptionSequences')}
-                />
-            )}
             <DeleteSequenceModal
                 show={showDeleteModal}
                 setShow={setShowDeleteModal}

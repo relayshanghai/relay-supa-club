@@ -30,12 +30,12 @@ export const formatStats = (userProfile: CreatorReport['user_profile']) => {
             icon: <Views />,
             data: numFormatter(userProfile.total_views),
         });
-    if (userProfile?.avg_views)
+    if (userProfile?.avg_views || userProfile?.avg_reels_plays)
         stats.push({
             label: 'avgViews',
             descr: 'avgViews',
             icon: <Views />,
-            data: numFormatter(userProfile.avg_views),
+            data: numFormatter(userProfile.avg_views || userProfile.avg_reels_plays),
         });
     if (userProfile?.engagements)
         stats.push({
