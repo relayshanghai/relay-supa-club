@@ -73,7 +73,8 @@ export default class StripeService {
         const c = coupon ?? undefined;
         const paymentMethodsTypes: Stripe.SubscriptionCreateParams.PaymentSettings.PaymentMethodType[] = ['card'];
         const price = await this.getPrice(priceId);
-        if (price?.currency === 'cny') paymentMethodsTypes.push('alipay' as any);
+        const unitAmount = (price.unit_amount ?? 0) / 100;
+        if (price?.currency === 'cny' && unitAmount < 3000) paymentMethodsTypes.push('alipay' as any);
         const subscription = await StripeService.client.subscriptions.create({
             customer: cusId,
             items: [
@@ -178,7 +179,7 @@ export default class StripeService {
     }
 
     async getPrice(priceId: string) {
-        return await StripeService.client.prices.retrieve(priceId);
+        return StripeService.client.prices.retrieve(priceId);
     }
 
     async getPriceByProduct(productId: string): Promise<Stripe.ApiList<StripePriceWithProductMetadata>> {
