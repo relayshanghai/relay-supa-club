@@ -1,11 +1,18 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class SubscriptionMigrationRequest {
-    @IsString()
-    customerIds?: string[];
+    @IsBoolean()
+    @IsOptional()
+    isDryRun?: boolean;
 
     @IsString()
-    sourcePriceId!: string;
+    @IsOptional()
+    customerIds?: string[];
+
+    @IsString({
+        each: true,
+    })
+    sourcePriceIds!: string[];
 
     @IsString()
     targetPriceId!: string;
