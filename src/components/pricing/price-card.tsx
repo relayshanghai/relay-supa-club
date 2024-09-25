@@ -115,7 +115,10 @@ export const PriceCard = ({
 
     const shouldUpgrade = subscriptionStatus === 'ACTIVE' || companySubscriptionStatus === 'active';
 
-    const priceId = price.priceIdsForExistingUser ? price.priceIdsForExistingUser[period] : price.priceIds[period];
+    const priceId = price.priceIdsForExistingUser?.[period]
+        ? price.priceIdsForExistingUser[period]
+        : price.priceIds[period];
+
     const triggerCreateSubscription = () => {
         setSelectedPrice(price);
         createSubscription({ priceId, quantity: 1 })
@@ -176,7 +179,7 @@ export const PriceCard = ({
     };
 
     const PriceDetail = ({ price }: { price: RelayPlanWithAnnual }) => {
-        if (price.forExistingUser) {
+        if (price.forExistingUser?.[period]) {
             return (
                 <>
                     <h3 className="mt-4 flex items-center text-lg text-gray-800 line-through" data-plan="diy">

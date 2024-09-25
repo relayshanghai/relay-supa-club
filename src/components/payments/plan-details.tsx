@@ -27,7 +27,7 @@ export const PlanDetails = ({ priceTier }: { priceTier: ActiveSubscriptionTier }
             </h1>
             <p className="text-wrap mt-4 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</p>
             <div className=" mt-12 ">
-                {selectedPrice.forExistingUser ? (
+                {selectedPrice.forExistingUser?.[paymentPeriod.period] ? (
                     <h4 className="line-through">
                         {selectedPrice.prices[paymentPeriod.period]}
                         {selectedPrice.currency === 'cny' ? 'RMB' : 'USD'} {periodText()}
@@ -36,7 +36,7 @@ export const PlanDetails = ({ priceTier }: { priceTier: ActiveSubscriptionTier }
                     <></>
                 )}
                 <h3 className="mb-3 inline text-4xl font-semibold text-gray-700">
-                    {selectedPrice.forExistingUser
+                    {selectedPrice.forExistingUser?.[paymentPeriod.period]
                         ? selectedPrice.forExistingUser[paymentPeriod.period]
                         : selectedPrice.prices[paymentPeriod.period]}{' '}
                     {selectedPrice.currency === 'cny' ? 'RMB' : 'USD'}
