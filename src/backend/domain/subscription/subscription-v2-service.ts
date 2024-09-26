@@ -353,13 +353,24 @@ export default class SubscriptionV2Service {
         cusId,
         request,
         resetBalance = true,
+        useCompanyId = false,
     }: {
         companyId: string;
         cusId: string;
         request: Pick<PostConfirmationRequest, 'subscriptionId'>;
         resetBalance?: boolean;
+        useCompanyId?: boolean;
     }) {
-        const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
+        let subscription = null;
+
+        if (useCompanyId) {
+            subscription = await StripeService.getService().getLastSubscription<{ plan: Stripe.Plan }>(cusId, {
+                expand: ['data.plan'],
+            });
+        } else {
+            subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
+        }
+
         const plan = subscription.plan;
         const internalProductMetadata = await PriceRepository.getRepository().findOne({
             where: [
@@ -697,50 +708,73 @@ export default class SubscriptionV2Service {
     async syncSubscription() {
         const companyId = RequestContext.getContext().companyId as string;
         const cusId = RequestContext.getContext().customerId as string;
-        const subscription = await SubscriptionRepository.getRepository().findOne({
-            where: {
-                company: {
-                    id: companyId,
-                },
-            },
-        });
-        if (!subscription) {
-            throw new NotFoundError('No subscription found');
-        }
-        return this.storeSubscription({
-            companyId,
-            cusId,
-            request: { subscriptionId: subscription.providerSubscriptionId },
-            resetBalance: false,
-        });
+        return this.syncSubscriptionProcess({ companyId, cusId });
     }
 
-    @CompanyIdRequired()
-    @UseLogger()
-    async getCustomerOfAPlan() {
-        // subscriptions.data[0].plan
-        return null;
+    async syncAllSubscriptions() {
+        let companies = await CompanyRepository.getRepository().find({
+            relations: { subscription: true },
+        });
+        const stripeSubscriptions = await StripeService.getService().getAllSubscriptions();
+        companies = companies.filter((company) => company.subscription?.status);
+        for (const company of companies) {
+            if (
+                stripeSubscriptions
+                    .map((sub) => sub.id)
+                    .includes(company.subscription?.providerSubscriptionId as string)
+            ) {
+                console.log(company.id, ' already synced');
+                continue;
+            }
+            console.log(company.id, ' need synchronized');
+            const [err] = await awaitToError(
+                this.syncSubscriptionProcess({
+                    companyId: company.id,
+                    cusId: company.cusId as string,
+                    useCompanyId: true,
+                }),
+            );
+            if (err) console.error(err);
+            break;
+        }
+        return companies;
     }
 
     async getListOfAllSubscriptions() {
-        const subscriptions = await StripeService.getService().getAllSubscriptions();
+        const stripeSubscriptions = await StripeService.getService().getAllSubscriptions();
 
-        const activePrices = subscriptions
+        let subscriptions = await SubscriptionRepository.getRepository().find({
+            relations: {
+                company: { profiles: true },
+            },
+        });
+        subscriptions = subscriptions.filter((sub) => [SubscriptionStatus.ACTIVE].includes(sub.status));
+
+        const existedData = stripeSubscriptions
+            .filter((stripeSub) => subscriptions.map((sub) => sub.providerSubscriptionId).includes(stripeSub.id))
+            .map((sub) => sub.id);
+        const nonExistedData = stripeSubscriptions
+            .filter((stripeSub) => !subscriptions.map((sub) => sub.providerSubscriptionId).includes(stripeSub.id))
+            .map((sub) => sub.id);
+
+        return { existedData, nonExistedData };
+        const subs = await StripeService.getService().getAllSubscriptions();
+
+        const activePrices = subs
             .map((sub) => sub.items.data[0].price.id)
             .reduce((acc: { [key: string]: Record<string, any> }, priceId) => {
                 acc[priceId] = {
                     price:
-                        (subscriptions.find((sub) => sub.items.data[0].price.id === priceId)?.items.data[0].price
-                            .unit_amount ?? 0) / 100,
-                    currency: subscriptions.find((sub) => sub.items.data[0].price.id === priceId)?.currency,
-                    interval: subscriptions.find((sub) => sub.items.data[0].price.id === priceId)?.items.data[0].plan
-                        .interval,
-                    total: subscriptions.filter((sub) => sub.items.data[0].price.id === priceId).length,
+                        (subs.find((sub) => sub.items.data[0].price.id === priceId)?.items.data[0].price.unit_amount ??
+                            0) / 100,
+                    currency: subs.find((sub) => sub.items.data[0].price.id === priceId)?.currency,
+                    interval: subs.find((sub) => sub.items.data[0].price.id === priceId)?.items.data[0].plan.interval,
+                    total: subs.filter((sub) => sub.items.data[0].price.id === priceId).length,
                 };
                 return acc;
             }, {});
 
-        return { totalSubscriptions: subscriptions.length, activePrices };
+        return { totalSubscriptions: subs.length, activePrices };
     }
 
     async migrateSubscription(request: SubscriptionMigrationRequest) {
@@ -809,5 +843,33 @@ export default class SubscriptionV2Service {
         for (const sub of nonActiveSubs) {
             await awaitToError(StripeService.getService().cancelSubscriptionBySubsId(sub.id));
         }
+    }
+
+    private async syncSubscriptionProcess({
+        companyId,
+        cusId,
+        useCompanyId,
+    }: {
+        companyId: string;
+        cusId: string;
+        useCompanyId?: boolean;
+    }) {
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        return this.storeSubscription({
+            companyId,
+            cusId,
+            request: { subscriptionId: subscription.providerSubscriptionId },
+            resetBalance: false,
+            useCompanyId,
+        });
     }
 }
