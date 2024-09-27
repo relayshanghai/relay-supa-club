@@ -353,25 +353,29 @@ export default class SubscriptionV2Service {
         cusId,
         request,
         resetBalance = true,
-        useCompanyId = false,
+        useCusId = false,
     }: {
         companyId: string;
         cusId: string;
         request: Pick<PostConfirmationRequest, 'subscriptionId'>;
         resetBalance?: boolean;
-        useCompanyId?: boolean;
+        useCusId?: boolean;
     }) {
-        let subscription = null;
+        let customerData:
+                | (Stripe.Customer & { subscriptions: Stripe.ApiList<Stripe.Subscription & { plan?: Stripe.Plan }> })
+                | null = null,
+            subscriptionData: (Stripe.Subscription & { plan?: Stripe.Plan }) | null = null;
 
-        if (useCompanyId) {
-            subscription = await StripeService.getService().getLastSubscription<{ plan: Stripe.Plan }>(cusId, {
-                expand: ['data.plan'],
-            });
+        if (useCusId) {
+            customerData = (await StripeService.getService().getCustomer(cusId, {
+                expand: ['subscriptions.data'],
+            })) as Stripe.Customer & { subscriptions: Stripe.ApiList<Stripe.Subscription> };
         } else {
-            subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
+            subscriptionData = await StripeService.getService().retrieveSubscription(request.subscriptionId);
         }
-
-        const plan = subscription.plan;
+        const subscription = customerData ? customerData.subscriptions.data[0] : subscriptionData;
+        const plan = subscription?.plan;
+        const subscriptionId = useCusId ? (subscription?.id as string) : request.subscriptionId;
         const internalProductMetadata = await PriceRepository.getRepository().findOne({
             where: [
                 {
@@ -380,7 +384,7 @@ export default class SubscriptionV2Service {
                 { priceIdsForExistingUser: plan?.id },
             ],
         });
-        const stripeProductMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
+        const stripeProductMetadata = await StripeService.getService().getProductMetadata(subscriptionId);
         const productMetadata = {
             profiles: internalProductMetadata ? internalProductMetadata.profiles + '' : stripeProductMetadata.profiles,
             searches: internalProductMetadata ? internalProductMetadata.searches + '' : stripeProductMetadata.searches,
@@ -394,7 +398,9 @@ export default class SubscriptionV2Service {
                 id: companyId,
             },
         });
-        const interval = StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval);
+        const interval = StripeService.getService().getSubscriptionInterval(
+            subscription?.items.data[0].plan.interval as string,
+        );
         const nextMonth = new Date();
         nextMonth.setMonth(new Date().getMonth() + 1);
         const promises = [
@@ -402,23 +408,27 @@ export default class SubscriptionV2Service {
                 {
                     company: company as CompanyEntity,
                     provider: 'stripe',
-                    providerSubscriptionId: subscription.id,
+                    providerSubscriptionId: subscription?.id,
                     paymentMethod:
-                        subscription.payment_settings?.payment_method_types?.[0] ||
-                        subscription.default_payment_method?.toString() ||
+                        subscription?.payment_settings?.payment_method_types?.[0] ||
+                        subscription?.default_payment_method?.toString() ||
                         'card',
-                    quantity: subscription.items.data[0].quantity,
-                    price: +formatStripePrice(subscription.items.data[0].price.unit_amount?.valueOf() || 0),
+                    quantity: subscription?.items.data[0].quantity,
+                    price: +formatStripePrice(subscription?.items.data[0].price.unit_amount?.valueOf() || 0),
                     total: +formatStripePrice(
-                        (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                        (subscription?.items.data[0].price.unit_amount?.valueOf() || 0) *
                             (subscription?.items?.data?.[0].quantity ?? 0),
                     ),
-                    subscriptionData: subscription,
+                    subscriptionData: subscription ? subscription : undefined,
                     interval,
-                    discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
-                    coupon: subscription.discount?.coupon?.id,
-                    activeAt: new Date(subscription.current_period_start * 1000),
-                    pausedAt: new Date(subscription.current_period_end * 1000),
+                    discount: subscription?.discount?.coupon?.amount_off?.valueOf() || 0,
+                    coupon: subscription?.discount?.coupon?.id,
+                    activeAt: subscription?.current_period_start
+                        ? new Date(subscription?.current_period_start * 1000)
+                        : null,
+                    pausedAt: subscription?.current_period_end
+                        ? new Date(subscription?.current_period_end * 1000)
+                        : null,
                     cancelledAt: null,
                 },
                 {
@@ -430,7 +440,7 @@ export default class SubscriptionV2Service {
                     id: companyId,
                 },
                 {
-                    subscriptionStatus: subscription.status as string,
+                    subscriptionStatus: subscription?.status as string,
                     profilesLimit: productMetadata.profiles,
                     searchesLimit: productMetadata.searches,
                     trialProfilesLimit: productMetadata.trial_profiles,
@@ -717,27 +727,28 @@ export default class SubscriptionV2Service {
         });
         const stripeSubscriptions = await StripeService.getService().getAllSubscriptions();
         companies = companies.filter((company) => company.subscription?.status);
+        const synced = [],
+            notSynced = [];
         for (const company of companies) {
             if (
                 stripeSubscriptions
                     .map((sub) => sub.id)
                     .includes(company.subscription?.providerSubscriptionId as string)
             ) {
-                console.log(company.id, ' already synced');
+                synced.push({ [company.id]: {} });
                 continue;
             }
-            console.log(company.id, ' need synchronized');
             const [err] = await awaitToError(
                 this.syncSubscriptionProcess({
                     companyId: company.id,
                     cusId: company.cusId as string,
-                    useCompanyId: true,
+                    useCusId: true,
                 }),
             );
-            if (err) console.error(err);
-            break;
+            if (!err) synced.push({ [company.id]: {} });
+            else notSynced.push({ [company.id]: err });
         }
-        return companies;
+        return { synced, notSynced };
     }
 
     async getListOfAllSubscriptions() {
@@ -848,11 +859,11 @@ export default class SubscriptionV2Service {
     private async syncSubscriptionProcess({
         companyId,
         cusId,
-        useCompanyId,
+        useCusId,
     }: {
         companyId: string;
         cusId: string;
-        useCompanyId?: boolean;
+        useCusId?: boolean;
     }) {
         const subscription = await SubscriptionRepository.getRepository().findOne({
             where: {
@@ -869,7 +880,7 @@ export default class SubscriptionV2Service {
             cusId,
             request: { subscriptionId: subscription.providerSubscriptionId },
             resetBalance: false,
-            useCompanyId,
+            useCusId,
         });
     }
 }

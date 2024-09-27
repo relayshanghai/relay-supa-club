@@ -131,8 +131,8 @@ export default class StripeService {
         });
     }
 
-    async getCustomer(cusId: string) {
-        const customer = await StripeService.client.customers.retrieve(cusId);
+    async getCustomer(cusId: string, options?: Stripe.CustomerRetrieveParams) {
+        const customer = await StripeService.client.customers.retrieve(cusId, options);
         if (customer.deleted) {
             throw new NotFoundError('Customer not found');
         }
@@ -337,6 +337,7 @@ export default class StripeService {
                     limit: 100,
                     starting_after: lastId,
                     status,
+                    expand: ['data.customer', 'data.plan', 'data.plan.product'],
                 })) as Stripe.ApiList<Stripe.Subscription>;
                 subscriptions.push(...subs.data);
                 if (!subs.has_more) {
