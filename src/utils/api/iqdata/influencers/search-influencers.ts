@@ -35,14 +35,28 @@ export const searchInfluencers = async (payload: SearchInfluencersPayloadInput, 
 export const searchInfluencersList = async (payload: SearchInfluencersListPayloadInput, context?: ServerContext) => {
     const { username, platform } = payload;
 
-    const response = await IqDataApiFetcher.service.request<
+    let response = await IqDataApiFetcher.service.request<
         CreatorSearchByUsernameResult & SearchResultMetadata,
         { query: SearchInfluencersListPayloadQuery } & { context?: ServerContext }
     >(
-        `/dict/users?${new URLSearchParams({ q: username, type: 'topic-tags', platform, limit: '1' })}`,
-        { query: { q: username, type: 'topic-tags', platform, limit: '1' }, context },
+        `/dict/users?${new URLSearchParams({ q: username, type: 'search', platform, limit: '1' })}`,
+        { query: { q: username, type: 'search', platform, limit: '1' }, context },
         { method: 'GET' },
     );
+
+    /**
+     * If no results are found, try searching for topic tags
+     */
+    if (response.content.data.length === 0) {
+        response = await IqDataApiFetcher.service.request<
+            CreatorSearchByUsernameResult & SearchResultMetadata,
+            { query: SearchInfluencersListPayloadQuery } & { context?: ServerContext }
+        >(
+            `/dict/users?${new URLSearchParams({ q: username, type: 'topic-tags', platform, limit: '1' })}`,
+            { query: { q: username, type: 'topic-tags', platform, limit: '1' }, context },
+            { method: 'GET' },
+        );
+    }
 
     return response.content;
 };
