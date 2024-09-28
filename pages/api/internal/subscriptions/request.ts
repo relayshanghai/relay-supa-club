@@ -1,4 +1,12 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, ValidateNested } from 'class-validator';
+
+export class TargetPriceIds {
+    @IsString()
+    usdPriceId!: string;
+
+    @IsString()
+    cnyPriceId!: string;
+}
 
 export class SubscriptionMigrationRequest {
     @IsBoolean()
@@ -6,14 +14,14 @@ export class SubscriptionMigrationRequest {
     isDryRun?: boolean;
 
     @IsString()
+    customerId!: string;
+
+    @ValidateNested()
+    targetPriceIds!: TargetPriceIds;
+}
+
+export class GetSubscriptionMigrationRequest {
     @IsOptional()
-    customerIds?: string[];
-
-    @IsString({
-        each: true,
-    })
-    sourcePriceIds!: string[];
-
     @IsString()
-    targetPriceId!: string;
+    targetPriceId?: string;
 }
