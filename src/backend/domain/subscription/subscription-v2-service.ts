@@ -726,7 +726,11 @@ export default class SubscriptionV2Service {
             relations: { subscription: true },
         });
         const stripeSubscriptions = await StripeService.getService().getAllSubscriptions();
-        companies = companies.filter((company) => company.subscription?.status);
+        companies = companies.filter((company) =>
+            [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(
+                company.subscription?.status as SubscriptionStatus,
+            ),
+        );
         const synced = [],
             notSynced = [];
         for (const company of companies) {
@@ -735,9 +739,10 @@ export default class SubscriptionV2Service {
                     .map((sub) => sub.id)
                     .includes(company.subscription?.providerSubscriptionId as string)
             ) {
-                synced.push({ [company.id]: {} });
+                synced.push({ [company.cusId as string]: {} });
                 continue;
             }
+            notSynced.push({ [company.cusId as string]: {} });
             const [err] = await awaitToError(
                 this.syncSubscriptionProcess({
                     companyId: company.id,
@@ -748,7 +753,7 @@ export default class SubscriptionV2Service {
             if (!err) synced.push({ [company.id]: {} });
             else notSynced.push({ [company.id]: err });
         }
-        return { synced, notSynced };
+        return { synced, notSynced, syncedTotal: synced.length, notSyncedTotal: notSynced.length };
     }
 
     async getListOfAllSubscriptions() {
