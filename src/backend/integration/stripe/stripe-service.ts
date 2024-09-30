@@ -350,6 +350,26 @@ export default class StripeService {
         return subscriptions;
     }
 
+    async getAllCustomers() {
+        const customers: Stripe.Customer[] = [];
+
+        let lastId: string | undefined = undefined;
+        while (true) {
+            const subs = (await StripeService.client.customers.list({
+                limit: 100,
+                starting_after: lastId,
+                expand: ['data.subscriptions', 'data.subscriptions.data.plan'],
+            })) as Stripe.ApiList<Stripe.Customer>;
+            customers.push(...subs.data);
+            if (!subs.has_more) {
+                break;
+            } else {
+                lastId = subs.data[subs.data.length - 1].id;
+            }
+        }
+        return customers.filter((customer) => (customer as any).subscriptions.data.length > 0);
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,

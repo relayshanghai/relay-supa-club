@@ -779,9 +779,18 @@ export default class SubscriptionV2Service {
                     .map((sub) => sub.id)
                     .includes(company.subscription?.providerSubscriptionId as string)
             ) {
-                // the company subscription is not synced
-                unprocessedData[company.cusId as string] = {};
-                continue;
+                const [, cus] = await awaitToError(
+                    StripeService.getService().getCustomer(company.cusId as string, {
+                        expand: ['subscriptions.data', 'subscriptions.data.plan'],
+                    }) as Promise<Stripe.Customer & { subscriptions: Stripe.ApiList<Stripe.Subscription> }>,
+                );
+                if (cus && cus.subscriptions.data.length !== 0) {
+                    stripeSubscriptions.push(cus.subscriptions.data[0]);
+                } else {
+                    // the company subscription is not synced
+                    unprocessedData[company.cusId as string] = {};
+                    continue;
+                }
             }
             const subscription = stripeSubscriptions.find(
                 (sub) => sub.id === company.subscription?.providerSubscriptionId,
@@ -856,7 +865,7 @@ export default class SubscriptionV2Service {
         if (isDryRun) {
             return {
                 message: 'Refunded successfully',
-                amount: mustRefundAmount,
+                mustRefundAmount,
                 proratedAmount,
                 newPriceId,
                 currency: customerCurrency,
@@ -883,7 +892,7 @@ export default class SubscriptionV2Service {
 
             return {
                 message: 'Refunded successfully',
-                amount: mustRefundAmount,
+                mustRefundAmount,
                 proratedAmount,
                 newPriceId,
                 currency: customerCurrency,
