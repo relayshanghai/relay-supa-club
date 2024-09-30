@@ -186,6 +186,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                  * using [GET] /v2/subscriptions/sync
                  */
 
+                /**
+                 * init balance every login
+                 */
+                await awaitToError(apiClient.post('/v2/balances'));
+
                 if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
                 identify(data?.user?.email || '');
@@ -199,7 +204,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, trackEvent, identify],
+        [supabaseClient, trackEvent, identify, apiClient],
     );
 
     const updateProfile = useCallback(

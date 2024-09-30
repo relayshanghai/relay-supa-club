@@ -19,7 +19,6 @@ import awaitToError from './await-to-error';
 import type { HttpError } from './error/http-error';
 import { UnauthorizedError } from './error/http-error';
 import { getHostnameFromRequest } from './get-host';
-import BalanceService from 'src/backend/domain/balance/balance-service';
 
 // Create a immutable symbol for "key error" for ApiRequest utility type
 //
@@ -151,10 +150,6 @@ export const ApiHandler = (params: ApiHandlerParams) => async (req: RelayApiRequ
                 return scope.setContext('User', context);
             });
         }
-
-        if (rows[0]?.company_id) {
-            await BalanceService.getService().initBalance(rows[0]?.company_id);
-        }
         req.profile = rows[0];
     }
 
@@ -220,10 +215,6 @@ export const ApiHandlerWithContext =
                         serverLogger('Cannot get profile from session', (scope) => {
                             return scope.setContext('User', context);
                         });
-                    }
-
-                    if (row?.companies?.id) {
-                        await BalanceService.getService().initBalance(row.companies?.id);
                     }
                 } else if (params.requireAuth) {
                     throw new UnauthorizedError('Unauthorized');

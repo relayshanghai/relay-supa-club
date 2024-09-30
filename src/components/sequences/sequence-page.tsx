@@ -5,10 +5,10 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, DeleteOutline, Info, Question, SendOutline, Spinner } from '../icons';
+import { DeleteOutline, Info, Question, SendOutline, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
-import { Badge, FaqModal, SelectMultipleDropdown, Switch, Tabs } from '../library';
+import { Badge, FaqModal, Switch } from '../library';
 import { Button } from '../button';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
@@ -28,11 +28,8 @@ import { useRouter } from 'next/router';
 import { clientLogger } from 'src/utils/logger-client';
 import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
-import { ViewSequenceTemplates } from 'src/utils/analytics/events/outreach/view-sequence-templates';
 import { Banner } from '../library/banner';
-import { ChangeSequenceTab } from 'src/utils/analytics/events/outreach/change-sequence-tab';
 import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
-import { FilterSequenceInfluencers } from 'src/utils/analytics/events/outreach/filter-sequence-influencers';
 import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
@@ -59,7 +56,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         .map((variable) => ` **${variable.name}** `) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
-    const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
+    const [filterSteps] = useState<CommonStatusType[]>([]);
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
@@ -141,14 +138,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     };
 
     const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
-    const handleOpenUpdateTemplateVariables = () => {
-        track(ViewSequenceTemplates, {
-            sequence_id: sequenceId,
-            sequence_name: sequence?.name || '',
-            variables_set: missingVariables.length === 0,
-        });
-        setShowUpdateTemplateVariables(true);
-    };
 
     const needsAttentionInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'To Contact');
     const inSequenceInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'In Sequence');
@@ -179,23 +168,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 ) : null,
         },
     ];
-    const [currentTab, setCurrentTabState] = useState(tabs[0].value);
-    const setCurrentTab = (tab: SequenceInfluencerManagerPage['funnel_status']) => {
-        track(ChangeSequenceTab, {
-            current_tab: currentTab,
-            selected_tab: tab,
-            sequence_id: sequenceId,
-            sequence_name: sequence?.name || '',
-        });
-        setCurrentTabState(tab);
-    };
+    const [currentTab] = useState(tabs[0].value);
     const [selection, setSelection] = useState<string[]>([]);
 
     const currentTabInfluencers = influencers
         ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
         : [];
 
-    const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
+    const [, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
     const handleDelete = async (influencerIds: string[]) => {
         try {
@@ -212,22 +192,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             toast.error(t('sequences.influencerDeleteFailed'));
         }
     };
-
-    const handleSetSelectedOptions = useCallback(
-        (filters: CommonStatusType[]) => {
-            track(FilterSequenceInfluencers, {
-                filter_type: filters.toString(),
-                current_tab: currentTab,
-                total_sequence_influencers: influencers?.length,
-                total_filter_results: influencers?.filter((influencer) => filters.includes(influencer.funnel_status))
-                    .length,
-                sequence_id: sequenceId,
-                sequence_name: sequence?.name || '',
-            });
-            setFilterSteps(filters);
-        },
-        [currentTab, influencers, sequence?.name, sequenceId, track],
-    );
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -455,23 +419,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 <div className="mb-6 flex w-full gap-6">
                     <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <Button
-                        onClick={handleOpenUpdateTemplateVariables}
-                        variant="secondary"
-                        className="relative flex border-primary-600 bg-white text-primary-600"
-                        id="sequence-email-template-button"
-                    >
-                        <Brackets className="mr-2 h-6" />
-                        <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
-                        {missingVariables.length > 0 && (
-                            <div
-                                data-testid="missing-variables-alert"
-                                className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white"
-                            >
-                                {missingVariables.length}
-                            </div>
-                        )}
-                    </Button>
-                    <Button
                         variant="ghost"
                         onClick={() => {
                             setShowNeedHelp(true);
@@ -498,8 +445,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         (sequenceEmails?.length || 1)
                     }
                 />
-                <section className="relative flex w-full flex-1 flex-row items-center justify-between border-b-2 pt-11">
-                    <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                <section className="relative flex w-full flex-1 flex-row items-center justify-between">
                     {hideAutoStart ? null : (
                         <div
                             className="flex flex-row"
@@ -527,13 +473,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
                 <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
                     <div className="left-0 flex w-full flex-row items-center justify-between">
-                        <SelectMultipleDropdown
-                            text={t('sequences.steps.filter')}
-                            options={emailSteps}
-                            selectedOptions={filterSteps}
-                            setSelectedOptions={handleSetSelectedOptions}
-                            translationPath="sequences.steps"
-                        />
                         <div className="flex space-x-4">
                             <button
                                 data-testid="delete-influencers-button"

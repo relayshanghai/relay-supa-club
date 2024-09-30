@@ -4,11 +4,12 @@ import EmailEngineService from 'src/backend/integration/email-engine/email-engin
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { CompanyIdRequired } from '../decorators/company-id';
 import OutreachTemplateVariableRepository from 'src/backend/database/outreach-template-variable-repository';
-import { NotFoundError } from 'src/utils/error/http-error';
+import { BadRequestError, NotFoundError } from 'src/utils/error/http-error';
 import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
 import type { Step } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import awaitToError from 'src/utils/await-to-error';
 import { GlobalTemplateVariables } from './constants';
+import { IsNull } from 'typeorm';
 
 export default class TemplateService {
     static readonly service: TemplateService = new TemplateService();
@@ -66,6 +67,9 @@ export default class TemplateService {
             }),
         );
         if (err) throw new NotFoundError('not found');
+        template.variableIds = template.variableIds.filter(
+            (id) => !GlobalTemplateVariables.some((variable) => variable.id === id),
+        );
         await this.checkVariableExists(template.variableIds);
         await EmailEngineService.getService().updateTemplate(existed.email_engine_template_id, {
             html: template.template,
@@ -92,7 +96,7 @@ export default class TemplateService {
         const companyId = RequestContext.getContext().companyId as string;
         const data = await OutreachEmailTemplateRepository.getRepository().find({
             where: {
-                company: { id: companyId },
+                company: [{ id: companyId }, { id: IsNull() }],
                 step: param.step as unknown as Step,
             },
         });
@@ -110,10 +114,10 @@ export default class TemplateService {
         const [err, data] = await awaitToError(
             OutreachEmailTemplateRepository.getRepository().findOneOrFail({
                 where: {
-                    company: { id: companyId },
+                    company: [{ id: companyId }, { id: IsNull() }],
                     id,
                 },
-                relations: { variables: true, sequenceStep: true },
+                relations: { variables: true, sequenceStep: true, company: true },
             }),
         );
         if (err) throw new NotFoundError('not found');
@@ -133,13 +137,14 @@ export default class TemplateService {
                   }))
                 : [],
             sequenceStep: data.sequenceStep,
+            company: data.company,
         };
     }
     @CompanyIdRequired()
     async delete(id: string): Promise<void> {
         const template = await this.getOne(id);
         if (template.sequenceStep) {
-            throw new Error('Cannot delete template that is used in sequence');
+            throw new BadRequestError('Cannot delete template that is used in sequence');
         }
         await OutreachEmailTemplateRepository.getRepository().delete({ id });
         await EmailEngineService.getService().deleteTemplate(template.emailEngineTemplateId as string);

@@ -81,6 +81,7 @@ const sequences = {
         sequenceActions: 'Sequence actions',
     },
     sequenceModal: 'Create a new sequence',
+    sequenceModalEdit: 'Edit an existing sequence',
     sequenceInfo: 'Sequence Info',
     sequenceName: 'Sequence Name',
     product: 'Product',

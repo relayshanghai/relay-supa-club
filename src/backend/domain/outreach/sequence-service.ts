@@ -4,6 +4,9 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 import SequenceRepository from 'src/backend/database/sequence/sequence-repository';
 import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import type { PaginationParam } from 'types/pagination';
+import OutreachEmailTemplateRepository from 'src/backend/database/sequence-email-template/sequence-email-template-repository';
+import { IsNull } from 'typeorm';
+import { StepNumber } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 
 export default class SequenceService {
     static service = new SequenceService();
@@ -44,6 +47,19 @@ export default class SequenceService {
                     outreachEmailTemplate: true,
                 },
             },
+        });
+        const defaultTemplates = await OutreachEmailTemplateRepository.getRepository().find({
+            where: {
+                company: { id: IsNull() },
+            },
+        });
+        sequence.steps = sequence.steps.map((step) => {
+            return {
+                ...step,
+                outreachEmailTemplate:
+                    step.outreachEmailTemplate ||
+                    defaultTemplates.find((template) => StepNumber[template.step] === step.stepNumber),
+            };
         });
         const info = await SequenceInfluencerRepository.getRepository().getSequenceInfo(companyId, id);
         return { ...sequence, info };

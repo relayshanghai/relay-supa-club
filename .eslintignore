@@ -1,3 +1,2 @@
 *.md
 !.storybook
-src/backend/database/**/*-entity.ts

@@ -19,6 +19,7 @@ const initialState: ProductState = {
     item: {
         id: '',
         name: '',
+        brandName: '',
         description: '',
         price: 0,
         shopUrl: '',

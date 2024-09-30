@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { Switch } from 'shadcn/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState, type FC } from 'react';
 import { type ModalStepProps } from 'app/v2/sequences/types';
@@ -27,6 +26,10 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
     useEffect(() => {
         getProducts();
     }, []);
+
+    const disableNextButton = () => {
+        return !sequence?.name || !sequence?.product;
+    };
 
     return (
         <>
@@ -80,7 +83,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                         <ChevronDown className="h-4 w-4 text-black" />
                                                     </section>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent className="w-[210px]">
+                                                <DropdownMenuContent className="flex !w-full">
                                                     {products?.items.map((d) => (
                                                         <DropdownMenuItem
                                                             key={d.id}
@@ -90,7 +93,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                                     product: d,
                                                                 } as SequenceEntity);
                                                             }}
-                                                            className="flex w-full"
+                                                            className="flex !w-full"
                                                         >
                                                             {d.name}
                                                         </DropdownMenuItem>
@@ -99,7 +102,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                         onSelect={() => {
                                                             setModalOpen(true);
                                                         }}
-                                                        className="flex w-full cursor-pointer focus:bg-white"
+                                                        className="flex !w-full cursor-pointer focus:bg-white"
                                                     >
                                                         <div className="inline-flex space-x-2 text-gray-400">
                                                             <Plus className="h-4 w-4" strokeWidth={2} />
@@ -108,25 +111,6 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
-                                        </div>
-                                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-end gap-1">
-                                            <div className="inline-flex items-start justify-start gap-1">
-                                                <div className="font-['Poppins'] text-sm font-semibold leading-normal tracking-tight text-gray-500">
-                                                    {t('outreaches.autoStart')}
-                                                </div>
-                                                <div className="relative h-3 w-3" />
-                                            </div>
-                                            <div className="inline-flex h-10 items-center justify-start gap-1 self-stretch">
-                                                <Switch
-                                                    checked={sequence?.autoStart ?? false}
-                                                    onCheckedChange={(checked) =>
-                                                        setSequence({
-                                                            ...sequence,
-                                                            autoStart: checked,
-                                                        } as SequenceEntity)
-                                                    }
-                                                />
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -146,6 +130,7 @@ export const CampaignModalStepTwo: FC<ModalStepProps> = ({ onNextStep, onPrevSte
                                 variant="primary"
                                 className="inline-flex items-center border-none !bg-pink-500 !p-2"
                                 onClick={() => onNextStep()}
+                                disabled={disableNextButton()}
                                 id="step2-next-button"
                             >
                                 <span className="ml-1">{t('outreaches.saveAndContinue')}</span>

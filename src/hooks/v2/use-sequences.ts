@@ -11,6 +11,7 @@ import type { SequenceRequest } from 'pages/api/v2/outreach/sequences/request';
 import type { GetSequenceDetailResponse } from 'pages/api/v2/sequences/[id]/response';
 import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
 import useSWR from 'swr';
+import { GlobalTemplateVariables } from 'src/backend/domain/templates/constants';
 
 export const useSequences = () => {
     const { page, setPage, setSize, size } = usePaginationParam();
@@ -77,11 +78,15 @@ export const useSequence = () => {
     } = useSequencesStore();
     const { apiClient, loading, error } = useApiClient();
     const createSequences = async (payload: SequenceRequest) => {
+        //exclude GlobalTemplateVariables variables
+        payload.variables = payload.variables?.filter((v) => !GlobalTemplateVariables.some((g) => g.name === v.name));
         const [err, res] = await awaitToError(apiClient.post<SequenceEntity>('/v2/outreach/sequences', payload));
         if (err) throw err;
         return res.data;
     };
     const updateSequences = async (id: string, payload: SequenceRequest) => {
+        //exclude GlobalTemplateVariables variables
+        payload.variables = payload.variables?.filter((v) => !GlobalTemplateVariables.some((g) => g.name === v.name));
         const [err, res] = await awaitToError(apiClient.put(`/v2/outreach/sequences/${id}`, payload));
         if (err) throw err;
         return res.data;

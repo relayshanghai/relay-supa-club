@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, Matches, ValidateNested } from 'class-validator';
 import type { ProductEntity } from 'src/backend/database/product/product-entity';
 
 export class SequenceTemplate {
@@ -11,8 +11,10 @@ export class Variable {
     @IsString()
     name!: string;
 
-    @IsString()
-    value!: string;
+    @Matches(/^[a-zA-Z0-9\s]+$/, {
+        message: 'Variable only allow alphanumeric characters',
+    })
+    value!: string | number;
 }
 
 export class SequenceRequest {

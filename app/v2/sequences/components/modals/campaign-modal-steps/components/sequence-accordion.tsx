@@ -9,6 +9,7 @@ import {
 import { useSequenceEmailTemplates } from 'src/hooks/v2/use-sequences-template';
 import { EmailTemplateDetailModal } from '../../email-template-detail-modal';
 import { useSequenceEmailTemplateStore } from 'src/store/reducers/sequence-template';
+import { sortStepsByKeys } from 'app/v2/sequences/common/outreach-step';
 
 type SequenceAccordionProps = {
     title: string;
@@ -47,10 +48,12 @@ export const SequenceAccordion: FC<SequenceAccordionProps> = ({ title, items, st
                         <div
                             className="inline-flex w-full space-x-2 hover:cursor-pointer"
                             onClick={() => {
-                                setStagedSequenceEmailTemplate({
-                                    ...stagedSequenceEmailTemplates,
-                                    [step]: d,
-                                });
+                                setStagedSequenceEmailTemplate(
+                                    sortStepsByKeys({
+                                        ...stagedSequenceEmailTemplates,
+                                        [step]: d,
+                                    }),
+                                );
                             }}
                         >
                             <BoostbotSelected className="h-4 w-4" strokeWidth={2} />

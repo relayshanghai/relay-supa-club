@@ -7,6 +7,7 @@ import type { GetProductRequest, ProductRequest } from 'pages/api/products/reque
 import type { Paginated } from 'types/pagination';
 import ProductRepository from 'src/backend/database/product/product-repository';
 import type { ProductEntity } from 'src/backend/database/product/product-entity';
+import { type GetProductResponse } from 'pages/api/products/response';
 
 describe('src/backend/domain/product/product-service.ts', () => {
     const getContextMock = vi.fn();
@@ -44,6 +45,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 } as ProductEntity);
                 const result = await ProductService.getService().create({
                     name: 'product_name',
+                    brandName: 'product_brand',
                     description: 'product_description',
                     price: 100,
                     shopUrl: 'https://example.com',
@@ -63,6 +65,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                     description: 'product_description',
                     id: undefined,
                     name: 'product_name',
+                    brandName: 'product_brand',
                     price: 100,
                     priceCurrency: 'USD',
                     shopUrl: 'https://example.com',
@@ -74,6 +77,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 const [err] = await awaitToError(
                     ProductService.getService().create({
                         name: 'product_name',
+                        brandName: 'product_brand',
                         description: 'product_description',
                         price: 100,
                         shopUrl: 'https://example.com',
@@ -91,6 +95,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 const mockData = {
                     id: 'product_1',
                     name: 'product_name',
+                    brandName: 'product_brand',
                     description: 'product_description',
                     price: 100,
                     shopUrl: 'https://example.com',
@@ -105,6 +110,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(result).toEqual({
                     id: 'product_1',
                     name: 'product_name',
+                    brandName: 'product_brand',
                     description: 'product_description',
                     price: 100,
                     shopUrl: 'https://example.com',
@@ -132,12 +138,13 @@ describe('src/backend/domain/product/product-service.ts', () => {
             });
         });
         describe('fetch', () => {
-            let mockedProducts: ProductEntity[];
+            let mockedProducts: GetProductResponse[];
 
             beforeEach(() => {
                 mockedProducts = new Array(20).fill(null).map((d, i) => ({
                     id: `product_${i}`,
                     name: `product_name_${i}`,
+                    brandName: 'product_brand',
                     description: `product_description_${i}`,
                     price: 100,
                     shopUrl: `https://example${i}.com`,
@@ -245,13 +252,14 @@ describe('src/backend/domain/product/product-service.ts', () => {
                         {
                             id: 'product_1',
                             name: 'product_name_1',
+                            brandName: 'product_brand',
                             description: 'product_description_1',
                             price: 100,
                             shopUrl: 'https://example1.com',
                             currency: 'USD',
                             createdAt: mockedProducts[1].createdAt,
                             updatedAt: mockedProducts[1].updatedAt,
-                        } as unknown as ProductEntity,
+                        } as unknown as GetProductResponse,
                     ],
                     page: 1,
                     size: 10,
@@ -321,6 +329,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
             it('should update product when request is valid', async () => {
                 const request: ProductRequest = {
                     name: 'new_product_name',
+                    brandName: 'product_brand',
                     description: 'new_product_description',
                     price: 200,
                     shopUrl: 'https://example.com/new',
@@ -377,6 +386,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 expect(ProductRepository.getRepository().save).toBeCalledWith({
                     id: productId,
                     name: 'new_product_name',
+                    brandName: 'product_brand',
                     description: 'new_product_description',
                     price: 200,
                     shopUrl: 'https://example.com/new',
@@ -392,6 +402,7 @@ describe('src/backend/domain/product/product-service.ts', () => {
                 const [err] = await awaitToError(
                     ProductService.getService().create({
                         name: 'product_name',
+                        brandName: 'product_brand',
                         description: 'product_description',
                         price: 100,
                         shopUrl: 'https://example.com',

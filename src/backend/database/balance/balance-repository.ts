@@ -32,15 +32,18 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
     @UseLogger()
     async deduct(companyId: string, type: BalanceType, amount: number) {
         await this.manager.transaction(async (manager) => {
-            const balance = await manager.query(
-                `select amount from balances where company_id = $1 and balance_type = $2`,
-                [companyId, type],
-            );
-            if (!balance || balance?.length === 0) {
-                throw new NotFoundError('Balance not found');
-            }
-            if (balance[0]?.amount < amount) {
-                throw new UnprocessableEntityError('insuficentbalance');
+            // dont check balance if the deduction bellow zero
+            if (amount > 0) {
+                const balance = await manager.query(
+                    `select amount from balances where company_id = $1 and balance_type = $2`,
+                    [companyId, type],
+                );
+                if (!balance || balance?.length === 0) {
+                    throw new NotFoundError('Balance not found');
+                }
+                if (balance[0]?.amount < amount) {
+                    throw new UnprocessableEntityError('insuficentbalance');
+                }
             }
             await manager.query(
                 `
@@ -54,9 +57,9 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
         await this.manager.transaction(async (manager) => {
             await manager.query(
                 `
-            UPDATE balances SET 
+            UPDATE balances SET
                 amount = $1,
-                next_renew_at = $2 
+                next_renew_at = $2
             WHERE company_id = $3 AND balance_type = $4`,
                 [amount, nextRenewAt, companyId, type],
             );
@@ -64,23 +67,23 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
     }
     async resetBySchedule() {
         await this.manager.query(`
-            UPDATE balances b 
-            SET 
+            UPDATE balances b
+            SET
                 amount = COALESCE(c.profiles_limit, c.trial_profiles_limit)::bigint,
                 next_renew_at = next_renew_at + interval '1 month'
             FROM companies c
-            WHERE 
-            b.company_id = c.id AND "b"."balance_type" = 'profile' AND 
+            WHERE
+            b.company_id = c.id AND "b"."balance_type" = 'profile' AND
             b.next_renew_at <= now() AND b.next_renew_at IS NOT NULL
         `);
         await this.manager.query(`
-            UPDATE balances b 
-            SET 
+            UPDATE balances b
+            SET
                 amount = COALESCE(c.searches_limit, c.trial_searches_limit)::bigint,
                 next_renew_at = next_renew_at + interval '1 month'
             FROM companies c
-            WHERE 
-            b.company_id = c.id AND "b"."balance_type" = 'search' AND 
+            WHERE
+            b.company_id = c.id AND "b"."balance_type" = 'search' AND
             b.next_renew_at <= now() AND b.next_renew_at IS NOT NULL
         `);
     }

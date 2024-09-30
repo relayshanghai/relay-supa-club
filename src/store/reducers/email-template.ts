@@ -1,6 +1,9 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { type OutreachEmailTemplateEntity } from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
+import {
+    Step,
+    type OutreachEmailTemplateEntity,
+} from 'src/backend/database/sequence-email-template/sequence-email-template-entity';
 import { OutreachStepRequest } from 'pages/api/outreach/email-templates/request';
 import { type GetTemplateResponse } from 'pages/api/outreach/email-templates/response';
 import { type Nullable } from 'types/nullable';
@@ -11,6 +14,7 @@ interface TemplateVariableProps {
     tempItem: Nullable<GetTemplateResponse>;
     editMode: boolean;
     saveExistingAsNew: boolean;
+    selectionStep: Nullable<Step>;
 }
 
 const initialState: TemplateVariableProps = {
@@ -27,6 +31,7 @@ const initialState: TemplateVariableProps = {
     tempItem: null,
     editMode: false,
     saveExistingAsNew: false,
+    selectionStep: Step.OUTREACH,
 };
 
 const pageSlice = createSlice({
@@ -48,11 +53,20 @@ const pageSlice = createSlice({
         setSaveExistingAsNew: (state, action: PayloadAction<boolean>) => {
             state.saveExistingAsNew = action.payload;
         },
+        setSelectionStep: (state, action: PayloadAction<Step>) => {
+            state.selectionStep = action.payload;
+        },
     },
 });
 
-const { setEmailTemplates, setEmailTemplate, setEditMode, setSaveExistingAsNew, setTempEmailTemplate } =
-    pageSlice.actions;
+const {
+    setEmailTemplates,
+    setEmailTemplate,
+    setEditMode,
+    setSaveExistingAsNew,
+    setTempEmailTemplate,
+    setSelectionStep,
+} = pageSlice.actions;
 
 export const useEmailTemplateStore = () => {
     const dispatch = useAppDispatch();
@@ -65,6 +79,7 @@ export const useEmailTemplateStore = () => {
         setTempEmailTemplate: (template: GetTemplateResponse) => dispatch(setTempEmailTemplate(template)),
         setIsEdit: (edit: boolean) => dispatch(setEditMode(edit)),
         setSaveExistingAsNew: (saveAsNew: boolean) => dispatch(setSaveExistingAsNew(saveAsNew)),
+        setSelectionStep: (step: Step) => dispatch(setSelectionStep(step)),
     };
 };
 

@@ -116,22 +116,6 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
     };
     const [openReport, setOpenReport] = useState(false);
 
-    const usingOldTemplate = (sequence?: SequenceEntity) => {
-        const oldOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_OUTREACH;
-        const oldfirstFollowuUpOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_1ST_FOLLOW_UP;
-        const oldsecondFollowUpOutreach = process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID_2ND_FOLLOW_UP;
-        const existingTemplates = sequence?.steps.map((d) => d.templateId);
-
-        if (
-            existingTemplates?.find((d) => d === oldOutreach) ||
-            existingTemplates?.find((d) => d === oldfirstFollowuUpOutreach) ||
-            existingTemplates?.find((d) => d === oldsecondFollowUpOutreach)
-        ) {
-            return true;
-        }
-        return false;
-    };
-
     const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
     const isMissingVariables = sequence?.templateVariables?.some((v) => !v.value);
     const missingVariables = sequence?.templateVariables
@@ -287,11 +271,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
                             <button
                                 className="flex items-center justify-center gap-2 rounded-md bg-[#f43d86] py-2.5 pl-3.5 pr-3 text-[#fefefe] disabled:cursor-not-allowed disabled:bg-[#f43d86] disabled:opacity-50"
                                 onClick={() => handleScheduleEmails()}
-                                disabled={
-                                    isMissingSequenceSendEmail ||
-                                    usingOldTemplate(sequence) ||
-                                    selectedInfluencers.length === 0
-                                }
+                                disabled={isMissingSequenceSendEmail || selectedInfluencers.length === 0}
                             >
                                 <Send className="relative h-5 w-5" fill="white" />
                                 <div className="text-center font-['Poppins'] text-sm font-medium leading-normal tracking-tight text-[#fefefe]">

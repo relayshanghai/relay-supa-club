@@ -45,13 +45,16 @@ export const CreateVariableModal: FC<ModalVariableProps> = ({ modalOpen, setModa
             .catch((error) => {
                 const backendError = processErrorMessage(error);
                 const errorMessages = backendError.messages;
+                const errorMessage = backendError.message;
                 if (Array.isArray(errorMessages) && errorMessages.length) {
                     errorMessages.forEach((message: string) => {
                         // replace dot in the beginning of the message
                         toast.error(message.replace(/^\./, ''));
                     });
+                } else if (errorMessage) {
+                    toast.error(`Failed to ${isEdit ? 'update' : 'create'} template variable: ${errorMessage}`);
                 } else {
-                    toast.error(`Failed to ${isEdit ? 'update' : 'create'} template variable: ${errorMessages}`);
+                    toast.error(`Failed to ${isEdit ? 'update' : 'create'} template variable`);
                 }
                 clientLogger(error);
             });

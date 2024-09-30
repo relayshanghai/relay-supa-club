@@ -1,5 +1,6 @@
 import { Rocket, Gift, Atoms, User, Megaphone } from 'app/components/icons';
 import { type VariableWithValue } from 'src/store/reducers/sequence';
+import * as cheerio from 'cheerio';
 
 const DropdownIcon = (icon: JSX.Element) => {
     return <div className="mr-2 h-6 w-6">{icon}</div>;
@@ -34,16 +35,27 @@ export const convertTiptapVariableToComponent = (content: string) => {
     const cleanedHtml = content.replace(/<variable-component text="([^"]+)"><\/variable-component>/g, (_, text) =>
         spanRender(text),
     );
+
     return cleanedHtml;
 };
 
 export const substituteVariable = (content: string, variables: VariableWithValue[]) => {
-    let processedTemplate = content;
+    // Load the HTML string with cheerio
+    const $ = cheerio.load(content);
 
-    variables.forEach((variable) => {
-        const regex = new RegExp(`${variable.name}`, 'g');
-        processedTemplate = variable.value ? processedTemplate.replace(regex, variable.value) : processedTemplate;
+    // Define the replacements
+    const replacements = variables.reduce((acc: Record<string, string>, variable) => {
+        acc[variable.name] = variable.value ? variable.value + '' : '';
+        return acc;
+    }, {});
+
+    // Find all spans with the class "content" and replace their text content
+    $('.content').each((_, element) => {
+        const key = $(element).text().trim();
+        if (replacements[key]) {
+            $(element).text(replacements[key]);
+        }
     });
 
-    return processedTemplate;
+    return $.html();
 };

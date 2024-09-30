@@ -62,7 +62,9 @@ export const EmailTemplatePreview = ({
                                 <CardDescription className="flex flex-col gap-2">
                                     <section className="flex w-full justify-between gap-6 py-2">
                                         <section className="flex grow flex-col gap-2">
-                                            <p className="text-xl font-semibold text-gray-600">Sequence Step</p>
+                                            <p className="text-xl font-semibold text-gray-600">
+                                                {t('outreaches.emailTemplateModal.sequenceStep')}
+                                            </p>
                                             {loading ? (
                                                 <Skeleton className="h-10 min-w-[100px]" />
                                             ) : (
@@ -77,7 +79,9 @@ export const EmailTemplatePreview = ({
                                             )}
                                         </section>
                                         <section className="flex grow flex-col gap-2">
-                                            <p className="text-xl font-semibold text-gray-600">Subject Line</p>
+                                            <p className="text-xl font-semibold text-gray-600">
+                                                {t('outreaches.emailTemplateModal.subjectLine')}
+                                            </p>
                                             {loading ? (
                                                 <Skeleton className="h-10 w-full" />
                                             ) : (
@@ -103,7 +107,7 @@ export const EmailTemplatePreview = ({
                                         />
                                     )}
                                 </CardDescription>
-                                {!loading && (
+                                {!loading && template?.company && (
                                     <CardFooter className="mt-4 w-full justify-between px-0 pb-0">
                                         <Button
                                             variant="outline"
@@ -124,7 +128,7 @@ export const EmailTemplatePreview = ({
                                             }}
                                         >
                                             <Edit className="h-4 w-4 stroke-white" />
-                                            Modify Template
+                                            {t('outreaches.modifyTemplate')}
                                         </Button>
                                     </CardFooter>
                                 )}

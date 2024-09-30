@@ -17,6 +17,7 @@ export type ModalProductProps = {
 export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalOpen }) => {
     const { t } = useTranslation();
     const initValue: CreateProductPayload = {
+        brandName: '',
         name: '',
         price: 0,
         description: '',
@@ -57,7 +58,7 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
     return (
         <Modal visible={modalOpen} onClose={() => null} padding={0} maxWidth="!w-[512px]">
             <div
-                className="relative inline-flex h-[482px] w-[512px] flex-col items-start justify-start rounded-lg bg-violet-50"
+                className="relative inline-flex min-h-[482px] w-[512px] flex-col items-start justify-start rounded-lg bg-violet-50"
                 id="product-form-modal"
             >
                 <div className="absolute right-2 top-2 z-10 h-6 w-6 cursor-pointer" onClick={() => setModalOpen(false)}>
@@ -84,7 +85,20 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                 {/* title section */}
 
                 {/* form section */}
-                <div className="mb-6 flex h-[228px] flex-col items-start justify-start gap-3 self-stretch p-6">
+                <div className="flex min-h-[228px] flex-col items-start justify-start gap-3 self-stretch p-6">
+                    <div className="inline-flex items-start justify-center gap-6 self-stretch">
+                        <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
+                            <Input
+                                noBottomMargin
+                                label={t('products.productModal.brandName')}
+                                type="text"
+                                value={product.brandName}
+                                onChange={(e) => setProduct({ ...product, brandName: e.target.value })}
+                                placeholder={t('products.productModal.brandNamePlaceholder')}
+                                data-testid="product-name-input"
+                            />
+                        </div>
+                    </div>
                     <div className="inline-flex items-start justify-center gap-6 self-stretch">
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                             <Input
@@ -115,13 +129,11 @@ export const CreateProductModal: FC<ModalProductProps> = ({ modalOpen, setModalO
                     </div>
                     <div className="inline-flex items-start justify-center gap-6 self-stretch">
                         <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
-                            <Input
-                                noBottomMargin
-                                label={t('products.productModal.productDescription')}
-                                type="text"
+                            <textarea
+                                className="w-full rounded-sm border-2 border-gray-200 shadow placeholder:text-gray-400"
                                 value={product.description}
                                 onChange={(e) => setProduct({ ...product, description: e.target.value })}
-                                placeholder={t('products.productModal.shortProductDescription')}
+                                placeholder={t('products.productModal.shortProductDescription') ?? ''}
                                 data-testid="product-name-input"
                             />
                         </div>

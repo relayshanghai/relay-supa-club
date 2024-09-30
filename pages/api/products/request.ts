@@ -3,6 +3,9 @@ import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class ProductRequest {
     @IsString()
+    brandName!: string;
+
+    @IsString()
     name!: string;
 
     @IsNumber()
