@@ -824,6 +824,7 @@ export default class SubscriptionV2Service {
     }
 
     async migrateSubscription(request: SubscriptionMigrationRequest) {
+        return; // this is dangerous and should be used carefully
         const isDryRun = request.isDryRun ?? true;
 
         // 0 - get all subscriptions
@@ -872,7 +873,7 @@ export default class SubscriptionV2Service {
         }
 
         // Step 3: Update the subscription to the cheaper plan
-        await StripeService.getService().updateSubscription(subscriptionId, {
+        return StripeService.getService().updateSubscription(subscriptionId, {
             items: [
                 {
                     id: subscription.items.data[0].id,
