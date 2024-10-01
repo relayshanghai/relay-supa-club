@@ -844,7 +844,6 @@ export default class SubscriptionV2Service {
             expand: ['plan', 'latest_invoice'],
         })) as Stripe.Subscription & { plan?: Stripe.Plan; latest_invoice?: Stripe.Invoice };
 
-        const chargeId = subscription.latest_invoice.charge;
         const newPriceId =
             customerCurrency === 'cny' ? request.targetPriceIds.cnyPriceId : request.targetPriceIds.usdPriceId;
 
@@ -873,35 +872,25 @@ export default class SubscriptionV2Service {
         }
 
         // Step 3: Update the subscription to the cheaper plan
-        await StripeService.client.subscriptions.update(subscriptionId, {
+        await StripeService.getService().updateSubscription(subscriptionId, {
             items: [
                 {
                     id: subscription.items.data[0].id,
                     price: newPriceId,
                 },
             ],
-            billing_cycle_anchor: 'now', // Start the new plan immediately
+            proration_behavior: 'always_invoice',
+            expand: ['latest_invoice.payment_intent'],
+            off_session: true,
         });
 
-        // Step 4: Issue the prorated refund if there is a positive difference
-        if (mustRefundAmount > 0) {
-            await StripeService.client.refunds.create({
-                charge: chargeId as string,
-                amount: +(mustRefundAmount * 100).toFixed(),
-            });
-
-            return {
-                message: 'Refunded successfully',
-                mustRefundAmount: +(mustRefundAmount * 100).toFixed(),
-                proratedAmount: +(proratedAmount * 100).toFixed(),
-                newPriceId,
-                currency: customerCurrency,
-            };
-        } else {
-            return {
-                message: 'No refund needed',
-            };
-        }
+        return {
+            message: 'Refunded successfully',
+            mustRefundAmount: +(mustRefundAmount * 100).toFixed(),
+            proratedAmount: +(proratedAmount * 100).toFixed(),
+            newPriceId,
+            currency: customerCurrency,
+        };
     }
 
     private async getLoyalCompany(companyId: string) {
