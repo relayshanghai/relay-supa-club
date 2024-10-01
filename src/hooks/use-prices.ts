@@ -37,8 +37,8 @@ export type Prices = {
 
 export const priceDetails: PriceDetails = {
     discovery: [
-        { title: 'upTo_amount_Searches', icon: 'check', amount: 1200, subtitle: 'boostBotSearchAndNormalSearch' },
-        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 600 },
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 2400, subtitle: 'boostBotSearchAndNormalSearch' },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 1200 },
         { title: 'fullCustomerService', icon: 'check' },
     ],
     outreach: [
