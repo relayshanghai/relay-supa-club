@@ -31,6 +31,8 @@ import type {
     GetSubscriptionMigrationRequest,
     SubscriptionMigrationRequest,
 } from 'pages/api/internal/subscriptions/request';
+import type { SyncBalanceRequest } from 'pages/api/internal/balance/request';
+import BalanceService from '../balance/balance-service';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -753,8 +755,8 @@ export default class SubscriptionV2Service {
                     useCusId: true,
                 }),
             );
-            if (!err) synced.push({ [company.id]: {} });
-            else notSynced.push({ [company.id]: err });
+            if (!err) synced.push({ [company.cusId as string]: {} });
+            else notSynced.push({ [company.cusId as string]: err });
         }
         return { synced, notSynced, syncedTotal: synced.length, notSyncedTotal: notSynced.length };
     }
@@ -821,6 +823,27 @@ export default class SubscriptionV2Service {
             unprocessedData,
             totalUnprocessed: Object.keys(unprocessedData).length,
         };
+    }
+
+    async syncAllBalances(request: SyncBalanceRequest) {
+        let companies = await CompanyRepository.getRepository().find({
+            relations: { subscription: true },
+        });
+        companies = companies.filter((company) =>
+            [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(
+                company.subscription?.status as SubscriptionStatus,
+            ),
+        );
+        const p = [];
+        for (const company of companies) {
+            p.push(
+                this.fixBalance({
+                    companyId: company.id,
+                    priceId: request.targetPriceIds.cnyPriceId ?? request.targetPriceIds.usdPriceId,
+                }),
+            );
+        }
+        await Promise.all(p);
     }
 
     async migrateSubscription(request: SubscriptionMigrationRequest) {
@@ -909,6 +932,32 @@ export default class SubscriptionV2Service {
         for (const sub of nonActiveSubs) {
             await awaitToError(StripeService.getService().cancelSubscriptionBySubsId(sub.id));
         }
+    }
+
+    private async fixBalance({ companyId, priceId }: { priceId: string; companyId: string }) {
+        const price = await PriceRepository.getRepository().findOne({
+            where: {
+                priceId,
+            },
+        });
+
+        await Promise.all([
+            BalanceRepository.getRepository().delete({
+                company: {
+                    id: companyId,
+                },
+            }),
+            CompanyRepository.getRepository().update(
+                {
+                    id: companyId,
+                },
+                {
+                    profilesLimit: price?.profiles + '',
+                    searchesLimit: price?.searches + '',
+                },
+            ),
+        ]);
+        await BalanceService.getService().initBalance(companyId);
     }
 
     private async syncSubscriptionProcess({
