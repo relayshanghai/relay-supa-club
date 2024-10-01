@@ -865,8 +865,8 @@ export default class SubscriptionV2Service {
         if (isDryRun) {
             return {
                 message: 'Refunded successfully',
-                mustRefundAmount,
-                proratedAmount,
+                mustRefundAmount: +(mustRefundAmount * 100).toFixed(),
+                proratedAmount: +(proratedAmount * 100).toFixed(),
                 newPriceId,
                 currency: customerCurrency,
             };
@@ -880,20 +880,20 @@ export default class SubscriptionV2Service {
                     price: newPriceId,
                 },
             ],
-            proration_behavior: 'create_prorations', // Apply proration when switching
+            billing_cycle_anchor: 'now', // Start the new plan immediately
         });
 
         // Step 4: Issue the prorated refund if there is a positive difference
         if (mustRefundAmount > 0) {
             await StripeService.client.refunds.create({
                 charge: chargeId as string,
-                amount: mustRefundAmount * 100,
+                amount: +(mustRefundAmount * 100).toFixed(),
             });
 
             return {
                 message: 'Refunded successfully',
-                mustRefundAmount,
-                proratedAmount,
+                mustRefundAmount: +(mustRefundAmount * 100).toFixed(),
+                proratedAmount: +(proratedAmount * 100).toFixed(),
                 newPriceId,
                 currency: customerCurrency,
             };
