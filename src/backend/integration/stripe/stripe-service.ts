@@ -115,10 +115,14 @@ export default class StripeService {
         });
     }
 
-    async getSubscription(cusId: string) {
-        return await StripeService.client.subscriptions.list({
+    async getSubscription<Expand = unknown>(
+        cusId: string,
+        options?: Stripe.SubscriptionListParams,
+    ): Promise<Stripe.ApiList<Stripe.Subscription & Expand>> {
+        return StripeService.client.subscriptions.list({
             customer: cusId,
-        });
+            ...options,
+        }) as unknown as Stripe.ApiList<Stripe.Subscription & Expand>;
     }
 
     async attachPaymentMethod(cusId: string, paymentMethodId: string) {
@@ -127,8 +131,8 @@ export default class StripeService {
         });
     }
 
-    async getCustomer(cusId: string) {
-        const customer = await StripeService.client.customers.retrieve(cusId);
+    async getCustomer(cusId: string, options?: Stripe.CustomerRetrieveParams) {
+        const customer = await StripeService.client.customers.retrieve(cusId, options);
         if (customer.deleted) {
             throw new NotFoundError('Customer not found');
         }
@@ -161,8 +165,11 @@ export default class StripeService {
         });
     }
 
-    async getLastSubscription(cusId: string) {
-        const subscriptions = await this.getSubscription(cusId);
+    async getLastSubscription<Expand = unknown>(
+        cusId: string,
+        options?: Stripe.SubscriptionListParams,
+    ): Promise<Stripe.Subscription & Expand> {
+        const subscriptions = await this.getSubscription(cusId, options);
         let lastSubscription = subscriptions.data.filter((sub) => {
             return sub.status === 'active' || sub.status === 'trialing';
         });
@@ -175,7 +182,7 @@ export default class StripeService {
                     return new Date(b.current_period_start).getTime() - new Date(a.current_period_start).getTime();
                 });
         }
-        return lastSubscription?.[0];
+        return lastSubscription?.[0] as Stripe.Subscription & Expand;
     }
 
     async getPrice(priceId: string) {
@@ -317,6 +324,50 @@ export default class StripeService {
             expand: ['data.plan.product'],
         });
         return subscription.data;
+    }
+
+    async getAllSubscriptions() {
+        const subscriptions: Stripe.Subscription[] = [];
+        const statuses: Stripe.SubscriptionListParams.Status[] = ['active', 'trialing', 'incomplete'];
+
+        let lastId: string | undefined = undefined;
+        for (const status of statuses) {
+            while (true) {
+                const subs = (await StripeService.client.subscriptions.list({
+                    limit: 100,
+                    starting_after: lastId,
+                    status,
+                    expand: ['data.customer', 'data.plan', 'data.plan.product'],
+                })) as Stripe.ApiList<Stripe.Subscription>;
+                subscriptions.push(...subs.data);
+                if (!subs.has_more) {
+                    break;
+                } else {
+                    lastId = subs.data[subs.data.length - 1].id;
+                }
+            }
+        }
+        return subscriptions;
+    }
+
+    async getAllCustomers() {
+        const customers: Stripe.Customer[] = [];
+
+        let lastId: string | undefined = undefined;
+        while (true) {
+            const subs = (await StripeService.client.customers.list({
+                limit: 100,
+                starting_after: lastId,
+                expand: ['data.subscriptions', 'data.subscriptions.data.plan'],
+            })) as Stripe.ApiList<Stripe.Customer>;
+            customers.push(...subs.data);
+            if (!subs.has_more) {
+                break;
+            } else {
+                lastId = subs.data[subs.data.length - 1].id;
+            }
+        }
+        return customers.filter((customer) => (customer as any).subscriptions.data.length > 0);
     }
 
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {

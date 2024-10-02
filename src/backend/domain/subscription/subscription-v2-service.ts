@@ -27,6 +27,12 @@ import BalanceRepository from 'src/backend/database/balance/balance-repository';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
 import { formatStripePrice } from 'src/utils/utils';
 import { SequenceInfluencerScheduleStatus } from 'types/v2/sequence-influencer';
+import type {
+    GetSubscriptionMigrationRequest,
+    SubscriptionMigrationRequest,
+} from 'pages/api/internal/subscriptions/request';
+import type { SyncBalanceRequest } from 'pages/api/internal/balance/request';
+import BalanceService from '../balance/balance-service';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -352,14 +358,29 @@ export default class SubscriptionV2Service {
         cusId,
         request,
         resetBalance = true,
+        useCusId = false,
     }: {
         companyId: string;
         cusId: string;
         request: Pick<PostConfirmationRequest, 'subscriptionId'>;
         resetBalance?: boolean;
+        useCusId?: boolean;
     }) {
-        const subscription = await StripeService.getService().retrieveSubscription(request.subscriptionId);
-        const plan = subscription.plan;
+        let customerData:
+                | (Stripe.Customer & { subscriptions: Stripe.ApiList<Stripe.Subscription & { plan?: Stripe.Plan }> })
+                | null = null,
+            subscriptionData: (Stripe.Subscription & { plan?: Stripe.Plan }) | null = null;
+
+        if (useCusId) {
+            customerData = (await StripeService.getService().getCustomer(cusId, {
+                expand: ['subscriptions.data'],
+            })) as Stripe.Customer & { subscriptions: Stripe.ApiList<Stripe.Subscription> };
+        } else {
+            subscriptionData = await StripeService.getService().retrieveSubscription(request.subscriptionId);
+        }
+        const subscription = customerData ? customerData.subscriptions.data[0] : subscriptionData;
+        const plan = subscription?.plan;
+        const subscriptionId = useCusId ? (subscription?.id as string) : request.subscriptionId;
         const internalProductMetadata = await PriceRepository.getRepository().findOne({
             where: [
                 {
@@ -368,7 +389,7 @@ export default class SubscriptionV2Service {
                 { priceIdsForExistingUser: plan?.id },
             ],
         });
-        const stripeProductMetadata = await StripeService.getService().getProductMetadata(request.subscriptionId);
+        const stripeProductMetadata = await StripeService.getService().getProductMetadata(subscriptionId);
         const productMetadata = {
             profiles: internalProductMetadata ? internalProductMetadata.profiles + '' : stripeProductMetadata.profiles,
             searches: internalProductMetadata ? internalProductMetadata.searches + '' : stripeProductMetadata.searches,
@@ -382,7 +403,9 @@ export default class SubscriptionV2Service {
                 id: companyId,
             },
         });
-        const interval = StripeService.getService().getSubscriptionInterval(subscription.items.data[0].plan.interval);
+        const interval = StripeService.getService().getSubscriptionInterval(
+            subscription?.items.data[0].plan.interval as string,
+        );
         const nextMonth = new Date();
         nextMonth.setMonth(new Date().getMonth() + 1);
         const promises = [
@@ -390,23 +413,27 @@ export default class SubscriptionV2Service {
                 {
                     company: company as CompanyEntity,
                     provider: 'stripe',
-                    providerSubscriptionId: subscription.id,
+                    providerSubscriptionId: subscription?.id,
                     paymentMethod:
-                        subscription.payment_settings?.payment_method_types?.[0] ||
-                        subscription.default_payment_method?.toString() ||
+                        subscription?.payment_settings?.payment_method_types?.[0] ||
+                        subscription?.default_payment_method?.toString() ||
                         'card',
-                    quantity: subscription.items.data[0].quantity,
-                    price: +formatStripePrice(subscription.items.data[0].price.unit_amount?.valueOf() || 0),
+                    quantity: subscription?.items.data[0].quantity,
+                    price: +formatStripePrice(subscription?.items.data[0].price.unit_amount?.valueOf() || 0),
                     total: +formatStripePrice(
-                        (subscription.items.data[0].price.unit_amount?.valueOf() || 0) *
+                        (subscription?.items.data[0].price.unit_amount?.valueOf() || 0) *
                             (subscription?.items?.data?.[0].quantity ?? 0),
                     ),
-                    subscriptionData: subscription,
+                    subscriptionData: subscription ? subscription : undefined,
                     interval,
-                    discount: subscription.discount?.coupon?.amount_off?.valueOf() || 0,
-                    coupon: subscription.discount?.coupon?.id,
-                    activeAt: new Date(subscription.current_period_start * 1000),
-                    pausedAt: new Date(subscription.current_period_end * 1000),
+                    discount: subscription?.discount?.coupon?.amount_off?.valueOf() || 0,
+                    coupon: subscription?.discount?.coupon?.id,
+                    activeAt: subscription?.current_period_start
+                        ? new Date(subscription?.current_period_start * 1000)
+                        : null,
+                    pausedAt: subscription?.current_period_end
+                        ? new Date(subscription?.current_period_end * 1000)
+                        : null,
                     cancelledAt: null,
                 },
                 {
@@ -418,7 +445,7 @@ export default class SubscriptionV2Service {
                     id: companyId,
                 },
                 {
-                    subscriptionStatus: subscription.status as string,
+                    subscriptionStatus: subscription?.status as string,
                     profilesLimit: productMetadata.profiles,
                     searchesLimit: productMetadata.searches,
                     trialProfilesLimit: productMetadata.trial_profiles,
@@ -696,22 +723,198 @@ export default class SubscriptionV2Service {
     async syncSubscription() {
         const companyId = RequestContext.getContext().companyId as string;
         const cusId = RequestContext.getContext().customerId as string;
-        const subscription = await SubscriptionRepository.getRepository().findOne({
-            where: {
-                company: {
-                    id: companyId,
-                },
-            },
+        return this.syncSubscriptionProcess({ companyId, cusId });
+    }
+
+    async syncAllSubscriptions() {
+        let companies = await CompanyRepository.getRepository().find({
+            relations: { subscription: true },
         });
-        if (!subscription) {
-            throw new NotFoundError('No subscription found');
+        const stripeSubscriptions = await StripeService.getService().getAllSubscriptions();
+        companies = companies.filter((company) =>
+            [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(
+                company.subscription?.status as SubscriptionStatus,
+            ),
+        );
+        const synced = [],
+            notSynced = [];
+        for (const company of companies) {
+            if (
+                stripeSubscriptions
+                    .map((sub) => sub.id)
+                    .includes(company.subscription?.providerSubscriptionId as string)
+            ) {
+                synced.push({ [company.cusId as string]: {} });
+                continue;
+            }
+            notSynced.push({ [company.cusId as string]: {} });
+            const [err] = await awaitToError(
+                this.syncSubscriptionProcess({
+                    companyId: company.id,
+                    cusId: company.cusId as string,
+                    useCusId: true,
+                }),
+            );
+            if (!err) synced.push({ [company.cusId as string]: {} });
+            else notSynced.push({ [company.cusId as string]: err });
         }
-        return this.storeSubscription({
-            companyId,
-            cusId,
-            request: { subscriptionId: subscription.providerSubscriptionId },
-            resetBalance: false,
+        return { synced, notSynced, syncedTotal: synced.length, notSyncedTotal: notSynced.length };
+    }
+
+    async getListOfAllSubscriptions(request: GetSubscriptionMigrationRequest) {
+        const targetPriceId = request.targetPriceId?.split(',');
+        let companies = await CompanyRepository.getRepository().find({
+            relations: { subscription: true },
         });
+        companies = companies.filter((company) =>
+            [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(
+                company.subscription?.status as SubscriptionStatus,
+            ),
+        );
+        const stripeSubscriptions = await StripeService.getService().getAllSubscriptions();
+        const unsynchedData: Record<string, any> = {},
+            synchedData: Record<string, any> = {},
+            unprocessedData: Record<string, any> = {};
+        for (const company of companies) {
+            if (
+                !stripeSubscriptions
+                    .map((sub) => sub.id)
+                    .includes(company.subscription?.providerSubscriptionId as string)
+            ) {
+                const [, cus] = await awaitToError(
+                    StripeService.getService().getCustomer(company.cusId as string, {
+                        expand: ['subscriptions.data', 'subscriptions.data.plan'],
+                    }) as Promise<Stripe.Customer & { subscriptions: Stripe.ApiList<Stripe.Subscription> }>,
+                );
+                if (cus && cus.subscriptions.data.length !== 0) {
+                    stripeSubscriptions.push(cus.subscriptions.data[0]);
+                } else {
+                    // the company subscription is not synced
+                    unprocessedData[company.cusId as string] = {};
+                    continue;
+                }
+            }
+            const subscription = stripeSubscriptions.find(
+                (sub) => sub.id === company.subscription?.providerSubscriptionId,
+            );
+            if (targetPriceId?.includes(subscription?.items.data[0].price.id as string)) {
+                synchedData[company.cusId as string] = {
+                    priceId: subscription?.items.data[0].price.id,
+                    priceAmount: (subscription?.items.data[0].price.unit_amount ?? 0) / 100,
+                    currency: subscription?.currency,
+                    interval: subscription?.items.data[0].plan.interval,
+                    subscriptionId: subscription?.id,
+                };
+            } else {
+                unsynchedData[company.cusId as string] = {
+                    priceId: subscription?.items.data[0].price.id,
+                    priceAmount: (subscription?.items.data[0].price.unit_amount ?? 0) / 100,
+                    currency: subscription?.currency,
+                    interval: subscription?.items.data[0].plan.interval,
+                    subscriptionId: subscription?.id,
+                };
+            }
+        }
+        return {
+            unsynchedData,
+            totalUnsynched: Object.keys(unsynchedData).length,
+            synchedData,
+            totalSynched: Object.keys(synchedData).length,
+            unprocessedData,
+            totalUnprocessed: Object.keys(unprocessedData).length,
+        };
+    }
+
+    async syncAllBalances(request: SyncBalanceRequest) {
+        let companies = await CompanyRepository.getRepository().find({
+            relations: { subscription: true },
+        });
+        companies = companies.filter((company) =>
+            [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(
+                company.subscription?.status as SubscriptionStatus,
+            ),
+        );
+        const p = [];
+        for (const company of companies) {
+            p.push(
+                this.fixBalance({
+                    companyId: company.id,
+                    priceId: request.targetPriceIds.cnyPriceId ?? request.targetPriceIds.usdPriceId,
+                }),
+            );
+        }
+        await Promise.all(p);
+    }
+
+    async migrateSubscription(request: SubscriptionMigrationRequest) {
+        return; // this is dangerous and should be used carefully
+        const isDryRun = request.isDryRun ?? true;
+
+        // 0 - get all subscriptions
+        const targetPriceIds = [request.targetPriceIds.cnyPriceId, request.targetPriceIds.usdPriceId];
+        const customerSubscriptions = await this.getListOfAllSubscriptions({
+            targetPriceId: targetPriceIds.join(','),
+        });
+        const customerSubscription = customerSubscriptions.unsynchedData[request.customerId as string];
+        const customerCurrency = customerSubscription?.currency;
+        const subscriptionId = customerSubscription.subscriptionId;
+
+        if (targetPriceIds.includes(customerSubscription)) {
+            return { message: 'customer already synced' };
+        }
+
+        // Step 1: Retrieve the current subscription
+        const subscription = (await StripeService.client.subscriptions.retrieve(subscriptionId, {
+            expand: ['plan', 'latest_invoice'],
+        })) as Stripe.Subscription & { plan?: Stripe.Plan; latest_invoice?: Stripe.Invoice };
+
+        const newPriceId =
+            customerCurrency === 'cny' ? request.targetPriceIds.cnyPriceId : request.targetPriceIds.usdPriceId;
+
+        // Step 2: Calculate the upcoming invoice with the new plan
+        const upcomingInvoice = await StripeService.client.invoices.retrieveUpcoming({
+            customer: request.customerId,
+            subscription: customerSubscription.subscriptionId,
+            subscription_cancel_now: true,
+        });
+
+        // Prorated refund amount is based on the difference in the upcoming invoice's total and the amount already paid
+        const mustRefundAmount = Math.abs((upcomingInvoice.total ?? 0) / 100);
+        const proratedAmount =
+            subscription.current_period_end > Date.now() / 1000
+                ? (subscription.plan?.amount ?? 0) / 100 - mustRefundAmount
+                : 0;
+
+        if (isDryRun) {
+            return {
+                message: 'Refunded successfully',
+                mustRefundAmount: +(mustRefundAmount * 100).toFixed(),
+                proratedAmount: +(proratedAmount * 100).toFixed(),
+                newPriceId,
+                currency: customerCurrency,
+            };
+        }
+
+        // Step 3: Update the subscription to the cheaper plan
+        return StripeService.getService().updateSubscription(subscriptionId, {
+            items: [
+                {
+                    id: subscription.items.data[0].id,
+                    price: newPriceId,
+                },
+            ],
+            proration_behavior: 'always_invoice',
+            expand: ['latest_invoice.payment_intent'],
+            off_session: true,
+        });
+
+        return {
+            message: 'Refunded successfully',
+            mustRefundAmount: +(mustRefundAmount * 100).toFixed(),
+            proratedAmount: +(proratedAmount * 100).toFixed(),
+            newPriceId,
+            currency: customerCurrency,
+        };
     }
 
     private async getLoyalCompany(companyId: string) {
@@ -729,5 +932,59 @@ export default class SubscriptionV2Service {
         for (const sub of nonActiveSubs) {
             await awaitToError(StripeService.getService().cancelSubscriptionBySubsId(sub.id));
         }
+    }
+
+    private async fixBalance({ companyId, priceId }: { priceId: string; companyId: string }) {
+        const price = await PriceRepository.getRepository().findOne({
+            where: {
+                priceId,
+            },
+        });
+
+        await Promise.all([
+            BalanceRepository.getRepository().delete({
+                company: {
+                    id: companyId,
+                },
+            }),
+            CompanyRepository.getRepository().update(
+                {
+                    id: companyId,
+                },
+                {
+                    profilesLimit: price?.profiles + '',
+                    searchesLimit: price?.searches + '',
+                },
+            ),
+        ]);
+        await BalanceService.getService().initBalance(companyId);
+    }
+
+    private async syncSubscriptionProcess({
+        companyId,
+        cusId,
+        useCusId,
+    }: {
+        companyId: string;
+        cusId: string;
+        useCusId?: boolean;
+    }) {
+        const subscription = await SubscriptionRepository.getRepository().findOne({
+            where: {
+                company: {
+                    id: companyId,
+                },
+            },
+        });
+        if (!subscription) {
+            throw new NotFoundError('No subscription found');
+        }
+        return this.storeSubscription({
+            companyId,
+            cusId,
+            request: { subscriptionId: subscription.providerSubscriptionId },
+            resetBalance: false,
+            useCusId,
+        });
     }
 }
