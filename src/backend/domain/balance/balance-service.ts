@@ -11,7 +11,7 @@ import awaitToError from 'src/utils/await-to-error';
 export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
-    // @UseLogger()
+    @UseLogger()
     async initBalance(companyId?: string) {
         if (!companyId) {
             companyId = RequestContext.getContext().companyId as string;
