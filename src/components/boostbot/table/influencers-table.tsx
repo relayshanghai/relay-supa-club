@@ -98,7 +98,7 @@ export function InfluencersTable<_T, TValue>({
                 {/* Scroll to the top of the table when changing pagination pages */}
                 <div ref={tableRef} />
                 <Table>
-                    <TableHeader className="sticky top-0 z-0 bg-white shadow">
+                    <TableHeader className=" sticky top-0 z-20 bg-white shadow">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {

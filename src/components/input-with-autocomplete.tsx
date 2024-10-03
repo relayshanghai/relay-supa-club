@@ -83,7 +83,7 @@ const InputWithAutocomplete = ({
             />
             <div className="relative">
                 {!!value.length && (
-                    <div className="absolute left-0 top-1 z-10 w-full overflow-hidden rounded-lg bg-white text-sm ring-1 ring-gray-200">
+                    <div className="absolute left-0 top-1 z-[100] w-full overflow-hidden rounded-lg bg-white text-sm ring-1 ring-gray-200">
                         {!suggestions.length && topicSearch ? (
                             <div className="p-4">
                                 {spinnerLoading ? (
