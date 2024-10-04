@@ -98,11 +98,6 @@ const nextConfig = {
             key: 'Feature-Policy',
             value: "geolocation 'self'; microphone 'self'; camera 'self'",
           },
-          {
-            key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; object-src 'none';",
-            },
         ],
       },
     ];
