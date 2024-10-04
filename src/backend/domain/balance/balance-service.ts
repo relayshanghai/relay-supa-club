@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { UnprocessableEntityError } from 'src/utils/error/http-error';
+import awaitToError from 'src/utils/await-to-error';
 export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
@@ -45,28 +46,30 @@ export default class BalanceService {
                 : company.profilesLimit,
         );
 
-        await BalanceRepository.getRepository().upsert(
-            [
-                {
-                    id: v4(),
-                    company: {
-                        id: companyId,
+        await awaitToError(
+            BalanceRepository.getRepository().upsert(
+                [
+                    {
+                        id: v4(),
+                        company: {
+                            id: companyId,
+                        },
+                        type: BalanceType.PROFILE,
+                        amount: profileLimit - usage.profile,
                     },
-                    type: BalanceType.PROFILE,
-                    amount: profileLimit - usage.profile,
-                },
-                {
-                    id: v4(),
-                    company: {
-                        id: companyId,
+                    {
+                        id: v4(),
+                        company: {
+                            id: companyId,
+                        },
+                        type: BalanceType.SEARCH,
+                        amount: searchLimit - usage.search,
                     },
-                    type: BalanceType.SEARCH,
-                    amount: searchLimit - usage.search,
+                ],
+                {
+                    conflictPaths: ['company', 'type'],
                 },
-            ],
-            {
-                conflictPaths: ['company', 'type'],
-            },
+            ),
         );
     }
     @UseLogger()
