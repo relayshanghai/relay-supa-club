@@ -101,7 +101,7 @@ const nextConfig = {
           {
             key: 'Content-Security-Policy',
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
+              "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; object-src 'none';",
             },
         ],
       },
