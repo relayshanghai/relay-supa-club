@@ -1,8 +1,8 @@
 const sequences = {
-    campaign: 'Outreach Campaign',
+    campaign: 'Campaign',
     sequences: 'Sequences',
     subtitle:
-        'Sets of email templates that we will customize, schedule, and send to influencers to maximize your outreach conversion.',
+        'List of influencers you have added to this sequence. You can view their status, send time, and next email preview here.',
     updateTemplateVariables: 'View sequence templates',
     needsAttention: 'Needs attention',
     unscheduled: 'Unscheduled',

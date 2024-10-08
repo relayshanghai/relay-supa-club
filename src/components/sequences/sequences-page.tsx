@@ -109,7 +109,7 @@ export const SequencesPage = () => {
                 <div className="flex w-full justify-between">
                     <div className="md:w-1/2">
                         <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">
-                            {t('sequences.sequences')}
+                            {t('sequences.campaign')}
                         </h1>
                         <h2 className="mt-2 text-gray-500">{t('sequences.subtitle')}</h2>
                     </div>
