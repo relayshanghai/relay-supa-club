@@ -71,7 +71,6 @@ export const BoostbotAudienceLocationCell = ({ row, table }: BoostbotAudienceLoc
     }
     return (
         <>
-            {/* {JSON.stringify(audienceGeo)} */}
             {isLoading ? (
                 <div className="h-2 w-40 animate-pulse bg-gray-300" />
             ) : (
