@@ -198,6 +198,7 @@ const creators = {
     noSequence: 'No sequence created yet',
     addToSequenceSuccess: 'Influencer added to sequence successfully',
     addToSequenceError: 'Error adding influencer to sequence',
+    noAudienceData: 'No audience location data available',
 };
 
 export default creators;

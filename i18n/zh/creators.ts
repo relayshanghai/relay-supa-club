@@ -194,5 +194,6 @@ const creators = {
     noSequence: '没有创建序列',
     addToSequenceSuccess: '已成功添加至进程',
     addToSequenceError: '系统出错了，请重试',
+    noAudienceData: '没有可用的受众位置数据',
 };
 export default creators;

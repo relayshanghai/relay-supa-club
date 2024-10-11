@@ -3,6 +3,7 @@ import type { SearchTableInfluencer as BoostbotInfluencer } from 'types';
 import { Tooltip } from 'src/components/library';
 import { decimalToPercent } from 'src/utils/formatter';
 import type { Locations } from 'types/iqdata/influencer-search-request-body';
+import { useTranslation } from 'react-i18next';
 
 export type BoostbotAudienceLocationCellProps = {
     row: Row<BoostbotInfluencer>;
@@ -65,9 +66,23 @@ export const BoostbotAudienceLocationCell = ({ row, table }: BoostbotAudienceLoc
     const influencer = row.original;
     const audienceGeo = influencer.audience_geo;
     const isLoading = table.options.meta?.isLoading;
+    const { t } = useTranslation();
 
     if (!audienceGeo) {
-        return null;
+        return (
+            <Tooltip content={t('creators.noAudienceData')} contentSize="small" position="bottom-left">
+                <div className="w-40">
+                    <div className="relative w-full">
+                        <div className=" h-2 rounded-lg bg-gray-200" />
+                        <div
+                            className="absolute left-0 top-0 z-10 h-2 rounded-lg bg-primary-600"
+                            data-testid="boostbot-location-cell-country-1"
+                            style={{ width: '0%' }}
+                        />
+                    </div>
+                </div>
+            </Tooltip>
+        );
     }
     return (
         <>
