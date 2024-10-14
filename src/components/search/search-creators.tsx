@@ -42,6 +42,7 @@ export const SearchCreators = () => {
                         platform: searchPlatform,
                     }),
                 );
+                return;
             }
             setIsLoading(false);
 
