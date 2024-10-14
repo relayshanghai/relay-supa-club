@@ -303,3 +303,18 @@ export interface Post {
     title?: string;
     video?: string;
 }
+
+export interface CreatorDict {
+    user_id: string;
+    custom_name: string;
+    handle: string;
+    fullname: string;
+    picture: string;
+    followers: number;
+    is_verified: boolean;
+}
+
+export interface CreatorDictSearchResponse {
+    success: boolean;
+    data: CreatorDict[];
+}

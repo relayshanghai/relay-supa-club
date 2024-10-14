@@ -5,12 +5,12 @@ import { ChevronDown, Spinner } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { SearchInfluencerByName } from 'src/utils/analytics/events/discover/search-influencer-by-name';
-import useSearchInfluencersByUsername from 'src/hooks/use-search-influencers-by-username';
 import type { CreatorPlatform } from 'types';
 import { clientLogger } from 'src/utils/logger-client';
 import toast from 'react-hot-toast';
 import { platforms } from './search-select-platform';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
+import { useSearchInfluencersByUsernameV2 } from 'src/hooks/v2/use-search-influencers-by-username';
 
 export const SearchCreators = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +20,7 @@ export const SearchCreators = () => {
     const { trackSearch } = useSearchTrackers();
 
     const { track } = useRudderstackTrack();
-    const { getInfluencerByUsername } = useSearchInfluencersByUsername();
+    const { getInfluencerByUsername } = useSearchInfluencersByUsernameV2();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.trim() === '') {
@@ -34,21 +34,21 @@ export const SearchCreators = () => {
     const handleSubmit = useCallback(async () => {
         setIsLoading(true);
         try {
-            const searchResult = await getInfluencerByUsername(searchUsername, searchPlatform);
-            if (!searchResult.success || searchResult.data.length === 0 || !searchResult.data[0].user_id) {
+            const searchResult = await getInfluencerByUsername({ username: searchUsername, platform: searchPlatform });
+            if (!searchResult) {
                 toast.error(
                     t('creators.show.noInfluencerSearchResults', {
                         username: searchUsername,
                         platform: searchPlatform,
                     }),
                 );
-                return;
             }
-
             setIsLoading(false);
 
             window.open(
-                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(searchResult.data[0].user_id)}`,
+                `/influencer/${encodeURIComponent(searchPlatform)}/${encodeURIComponent(
+                    searchResult?.user_id as string,
+                )}`,
                 '_blank',
             );
         } catch (error) {

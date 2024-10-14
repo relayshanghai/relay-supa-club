@@ -11,3 +11,5 @@ export interface CreatorUserProfile {
 export * from './creator-report';
 export * from './creator-reports-metadata';
 export * from './creator-search-result';
+export * from './creator-search';
+export * from './platform';

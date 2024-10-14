@@ -1,7 +1,8 @@
 import axios from 'axios';
 import qs from 'query-string';
-import type { CreatorReport } from 'types';
+import type { CreatorDictSearchResponse, CreatorReport } from 'types';
 import type { CreatorReportsMetadataResult } from 'types';
+import type { CreatorDictRequest } from 'types';
 const IQDATA_URL = process.env.IQDATA_URL || 'https://socapi.icu/v2.0/api';
 
 export default class IQDataService {
@@ -36,5 +37,14 @@ export default class IQDataService {
     async getRelevantTopics(platform: string, username: string) {
         const response = await this.client.get(`/dict/relevant-tags?${qs.stringify({ q: username, platform })}`);
         return response.data.data;
+    }
+    async getDictUsers({
+        username,
+        platform,
+        type = 'search',
+        limit = 1,
+    }: CreatorDictRequest): Promise<CreatorDictSearchResponse> {
+        const response = await this.client.get(`/dict/users?${qs.stringify({ q: username, platform, type, limit })}`);
+        return response.data;
     }
 }
