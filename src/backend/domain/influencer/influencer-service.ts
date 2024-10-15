@@ -19,6 +19,19 @@ export default class InfluencerService {
         if (res.data.length > 0) {
             return res.data[0];
         }
+        res = await IQDataService.getService().getInfluencerFromSavedReports({ username, platform });
+        if (res[0]) {
+            const d = res[0].user_profile;
+            return {
+                user_id: d.user_id,
+                custom_name: d.fullname as string,
+                handle: d.username as string,
+                fullname: d.fullname,
+                picture: d.picture || '',
+                followers: d.followers,
+                is_verified: false,
+            };
+        }
         res = await IQDataService.getService().requestNewReport(platform, username, false);
         if (res.success) {
             return {
