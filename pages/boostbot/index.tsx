@@ -14,10 +14,9 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
-import { getFulfilledData, getRejectedData, unixEpochToISOString } from 'src/utils/utils';
+import { getFulfilledData, getRejectedData } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
 import { CurrentPageEvent } from 'src/utils/analytics/events/current-pages';
 import type { Sequence } from 'src/utils/api/db';
@@ -44,6 +43,7 @@ import { isInMaintenance } from 'src/utils/maintenance';
 import MaintenanceComponent from 'src/components/maintenance/Component';
 import toast from 'react-hot-toast';
 import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
 
 /** just a type check to satisfy .filter()'s return type */
 export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
@@ -127,8 +127,8 @@ const Boostbot = () => {
         subscriptionStatus === SubscriptionStatus.PASS_DUE ||
         subscriptionStatus === SubscriptionStatus.TRIAL_EXPIRED;
 
-    const periodStart = unixEpochToISOString(subscription?.current_period_start);
-    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+    const periodStart = company?.subscription_current_period_start;
+    const periodEnd = company?.subscription_current_period_end;
     const searchId = useAtomValue(boostbotSearchIdAtom);
 
     const { usages, isUsageLoaded, refreshUsages } = useUsages(
