@@ -43,6 +43,7 @@ import {
 import { isInMaintenance } from 'src/utils/maintenance';
 import MaintenanceComponent from 'src/components/maintenance/Component';
 import toast from 'react-hot-toast';
+import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
 
 /** just a type check to satisfy .filter()'s return type */
 export const isBoostbotInfluencer = (influencer?: BoostbotInfluencer): influencer is BoostbotInfluencer => {
@@ -118,7 +119,13 @@ const Boostbot = () => {
     const [isSearchDisabled, setIsSearchDisabled] = useState(false);
     const [areChatActionsDisabled, setAreChatActionsDisabled] = useState(false);
     const { subscription } = useSubscription();
-    const { isExpired, company } = useCompany();
+    const { company } = useCompany();
+
+    const subscriptionStatus = subscription?.status as SubscriptionStatus;
+    const isExpired =
+        subscriptionStatus === SubscriptionStatus.CANCELLED ||
+        subscriptionStatus === SubscriptionStatus.PASS_DUE ||
+        subscriptionStatus === SubscriptionStatus.TRIAL_EXPIRED;
 
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
