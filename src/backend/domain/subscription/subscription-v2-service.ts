@@ -82,6 +82,14 @@ export default class SubscriptionV2Service {
         if (attachPaymentMethodErr) {
             throw new UnprocessableEntityError('entity is unprocessable', attachPaymentMethodErr);
         }
+        if (request.isDefault) {
+            const [setDefaultPaymentMethodErr] = await awaitToError(
+                StripeService.getService().updateDefaultPaymentMethod(cusId, request.paymentMethodId),
+            );
+            if (setDefaultPaymentMethodErr) {
+                throw new UnprocessableEntityError('entity is unprocessable', setDefaultPaymentMethodErr);
+            }
+        }
 
         return setupIntent;
     }

@@ -79,6 +79,7 @@ const pricing = {
     noPaymentMethodFound: '未找到付款方式。请添加一种付款方式。',
     noDefaultPaymentMethodFound: '未找到默认付款方式。请选择一种默认付款方式。',
     pressApplyCouponButton: '别忘了按应用按钮',
+    submitPaymentDetails: '提交付款详情',
 };
 
 export default pricing;
