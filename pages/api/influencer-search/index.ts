@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { ApiHandlerWithContext } from 'src/utils/api-handler';
 import { flattenInfluencerData } from 'src/utils/api/boostbot/helper';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
@@ -12,10 +11,8 @@ import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
-import { db } from 'src/utils/supabase-client';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
 import type { CreatorSearchResult } from 'types';
-import { v4 } from 'uuid';
 import type { z } from 'zod';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
@@ -132,23 +129,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const structuredResults = flattenInfluencerData(results, ['search']);
 
-    const parameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
-
-    const snapshot = await createSearchSnapshot(
-        { req, res },
-        {
-            parameters_id: parameter.id,
-            parameters,
-            results,
-        },
-    );
-
-    // @see /types/appTypes/SearchResultMetadata
-    results.__metadata = {
-        event_id: v4(),
-        snapshot_id: snapshot.id,
-        parameters_id: parameter.id,
-    };
+    /**
+     * removing snapshots
+     */
     return res.status(httpCodes.OK).json(structuredResults);
 };
 

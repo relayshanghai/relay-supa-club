@@ -6,6 +6,7 @@ const creators = {
     loadMore: 'Load more',
     results: '{{ resultCount }} influencers matching your search and filters found.',
     noResults: 'No results found',
+    reloadResult: 'Reload',
     addFilters: 'Add filters to tailor your results',
     searchResultError: 'Failed to fetch search results',
     clearFilter: 'Clear',
@@ -198,6 +199,7 @@ const creators = {
     noSequence: 'No sequence created yet',
     addToSequenceSuccess: 'Influencer added to sequence successfully',
     addToSequenceError: 'Error adding influencer to sequence',
+    noAudienceData: 'No audience location data available',
 };
 
 export default creators;

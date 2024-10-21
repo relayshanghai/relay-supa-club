@@ -1,6 +1,7 @@
 const sequences = {
+    campaign: '活动',
     sequences: '邮件进程管理',
-    subtitle: '我们系统会将定制化的邮件模板定时发送给KOL，这个定制化的联络流程可以大大提升回复率。',
+    subtitle: '添加到此序列中的影响者列表。您可以在此查看他们的状态、发送时间和下一封电子邮件的预览。',
     updateTemplateVariables: '查看邮件进程模版',
     needsAttention: '等待处理',
     autoStart: '开启自动处理',
@@ -80,21 +81,21 @@ const sequences = {
     templateVariablesModalSubtitle: '您在这里看到的设置将用于自动化定制的邮件内容中！',
     updateVariables: '更新定制内容',
     cancel: '取消',
-    templateVariablesUpdated: 'Template variables updated',
-    templateVariablesUpdateError: 'Error updating template variables',
+    templateVariablesUpdated: '模板变量已更新',
+    templateVariablesUpdateError: '更新模板变量时出错',
     company: '公司详情',
     brandName: '品牌名称',
-    brandNamePlaceholder: 'Xiaomi',
+    brandNamePlaceholder: '小米',
     brandNameTooltip: `品牌名称`,
     brandNameTooltipDescription: `输入您品牌的英文名称，请确保格式正确。
         这将会直接显示于您的电子邮件模版中。`,
     marketingManagerName: '项目负责人英文名',
-    marketingManagerNamePlaceholder: 'Vivian',
+    marketingManagerNamePlaceholder: '薇薇安',
     marketingManagerNameTooltip: `项目负责人英文名`,
     marketingManagerNameTooltipDescription: `输入您用于邮箱落款的英文名。
         这将会直接显示于您的电子邮件模版中。`,
     productName: '产品名称',
-    productNamePlaceholder: 'Mi Band 8',
+    productNamePlaceholder: '小米手环 8',
     productNameTooltip: `产品名称`,
     productNameTooltipDescription: `输入正确格式的产品英文名称。
         这将会直接显示于您的电子邮件模版中。`,
@@ -104,13 +105,13 @@ const sequences = {
     productLinkTooltipDescription: `输入您产品的独立站链接，或Amazon、Shopify 平台的链接。
         这将会直接显示于您的电子邮件模版中。`,
     productDescription: '产品描述',
-    productDescriptionPlaceholder: `The Mi Band 8 is our latest affordable smart watch and fitness tracker.`,
+    productDescriptionPlaceholder: `小米手环 8 是我们最新的经济实惠的智能手表和健身追踪器。`,
     productDescriptionTooltip: `产品描述`,
     productDescriptionTooltipDescription: `输入简洁的产品描述，越简单清晰越好。
     以产品小米手环 8为例，
-    产品名称：Mi Band 8
-    产品介绍：“The Mi Band 8 is our latest affordable smart watch
-    and fitness tracker.”
+    产品名称：小米手环 8
+    产品介绍：“小米手环 8 是我们最新的经济实惠的智能手表
+    和健身追踪器。”
     这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
     productPriceTooltip: '产品价格',
@@ -123,11 +124,11 @@ const sequences = {
     productPricePlaceholder: '99.9',
     influencer: 'KOL',
     influencerNiche: 'KOL所在领域',
-    influencerNichePlaceholder: 'Productivity Hackers',
+    influencerNichePlaceholder: '生产力黑客',
     influencerNicheTooltip: 'KOL所在领域',
     influencerNicheTooltipDescription: `在邮件进程管理中输入您的目标领域或KOL类别。
     例如
-    "Health and Wellness"、"Tech Reviewer "或 "Fitness"。
+    "健康与保健"、"科技评测 "或 "健身"。
     这将会直接显示于您的电子邮件模版中。`,
     influencerAccountName: 'KOL名字（或账号）',
     influencerAccountNameTooltip: `KOL名字（或账号）`,

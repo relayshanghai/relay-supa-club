@@ -5,6 +5,7 @@ const creators = {
     loadMore: '更多',
     results: '找到{{ resultCount }}与搜索筛选条件匹配的红人',
     noResults: '无结果',
+    reloadResult: '重新加载',
     addFilters: '添加筛选项',
     searchResultError: '无法获取搜索结果',
     clearFilter: '清除筛选',
@@ -194,5 +195,6 @@ const creators = {
     noSequence: '没有创建序列',
     addToSequenceSuccess: '已成功添加至进程',
     addToSequenceError: '系统出错了，请重试',
+    noAudienceData: '没有可用的受众位置数据',
 };
 export default creators;

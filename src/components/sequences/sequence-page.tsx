@@ -5,7 +5,7 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { DeleteOutline, Info, Question, SendOutline, Spinner } from '../icons';
+import { DeleteOutline, Info, Question, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
 import { Badge, FaqModal, Switch } from '../library';
@@ -30,12 +30,8 @@ import { ClickNeedHelp } from 'src/utils/analytics/events';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Banner } from '../library/banner';
 import { ToggleAutoStart } from 'src/utils/analytics/events/outreach/toggle-auto-start';
-import type { BatchStartSequencePayload } from 'src/utils/analytics/events/outreach/batch-start-sequence';
-import { BatchStartSequence } from 'src/utils/analytics/events/outreach/batch-start-sequence';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
-import { useAtomValue } from 'jotai';
-import { submittingChangeEmailAtom } from 'src/atoms/sequence-row-email-updating';
-import { calculateReplyRate, isMissingSocialProfileInfo } from './helpers';
+import { calculateReplyRate } from './helpers';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
 
@@ -240,114 +236,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [showNeedHelp, setShowNeedHelp] = useState<boolean>(false);
     const hideAutoStart = true; // TODO: reenable when limits are set https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/817
 
-    const selectedInfluencers = useMemo(
-        () => influencers.filter((influencer) => selection.includes(influencer.id)),
-        [influencers, selection],
-    );
-
-    const handleBatchSend = useCallback(
-        async (batchSendInfluencers: SequenceInfluencerManagerPageWithChannelData[]) => {
-            if (selection.length === 0) {
-                return;
-            }
-            batchSendInfluencers = batchSendInfluencers.filter(
-                (influencer) => influencer.email && !isMissingSocialProfileInfo(influencer),
-            );
-
-            // remove them from selection, and optimistically update to "In Sequence"
-            setSelection(() => selection.filter((id) => !batchSendInfluencers.some((i) => i.id === id)));
-            refreshSequenceInfluencers(
-                sequenceInfluencers.map((influencer) => {
-                    if (batchSendInfluencers.some((i) => i.id === influencer.id)) {
-                        return {
-                            ...influencer,
-                            funnel_status: 'In Sequence',
-                            sequence_step: 0,
-                        };
-                    }
-                    return influencer;
-                }),
-                { revalidate: false },
-            );
-            const trackData: BatchStartSequencePayload = {
-                sequence_id: sequence?.id ?? null,
-                sequence_name: sequence?.name ?? null,
-                sequence_influencer_ids: batchSendInfluencers.map((si) => si.id),
-                is_success: false,
-                sent_success: [],
-                sent_success_count: null,
-                sent_failed: [],
-                sent_failed_count: null,
-            };
-
-            try {
-                const results = await handleStartSequence(batchSendInfluencers);
-                const failed = results.filter((result) => result.error);
-                const succeeded = results.filter((result) => !result.error);
-
-                trackData.sent_success = succeeded;
-                trackData.sent_success_count = succeeded.length;
-                trackData.sent_failed = failed;
-                trackData.sent_failed_count = failed.length;
-                trackData.is_success = true;
-                track(BatchStartSequence, trackData);
-
-                if (succeeded.length > 0) {
-                    toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
-                }
-                if (failed.length > 0) {
-                    toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
-                    trackData.extra_info = {
-                        error: 'sequence-page, sequences.number_emailsFailedToSchedule: ' + failed.length,
-                    };
-                    track(BatchStartSequence, trackData);
-                }
-            } catch (error: any) {
-                trackData.extra_info = { error: `error: ${error?.message} \nstack: ${error?.stack}` };
-                track(BatchStartSequence, trackData);
-                toast.error(error?.message ?? '');
-            }
-        },
-        [
-            handleStartSequence,
-            refreshSequenceInfluencers,
-            selection,
-            sequence?.id,
-            sequence?.name,
-            sequenceInfluencers,
-            t,
-            track,
-        ],
-    );
-
-    const sequenceSendTooltipTitle = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
-        ? t('sequences.invalidSocialProfileTooltip')
-        : selectedInfluencers.some((i) => !i.email)
-        ? t('sequences.missingEmail')
-        : isMissingSequenceSendEmail
-        ? t('sequences.outreachPlanUpgradeTooltip')
-        : isMissingVariables
-        ? t('sequences.missingRequiredTemplateVariables')
-        : t('sequences.sequenceSendTooltip');
-    const sequenceSendTooltipDescription = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
-        ? t('sequences.invalidSocialProfileTooltipDescription')
-        : selectedInfluencers.some((i) => !i.email)
-        ? t('sequences.missingEmailTooltipDescription')
-        : isMissingSequenceSendEmail
-        ? t('sequences.outreachPlanUpgradeTooltipDescription')
-        : isMissingVariables
-        ? t('sequences.missingRequiredTemplateVariables_variables', {
-              variables: missingVariables,
-          })
-        : t('sequences.sequenceBatchSendTooltipDescription');
-    const sequenceSendTooltipHighlight = selectedInfluencers.some((i) => !i.influencer_social_profile_id)
-        ? t('sequences.invalidSocialProfileTooltipHighlight')
-        : undefined;
-
-    const submittingChangeEmail = useAtomValue(submittingChangeEmailAtom);
-
-    const sendDisabled = submittingChangeEmail || isMissingSequenceSendEmail;
-
     const replyRate = useMemo(
         () => calculateReplyRate(sequenceInfluencers, sequenceEmails),
         [sequenceInfluencers, sequenceEmails],
@@ -472,7 +360,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 </section>
 
                 <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
-                    <div className="left-0 flex w-full flex-row items-center justify-between">
+                    <div className="flex w-full flex-row items-center justify-end">
                         <div className="flex space-x-4">
                             <button
                                 data-testid="delete-influencers-button"
@@ -486,31 +374,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             >
                                 <DeleteOutline className="h-4 w-4 stroke-red-500" />
                             </button>
-                            {currentTab === 'To Contact' && selection.length > 0 && (
-                                <Tooltip
-                                    content={sequenceSendTooltipTitle}
-                                    detail={sequenceSendTooltipDescription}
-                                    highlight={sequenceSendTooltipHighlight}
-                                    position="bottom-left"
-                                >
-                                    <Button
-                                        disabled={sendDisabled}
-                                        className={
-                                            isMissingVariables
-                                                ? 'flex !border-gray-300 !bg-gray-300 !text-gray-500'
-                                                : 'flex'
-                                        }
-                                        onClick={
-                                            isMissingVariables
-                                                ? () => setShowUpdateTemplateVariables(true)
-                                                : () => handleBatchSend(selectedInfluencers)
-                                        }
-                                    >
-                                        <SendOutline className="mr-2 h-5 w-5 stroke-white" />
-                                        {t('sequences.startSelectedSequences')}
-                                    </Button>
-                                </Tooltip>
-                            )}
                         </div>
                     </div>
                     <div>

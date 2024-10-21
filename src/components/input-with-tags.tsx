@@ -24,7 +24,7 @@ export const InputWithTags = ({
             <div
                 className={`flex w-full flex-row items-center rounded-md ${
                     tags.length > 0 && 'pl-2'
-                } border border-gray-200 bg-white pr-2  text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
+                } no-scrollbar overflow-x-scroll border border-gray-200 bg-white  pr-2 text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
             >
                 <div className="my-2 flex h-6 space-x-2">
                     {tags
@@ -64,7 +64,7 @@ export const InputWithTags = ({
                 </div>
                 <input
                     disabled={disabled}
-                    className="w-full appearance-none rounded border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                    className="w-full min-w-[150px] rounded border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     {...rest}
                 />
                 {spinnerLoading && !topicSearch && (

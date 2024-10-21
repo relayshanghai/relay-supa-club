@@ -303,3 +303,41 @@ export interface Post {
     title?: string;
     video?: string;
 }
+
+export interface CreatorDict {
+    user_id: string;
+    custom_name: string;
+    handle: string;
+    fullname: string;
+    picture: string;
+    followers: number;
+    is_verified: boolean;
+}
+
+export interface CreatorDictSearchResponse {
+    success: boolean;
+    data: CreatorDict[];
+}
+
+export interface StoredUserProfile {
+    user_id: string;
+    username: string;
+    url: string;
+    fullname: string;
+    picture: string;
+    followers: number;
+    engagements: number;
+    is_business: boolean;
+}
+
+export interface Result {
+    id: string;
+    created_at: Date;
+    pdf_url: string;
+    is_stored: boolean;
+    user_profile: StoredUserProfile;
+}
+
+export interface CreatorStoredReport {
+    results: Result[];
+}

@@ -7,6 +7,7 @@ import sequenceTemplate from './sequence-template';
 import sequenceInfluencer from './sequence-influencer';
 import inboxFilter from './inbox-filter';
 import report from './report';
+import classicSearchParams from './classic-search-params';
 
 const rootReducer = combineReducers({
     product,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     sequenceInfluencer,
     inboxFilter,
     report,
+    classicSearchParams,
 });
 
 export default rootReducer;

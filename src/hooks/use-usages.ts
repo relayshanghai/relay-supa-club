@@ -3,13 +3,15 @@ import type { UsageType } from 'types';
 import type { UsagesGetQueries, UsagesGetResponse } from 'pages/api/usages';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { useCompany } from './use-company';
+import { useSubscription } from './v2/use-subscription';
+import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
 
 export type StartEndDates = { thisMonthStartDate: Date; thisMonthEndDate: Date };
 
 export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => {
     const { company } = useCompany();
-    const { subscription_status, trial_profiles_limit, trial_searches_limit, profiles_limit, searches_limit } =
-        company || {};
+    const { subscription } = useSubscription();
+    const { trial_profiles_limit, trial_searches_limit, profiles_limit, searches_limit } = company || {};
 
     const { data, mutate: refreshUsages } = useSWR(
         company?.id ? ['usages', company.id, startEndDates?.thisMonthStartDate, startEndDates?.thisMonthEndDate] : null,
@@ -25,7 +27,7 @@ export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => 
     );
 
     const limits = company
-        ? subscription_status === 'trial'
+        ? subscription?.status == SubscriptionStatus.TRIAL
             ? {
                   profile: Number(trial_profiles_limit),
                   search: Number(trial_searches_limit),

@@ -58,6 +58,7 @@ import { isBoostbotInfluencer } from 'pages/boostbot';
 import { saveSearchResults } from 'src/utils/save-search-influencers';
 import MaintenanceComponent from '../maintenance/Component';
 import { isInMaintenance } from 'src/utils/maintenance';
+import { Button } from '../button';
 
 export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const { t } = useTranslation();
@@ -82,7 +83,15 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [needHelpModalOpen, setShowNeedHelpModal] = useState(false);
     const [_batchId, setBatchId] = useState(() => randomNumber());
-    const { results, resultsTotal, noResults, loading: resultsLoading, metadata, setOnLoad } = useSearchResults(page);
+    const {
+        results,
+        resultsTotal,
+        loading: resultsLoading,
+        metadata,
+        setOnLoad,
+        error: searchError,
+        mutate: triggerSearch,
+    } = useSearchResults(page);
     const { track: trackEvent } = useTrackEvent();
 
     const { track } = useRudderstackTrack();
@@ -403,8 +412,19 @@ export const SearchPageInner = ({ expired }: { expired: boolean }) => {
                 <div className="m-8 flex w-full justify-center">
                     <SearchExpired type={expired ? 'plan' : 'credit'} subscriptionStatus={subscription?.status} />
                 </div>
-            ) : noResults && !resultsLoading ? (
-                <p>{t('creators.noResults')}</p>
+            ) : searchError ? (
+                <div className="flex h-[200px] w-full flex-col items-center justify-center">
+                    <p>{t('creators.noResults')}</p>
+                    <Button
+                        className="mt-5 w-[200px]"
+                        onClick={() => {
+                            triggerSearch();
+                        }}
+                        loading={resultsLoading}
+                    >
+                        {t('creators.reloadResult')}
+                    </Button>
+                </div>
             ) : (
                 <div className="flex w-full basis-3/4 flex-col">
                     <div className="flex flex-row items-center justify-between">
