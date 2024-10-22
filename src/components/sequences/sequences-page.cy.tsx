@@ -17,7 +17,7 @@ describe('SequencesPage', () => {
             </StoreProvider>,
         );
 
-        cy.contains(sequences.sequences);
+        cy.contains(sequences.campaign);
         cy.contains(sequences.subtitle);
 
         cy.contains('tr', 'General collaboration');

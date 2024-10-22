@@ -116,10 +116,12 @@ export const useSubscription = () => {
         paymentMethodId,
         paymentMethodType,
         currency = 'cny',
+        isDefault,
     }: {
         paymentMethodId: string;
         paymentMethodType: 'card' | 'alipay';
         currency?: string;
+        isDefault?: boolean;
     }) => {
         const [err, res] = await awaitToError(
             apiClient.post<CreatePaymentMethodRequest, AxiosResponse<Stripe.SetupIntent>>(
@@ -129,6 +131,7 @@ export const useSubscription = () => {
                     paymentMethodType,
                     userAgent: window.navigator.userAgent,
                     currency,
+                    isDefault,
                 },
             ),
         );

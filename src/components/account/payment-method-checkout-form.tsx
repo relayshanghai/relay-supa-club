@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { type FC, type FormEvent, useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Spinner } from '../icons';
 import { Button } from '../button';
 import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
+import { type DefaultTFuncReturn } from 'i18next';
 
-export default function CheckoutForm({ onCompletion }: { onCompletion: (success: boolean) => void }) {
+type CheckoutFormProps = {
+    onCompletion: (success: boolean) => void;
+    buttonText?: string | DefaultTFuncReturn;
+    forceDefaultPaymentMethod?: boolean;
+};
+
+export const CheckoutForm: FC<CheckoutFormProps> = ({ onCompletion, buttonText, forceDefaultPaymentMethod }) => {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -20,7 +27,7 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: (success:
         setErrorMessage(error.message);
     };
 
-    const handleSubmit = async (event: any) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         if (!stripe || !elements) {
             return;
         }
@@ -46,6 +53,7 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: (success:
         const paymentMethodSetupIntent = await addPaymentMethod({
             paymentMethodId: paymentMethod.id,
             paymentMethodType: paymentMethod?.type as 'card' | 'alipay',
+            isDefault: forceDefaultPaymentMethod,
         });
 
         if (!paymentMethodSetupIntent || !paymentMethodSetupIntent.client_secret) {
@@ -81,6 +89,8 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: (success:
         onCompletion(true);
     };
 
+    buttonText = buttonText || 'Add Payment Method';
+
     return (
         <form className="p-6" onSubmit={handleSubmit}>
             <PaymentElement
@@ -90,10 +100,10 @@ export default function CheckoutForm({ onCompletion }: { onCompletion: (success:
                 }}
             />
             <Button disabled={isLoading || !stripe || !elements || !formReady} className="mt-10 w-full" type="submit">
-                {isLoading ? <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" /> : 'Add Payment Method'}
+                {isLoading ? <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" /> : buttonText}
             </Button>
             {/* Show any error or success messages */}
             {errorMessage && <p className="mt-2 text-xs text-red-500">{errorMessage}</p>}
         </form>
     );
-}
+};
