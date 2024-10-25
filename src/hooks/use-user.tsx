@@ -47,6 +47,7 @@ export interface IUserContext {
     ) => Promise<{
         user: User | null;
         session: Session | null;
+        hasDefaultPaymentMethod: boolean;
     }>;
     logout: (redirect?: boolean) => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
@@ -97,6 +98,7 @@ export const UserContext = createContext<IUserContext>({
     login: async () => ({
         user: null,
         session: null,
+        hasDefaultPaymentMethod: false,
     }),
     logout: () => null,
     updateProfile: () => null,
@@ -191,10 +193,20 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                  */
                 await awaitToError(apiClient.post('/v2/balances'));
 
+                /**
+                 * get payment methods
+                 */
+                let hasDefaultPaymentMethod = false;
+                const [, paymentMethodsRes] = await awaitToError(apiClient.get('/v2/subscriptions/payment-method'));
+                const paymentMethods = paymentMethodsRes?.data;
+                if (paymentMethods.defaultPaymentMethod) {
+                    hasDefaultPaymentMethod = true;
+                }
+
                 if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
                 identify(data?.user?.email || '');
-                return data;
+                return { ...data, hasDefaultPaymentMethod };
             } catch (e: unknown) {
                 clientLogger(e, 'error');
                 let message = 'Unknown error';
