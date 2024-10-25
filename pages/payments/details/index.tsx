@@ -1,12 +1,12 @@
-import { ScreenshotsCarousel } from 'src/components/signup/screenshots-carousel';
 import LoginSignupLayout from 'src/components/SignupLayout';
+import { PaymentIntroduction } from 'src/components/stripe/payment-introduction';
 import { PaymentMethodPage } from 'src/components/stripe/payment-method-page';
 
 const PaymentMethodsPage = () => {
     return (
         <LoginSignupLayout
             leftBgColor="boostbot-gradient"
-            left={<ScreenshotsCarousel />}
+            left={<PaymentIntroduction />}
             right={<PaymentMethodPage />}
         />
     );
