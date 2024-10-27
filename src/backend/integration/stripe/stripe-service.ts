@@ -86,6 +86,7 @@ export default class StripeService {
             payment_settings: {
                 payment_method_types: paymentMethodsTypes,
             },
+            collection_method: 'charge_automatically',
             payment_behavior: 'default_incomplete',
             expand: ['latest_invoice.payment_intent'],
             coupon: c,

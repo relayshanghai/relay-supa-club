@@ -17,6 +17,7 @@ import {
     PaymentFailedOutline,
     CheckedCircleOutline,
     Rocket,
+    Rejected,
 } from '../icons';
 import { Skeleton } from 'shadcn/components/ui/skeleton';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
@@ -26,6 +27,7 @@ import type Stripe from 'stripe';
 import toast from 'react-hot-toast';
 import { Tooltip } from '../library';
 import { useBalance } from 'src/hooks/use-balance';
+import { useRouter } from 'next/router';
 
 const Tablet = ({
     children,
@@ -39,18 +41,10 @@ const Tablet = ({
     return <span className={`rounded-lg border px-2 py-0.5 font-medium ${customStyle} ${textSize}`}>{children}</span>;
 };
 
-const PaymentTablets = ({
-    subscription,
-    handleCancelSubscription,
-}: {
-    subscription: SubscriptionEntity<Stripe.Subscription>;
-    handleCancelSubscription: () => void;
-}) => {
+const PaymentTablets = ({ subscription }: { subscription: SubscriptionEntity<Stripe.Subscription> }) => {
     const { subscriptionData, cancelledAt, pausedAt, status } = subscription;
 
     const { t, i18n } = useTranslation();
-
-    const canceledNotExpired = (cancelledAt && new Date(cancelledAt) > new Date()) || false;
 
     //@ts-ignore plan does exist on the object
     const subscriptionInterval = subscriptionData.plan.interval || subscriptionData.items.data[0].plan.interval;
@@ -168,13 +162,6 @@ const PaymentTablets = ({
                         })}
                     </span>
                 </p>
-                {!canceledNotExpired ? (
-                    <p onClick={handleCancelSubscription} className="cursor-pointer text-sm font-semibold text-red-400">
-                        {t('account.subscription.cancelSubscription')}
-                    </p>
-                ) : (
-                    <p> </p>
-                )}
             </section>
         );
     } else if (status === SubscriptionStatus.TRIAL) {
@@ -219,6 +206,36 @@ const PaymentTablets = ({
                 </p>
             </section>
         );
+    } else if (status === SubscriptionStatus.TRIAL_CANCELLED) {
+        return (
+            <section className="flex w-full flex-col items-end gap-2">
+                <section className="flex gap-3">
+                    <Tablet customStyle="bg-yellow-100 flex items-center gap-2 text-yellow-700 border-yellow-200">
+                        <CheckedCircleOutline className="h-4 w-4 text-yellow-700" />
+                        {t('account.subscription.freeTrial')}
+                    </Tablet>
+                    <Tablet customStyle="bg-orange-100 flex items-center gap-2 text-orange-700 border-orange-200">
+                        <Hourglass className="h-4 w-4 text-orange-700" />
+                        <span>{t('account.planSection.cancelsOn')}: </span>
+                        <span>
+                            {new Date(cancelledAt as Date).toLocaleDateString(i18n.language, {
+                                month: 'short',
+                                day: 'numeric',
+                            })}
+                        </span>
+                    </Tablet>
+                </section>
+                <p className="whitespace-nowrap">
+                    <span className="font-semibold">{t('account.planSection.trialEnds')}: </span>
+                    <span>
+                        {new Date(cancelledAt as Date).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                        })}
+                    </span>
+                </p>
+            </section>
+        );
     }
     return (
         <section className="flex w-full flex-col items-end gap-2">
@@ -230,9 +247,9 @@ const PaymentTablets = ({
 };
 
 export const SubscriptionDetails = () => {
-    const { subscription, product, resumeSubscription, refreshSubscription } = useSubscription();
+    const router = useRouter();
+    const { subscription, product, resumeSubscription, refreshSubscription, defaultPaymentMethod } = useSubscription();
     const { balance, loading: balanceLoading } = useBalance();
-
     const { company, refreshCompany } = useCompany();
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
@@ -287,6 +304,14 @@ export const SubscriptionDetails = () => {
             });
     };
 
+    const onUpgrdeSubscription = () => {
+        if (!defaultPaymentMethod) {
+            router.push('/payments/details');
+        } else {
+            router.push('/upgrade');
+        }
+    };
+
     const canceledOrLoading = subscription?.status === SubscriptionStatus.CANCELLED || balanceLoading;
     const usagesSearch = canceledOrLoading ? 0 : usages.search.limit - balance.search;
     const usagesProfiles = canceledOrLoading ? 0 : usages.profile.limit - balance.profile;
@@ -311,7 +336,7 @@ export const SubscriptionDetails = () => {
                         {company && subscription ? (
                             <>
                                 <section className="flex text-sm">
-                                    <div className="flex w-full flex-col items-start justify-between">
+                                    <div className="flex flex-col items-start justify-between">
                                         <h2 className="text-4xl font-semibold text-gray-900">
                                             {product ? (
                                                 <span>{t(`account.plans.${product?.name.toLowerCase()}`)}</span>
@@ -323,10 +348,7 @@ export const SubscriptionDetails = () => {
                                             {t(`account.planDescriptions.${product?.name.toLowerCase()}`)}
                                         </h2>
                                     </div>
-                                    <PaymentTablets
-                                        subscription={subscription}
-                                        handleCancelSubscription={handleCancelSubscription}
-                                    />
+                                    <PaymentTablets subscription={subscription} />
                                 </section>
 
                                 <section className="flex flex-col gap-6" id="account-search-and-report">
@@ -403,28 +425,36 @@ export const SubscriptionDetails = () => {
                             </>
                         )}
                     </div>
-                    {isAboutToCanceled() ? (
-                        <Button
-                            className="mt-11 bg-accent-500 font-semibold text-white hover:bg-accent-300"
-                            onClick={() => onResumeSubscription()}
-                        >
-                            <Rocket className="mr-2 h-4 w-4 text-white" />
-                            {t('account.subscription.resumeSubscription')}
-                        </Button>
-                    ) : (
-                        <Link className="mt-11" href="/upgrade">
+                    <div className="mt-11 flex space-x-3">
+                        {(isAboutToCanceled() || subscription?.status === SubscriptionStatus.TRIAL_CANCELLED) && (
                             <Button
-                                className="w-full bg-accent-500 font-semibold text-white hover:bg-accent-300"
-                                onClick={() =>
-                                    // @note previous name: Account, Subscription, click upgrade subscription and go to pricing page
-                                    trackEvent('Start Upgrade Subscription')
-                                }
+                                className="bg-accent-500 font-semibold text-white hover:bg-accent-300"
+                                onClick={() => onResumeSubscription()}
                             >
                                 <Rocket className="mr-2 h-4 w-4 text-white" />
-                                {t('account.subscription.upgradeSubscription')}
+                                {t('account.subscription.resumeSubscription')}
                             </Button>
-                        </Link>
-                    )}
+                        )}
+                        {[SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIAL].includes(
+                            subscription?.status as SubscriptionStatus,
+                        ) &&
+                            !isAboutToCanceled() && (
+                                <Link className="" href="javascript:void(0)" onClick={() => handleCancelSubscription()}>
+                                    <Button className="w-full bg-white font-semibold text-black hover:bg-white">
+                                        <Rejected className="mr-2 h-4 w-4 stroke-black" />
+                                        {t('account.subscription.cancelSubscription')}
+                                    </Button>
+                                </Link>
+                            )}
+                        {!isAboutToCanceled() && subscription?.status !== SubscriptionStatus.TRIAL_CANCELLED && (
+                            <Link className="" href="javascript:void(0)" onClick={() => onUpgrdeSubscription()}>
+                                <Button className="w-full bg-accent-500 font-semibold text-white hover:bg-accent-300">
+                                    <Rocket className="mr-2 h-4 w-4 text-white" />
+                                    {t('account.subscription.upgradeSubscription')}
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
                 </section>
             </section>
         </section>

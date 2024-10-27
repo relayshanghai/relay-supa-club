@@ -27,7 +27,9 @@ export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => 
     );
 
     const limits = company
-        ? subscription?.status == SubscriptionStatus.TRIAL
+        ? [SubscriptionStatus.TRIAL, SubscriptionStatus.TRIAL_CANCELLED, SubscriptionStatus.TRIAL_EXPIRED].includes(
+              subscription?.status as SubscriptionStatus,
+          )
             ? {
                   profile: Number(trial_profiles_limit),
                   search: Number(trial_searches_limit),
