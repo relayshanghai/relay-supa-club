@@ -43,7 +43,7 @@ const LoginPage = () => {
         try {
             setLoggingIn(true);
             await login(email, password).then((data) => {
-                const { user } = data;
+                const { user, hasDefaultPaymentMethod } = data;
 
                 // @note if for some reason we cannot get the user after logging in
                 if (!user) {
@@ -52,6 +52,10 @@ const LoginPage = () => {
                 }
 
                 toast.success(t('login.loginSuccess'));
+                if (!hasDefaultPaymentMethod) {
+                    router.push('/payments/details');
+                    return;
+                }
                 router.push('/boostbot');
             });
         } catch (error: any) {

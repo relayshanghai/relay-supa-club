@@ -523,6 +523,12 @@ export default class SubscriptionV2Service {
                 cancel_at_period_end: true,
             },
         );
+
+        // only to make the trialing status to be active if it is want to be cancelled
+        let activeAt = subscription.activeAt;
+        if (stripeSubscription.status === 'trialing' && !subscription.activeAt) {
+            activeAt = new Date((stripeSubscription?.trial_start || 0) * 1000);
+        }
         await SubscriptionRepository.getRepository().update(
             {
                 id: subscription.id,
@@ -530,6 +536,7 @@ export default class SubscriptionV2Service {
             {
                 subscriptionData: updatedSubscription,
                 cancelledAt: new Date(stripeSubscription.current_period_end * 1000),
+                activeAt,
             },
         );
     }
@@ -578,6 +585,14 @@ export default class SubscriptionV2Service {
             },
         );
 
+        let activeAt = subscription.activeAt;
+        let cancelledAt = subscription.cancelledAt;
+        if (subscription.status === SubscriptionStatus.TRIAL_CANCELLED) {
+            activeAt = null;
+        } else {
+            cancelledAt = null;
+        }
+
         await Promise.all([
             SubscriptionRepository.getRepository().update(
                 {
@@ -585,7 +600,8 @@ export default class SubscriptionV2Service {
                 },
                 {
                     subscriptionData: updatedSubscription,
-                    cancelledAt: null,
+                    cancelledAt,
+                    activeAt,
                 },
             ),
             SequenceInfluencerRepository.getRepository().update(

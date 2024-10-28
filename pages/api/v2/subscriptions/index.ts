@@ -29,7 +29,7 @@ class SubscriptionHandler {
     @GET()
     @Status(httpCodes.OK)
     async getSubscriptions() {
-        return await SubscriptionV2Service.getService().getSubscription();
+        return SubscriptionV2Service.getService().getSubscription();
     }
 
     @PATCH()
