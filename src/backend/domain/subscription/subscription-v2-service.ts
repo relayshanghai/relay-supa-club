@@ -523,8 +523,11 @@ export default class SubscriptionV2Service {
                 cancel_at_period_end: true,
             },
         );
-
-        // only to make the trialing status to be active if it is want to be cancelled
+        /**
+         * only to make the trialing status to be active if it is want to be cancelled
+         *
+         * @note this logic refers to docs/paywall.md
+         */
         let activeAt = subscription.activeAt;
         if (stripeSubscription.status === 'trialing' && !subscription.activeAt) {
             activeAt = new Date((stripeSubscription?.trial_start || 0) * 1000);
@@ -585,6 +588,9 @@ export default class SubscriptionV2Service {
             },
         );
 
+        /**
+         * @note this logic refers to docs/paywall.md
+         */
         let activeAt = subscription.activeAt;
         let cancelledAt = subscription.cancelledAt;
         if (subscription.status === SubscriptionStatus.TRIAL_CANCELLED) {
