@@ -95,6 +95,9 @@ export class SubscriptionEntity<T = any> {
             currentTime < cancelledAt &&
             dayDifference < +trial_days
         ) {
+            /**
+             * @note this logic refers to docs/paywall.md
+             */
             s = SubscriptionStatus.TRIAL_CANCELLED;
         }
         this.status = s;
