@@ -77,7 +77,7 @@ export class SubscriptionEntity<T = any> {
         const pausedAt = this.pausedAt as Date;
         // count day difference between cancelledAt to today date
         const { trial_days } = DISCOVERY_PLAN;
-        const dayDifference = dayjs(currentTime).diff(dayjs(cancelledAt), 'day');
+        const isTrialSubscription = dayjs(activeAt).diff(dayjs(cancelledAt), 'day') <= +trial_days;
 
         if (activeAt === null && currentTime < cancelledAt) {
             s = SubscriptionStatus.TRIAL;
@@ -89,12 +89,7 @@ export class SubscriptionEntity<T = any> {
             s = SubscriptionStatus.CANCELLED;
         } else if (activeAt !== null && currentTime < pausedAt) {
             s = SubscriptionStatus.ACTIVE;
-        } else if (
-            activeAt !== null &&
-            cancelledAt !== null &&
-            currentTime < cancelledAt &&
-            dayDifference < +trial_days
-        ) {
+        } else if (activeAt !== null && cancelledAt !== null && currentTime < cancelledAt && isTrialSubscription) {
             /**
              * @note this logic refers to docs/paywall.md
              */

@@ -12,8 +12,8 @@ But, currently we use this logic to achieve that:
 const cancelledAt = new Date(new Date().getTime()+(5 * 24 * 60 * 60 * 1000)) // 5 days ahead
 const currentTime = new Date();
 const { trial_days } = { 5 };
-const dayDifference = dayjs(currentTime).diff(dayjs(cancelledAt), 'day');
-const trialCancelled = activeAt !== null && cancelledAt !== null && currentTime < cancelledAt && dayDifference < +trial_days
+const isTrialSubscription = dayjs(activeAt).diff(dayjs(cancelledAt), 'day') <= +trial_days;
+const trialCancelled = activeAt !== null && cancelledAt !== null && currentTime < cancelledAt && isTrialSubscription
 ```
 
 You can find this code on `src/backend/database/subcription/subscription-entity.ts`
