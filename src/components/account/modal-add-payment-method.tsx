@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, DialogContent } from 'shadcn/components/ui/dialog'
 import { Elements as StripeElementsProvider } from '@stripe/react-stripe-js';
 import { type StripeElementsOptions, loadStripe } from '@stripe/stripe-js';
 import i18n from 'i18n';
-import CheckoutForm from './payment-method-checkout-form';
+import { CheckoutForm } from './payment-method-checkout-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 

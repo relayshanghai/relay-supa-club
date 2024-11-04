@@ -82,6 +82,14 @@ export default class SubscriptionV2Service {
         if (attachPaymentMethodErr) {
             throw new UnprocessableEntityError('entity is unprocessable', attachPaymentMethodErr);
         }
+        if (request.isDefault) {
+            const [setDefaultPaymentMethodErr] = await awaitToError(
+                StripeService.getService().updateDefaultPaymentMethod(cusId, request.paymentMethodId),
+            );
+            if (setDefaultPaymentMethodErr) {
+                throw new UnprocessableEntityError('entity is unprocessable', setDefaultPaymentMethodErr);
+            }
+        }
 
         return setupIntent;
     }
@@ -515,6 +523,15 @@ export default class SubscriptionV2Service {
                 cancel_at_period_end: true,
             },
         );
+        /**
+         * only to make the trialing status to be active if it is want to be cancelled
+         *
+         * @note this logic refers to docs/paywall.md
+         */
+        let activeAt = subscription.activeAt;
+        if (stripeSubscription.status === 'trialing' && !subscription.activeAt) {
+            activeAt = new Date((stripeSubscription?.trial_start || 0) * 1000);
+        }
         await SubscriptionRepository.getRepository().update(
             {
                 id: subscription.id,
@@ -522,6 +539,7 @@ export default class SubscriptionV2Service {
             {
                 subscriptionData: updatedSubscription,
                 cancelledAt: new Date(stripeSubscription.current_period_end * 1000),
+                activeAt,
             },
         );
     }
@@ -570,6 +588,17 @@ export default class SubscriptionV2Service {
             },
         );
 
+        /**
+         * @note this logic refers to docs/paywall.md
+         */
+        let activeAt = subscription.activeAt;
+        let cancelledAt = subscription.cancelledAt;
+        if (subscription.status === SubscriptionStatus.TRIAL_CANCELLED) {
+            activeAt = null;
+        } else {
+            cancelledAt = null;
+        }
+
         await Promise.all([
             SubscriptionRepository.getRepository().update(
                 {
@@ -577,7 +606,8 @@ export default class SubscriptionV2Service {
                 },
                 {
                     subscriptionData: updatedSubscription,
-                    cancelledAt: null,
+                    cancelledAt,
+                    activeAt,
                 },
             ),
             SequenceInfluencerRepository.getRepository().update(

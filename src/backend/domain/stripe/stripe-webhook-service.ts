@@ -233,10 +233,26 @@ export class StripeWebhookService {
         }
         switch (eventSubscription.status) {
             case 'active':
+                if (!previousAttributes?.cancellation_details) {
+                    /**
+                     * only store the subscription if the update is not from cancellation
+                     *
+                     * if the subscription activated from trial automatically or from payment,
+                     * we need to store the subscription to the database.
+                     *
+                     * @note this logic refers to docs/paywall.md
+                     */
+                    await SubscriptionV2Service.getService().storeSubscription({
+                        companyId: company.id,
+                        cusId: data?.object.customer as string,
+                        request: {
+                            subscriptionId: data?.object.id,
+                        },
+                    });
+                }
             case 'canceled':
             case 'past_due':
             case 'paused':
-            case 'trialing':
                 await SubscriptionRepository.getRepository().update(
                     {
                         company,
@@ -248,6 +264,29 @@ export class StripeWebhookService {
                         pausedAt: eventSubscription.current_period_end
                             ? new Date(eventSubscription.current_period_end * 1000)
                             : null,
+                    },
+                );
+                break;
+            case 'trialing':
+                /**
+                 * @note this logic refers to docs/paywall.md
+                 */
+                const currSubscription = await SubscriptionRepository.getRepository().findOne({
+                    where: {
+                        company: {
+                            cusId: data?.object.customer as string,
+                        },
+                    },
+                });
+                activeAt = currSubscription?.activeAt;
+                await SubscriptionRepository.getRepository().update(
+                    {
+                        company,
+                    },
+                    {
+                        interval,
+                        activeAt,
+                        cancelledAt,
                     },
                 );
                 break;

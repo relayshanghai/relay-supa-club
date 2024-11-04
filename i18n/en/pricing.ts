@@ -17,7 +17,6 @@ const pricing = {
     checkOutOur: 'Check out our ',
     blog: 'blog',
     andLearnHowToGetTheMost: ' and learn how to get the most value out of your subscription.',
-
     upTo_amount_Searches: '{{amount}} Influencer Searches',
     amount_InfluencerAudienceReports: '{{amount}} Influencer Audience Reports',
     campaignManagementTool: 'Campaign Management Tool',
@@ -79,6 +78,10 @@ const pricing = {
     noPaymentMethodFound: 'No payment method found. Please add a payment method.',
     noDefaultPaymentMethodFound: 'No default payment method found. Please select a default payment method.',
     pressApplyCouponButton: "Don't forget to press Apply Button",
+    submitPaymentDetails: 'Submit Payment Details',
+    trialExplanationTitle: 'Enjoy a 5-day free trial with BoostBot—no charge!',
+    trialExplanation:
+        'Feel free to cancel anytime during the trial at no cost. If you choose to continue with us after your trial, your card will automatically be charged for the next month. Dive in and start finding creators with BoostBot!',
 };
 
 export default pricing;

@@ -17,7 +17,6 @@ const pricing = {
     checkOutOur: '查看我们的',
     blog: '博客',
     andLearnHowToGetTheMost: '，了解如何从您的订阅中获得最大价值。',
-
     upTo_amount_Searches: '{{amount}}次KOL搜索',
     amount_InfluencerAudienceReports: '{{amount}}次KOL受众报告',
     campaignManagementTool: '项目管理工具',
@@ -79,6 +78,10 @@ const pricing = {
     noPaymentMethodFound: '未找到付款方式。请添加一种付款方式。',
     noDefaultPaymentMethodFound: '未找到默认付款方式。请选择一种默认付款方式。',
     pressApplyCouponButton: '别忘了按应用按钮',
+    submitPaymentDetails: '提交付款详情',
+    trialExplanationTitle: '享受雷宝的5天免费试用期 — 无需支付任何费用！',
+    trialExplanation:
+        '在试用期间，您可以随时取消，不会产生任何费用。如果试用期后您选择继续使用，我们将自动从您的卡上扣除下个月的费用。快来开始找合适的北美KOL!',
 };
 
 export default pricing;

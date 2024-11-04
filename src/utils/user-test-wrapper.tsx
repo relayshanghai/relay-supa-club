@@ -15,6 +15,7 @@ const mockUserContext: IUserContext = {
     login: async () => ({
         user: null,
         session: null,
+        hasDefaultPaymentMethod: false,
     }),
     signup: async () => mockCompany,
     logout: () => null,
