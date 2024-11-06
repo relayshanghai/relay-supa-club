@@ -5,6 +5,8 @@ import { loadStripe, type StripeElementsOptions } from '@stripe/stripe-js';
 import i18n from 'i18n';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
+import { useCompany } from 'src/hooks/use-company';
+import { useEffect, useState } from 'react';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -12,6 +14,8 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 export const PaymentMethodForm = () => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { company } = useCompany();
+    const [paymentMethods, setPaymentMethods] = useState(['card']);
     const cardOptions: StripeElementsOptions = {
         mode: 'setup',
         paymentMethodCreation: 'manual',
@@ -22,8 +26,14 @@ export const PaymentMethodForm = () => {
             },
         },
         locale: i18n.language?.includes('en') ? 'en' : 'zh',
-        payment_method_types: ['card', 'alipay'],
+        payment_method_types: paymentMethods,
     };
+
+    useEffect(() => {
+        if (company?.currency === 'cny') {
+            setPaymentMethods(['card', 'alipay']);
+        }
+    }, [company?.currency, paymentMethods]);
 
     return (
         <>
