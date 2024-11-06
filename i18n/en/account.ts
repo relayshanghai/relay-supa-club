@@ -37,7 +37,7 @@ const account = {
         renewsOn: 'Renews on',
         expirationDate: 'Expiration Date',
         subscriptionStatus: 'Subscription Status',
-        pausedMessage: `Your trial has expired. Please update your account to continue using BoostBot.`,
+        pausedMessage: `Your access period has ended. Please upgrade your account or subscribe to continue using BoostBot.`,
         canceledMessage: `Your subscription is canceled. Your account will remain active until {{expirationDate}}.`,
         paymentCycle: 'Payment cycle',
         usageLimits: 'Usage limits',

@@ -6,8 +6,8 @@ const banner = {
         descriptionSequences: 'Sending sequence emails is only available for Outreach Plan accounts.',
     },
     expired: {
-        title: 'Your free trial has expired.',
-        description: 'Please upgrade your account to use this feature.',
+        title: 'Your access period has ended.',
+        description: 'Please upgrade your account or subscribe to use this feature.',
     },
     sequencePageSlow: {
         title: "We're currently addressing influencer data not loading on this page",

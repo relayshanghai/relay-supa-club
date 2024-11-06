@@ -6,8 +6,8 @@ const banner = {
         descriptionSequences: '邮件进程管理目前仅拓展方案客户可以使用',
     },
     expired: {
-        title: '你的免费试用已到期。',
-        description: '你可在升级帐户后继续使用此功能。',
+        title: '您的访问期限已结束。',
+        description: '请升级您的账户或订阅以使用此功能。',
     },
     sequencePageSlow: {
         title: '我们目前正在修复此页面上的红人数据加载问题。',
