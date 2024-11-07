@@ -49,7 +49,7 @@ export const EmailTemplatePreview = ({
     return (
         <>
             <ConfirmModal
-                deleteHandler={() => deleteHandler()}
+                positiveHandler={() => deleteHandler()}
                 setShow={(show) => setOpenConfirmModal(show)}
                 show={openConfirmModal}
                 cancelHandler={() => setModalOpen(true)}

@@ -28,7 +28,7 @@ export function VariableTable({ items, loading }: Readonly<VariableTableProps>) 
     return (
         <>
             <ConfirmModal
-                deleteHandler={() => handleDeleteVariable()}
+                positiveHandler={() => handleDeleteVariable()}
                 setShow={(show) => setOpenConfirmModal(show)}
                 show={openConfirmModal}
             />

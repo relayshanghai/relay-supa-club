@@ -18,6 +18,7 @@ import { useUser } from 'src/hooks/use-user';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import { AxiosError } from 'axios';
 import { useLocalStorage } from 'src/hooks/use-localstorage';
+import { ConfirmModal } from 'app/components/confirmation/confirm-modal';
 export interface SignUpValidationErrors {
     firstName: string;
     lastName: string;
@@ -60,7 +61,7 @@ const initialSignUpData = {
     email: '',
     password: '',
     confirmPassword: '',
-    phoneNumber: '+1',
+    phoneNumber: '+86',
     companyName: '',
     companyWebsite: '',
 };
@@ -73,8 +74,7 @@ const SignUpPage = ({
     setCurrentStep: (step: number) => void;
     selectedPriceId: string;
 }) => {
-    const { t, i18n } = useTranslation();
-    const en = i18n.language?.includes('en');
+    const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
     const { login, logout, signup } = useUser();
@@ -151,10 +151,8 @@ const SignUpPage = ({
             setSignUpData({ ...signUpData, companyWebsite: '' });
         },
     };
-    const [currency, setCurrency] = useState(!en ? 'cny' : 'usd');
-    useEffect(() => {
-        setCurrency(!en ? 'cny' : 'usd');
-    }, [en]);
+    const [currency, setCurrency] = useState('cny');
+    const [confirmCurrencyModalOpen, setConfirmCurrencyModalOpen] = useState(false);
     const [rewardfulReferral, setRewardfulReferral] = useState<string>();
     const setFieldValue = useCallback(
         (type: SignupInputTypes, value: string) => {
@@ -341,6 +339,17 @@ const SignUpPage = ({
 
     return (
         <div>
+            <ConfirmModal
+                positiveHandler={() => onNext()}
+                setShow={(show) => setConfirmCurrencyModalOpen(show)}
+                show={confirmCurrencyModalOpen}
+                title={
+                    t('login.confirmCurrency', {
+                        currency: currency.toUpperCase(),
+                    }) as string
+                }
+                okButtonText={t('login.yesContinue') as string}
+            />
             {steps.map(
                 (step) =>
                     step.num === currentStep && (
@@ -377,7 +386,9 @@ const SignUpPage = ({
                                     setAndValidate={setAndValidate}
                                     validationErrors={validationErrors}
                                     loading={loading}
-                                    onNext={onNext}
+                                    onNext={() => {
+                                        setConfirmCurrencyModalOpen(true);
+                                    }}
                                 />
                             )}
                         </FormWizard>

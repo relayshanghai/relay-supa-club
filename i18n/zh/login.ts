@@ -76,5 +76,8 @@ const login = {
     emailDomainNotAllowed: '请使用真实的电子邮件地址',
     requestResetPassword: '重置密码的请求将发送至您账户附带的电子邮件地址',
     sendResetPasswordEmail: '发送重置密码的电子邮件',
+    confirmCurrency: '您已选择 {{currency}} 作为您的货币。此选择是最终的，无法更改。您确定要继续吗？',
+    yesContinue: '是的，继续',
+    usingUsd: '由于您使用的是 {{currency}}，可用的支付方式仅限于信用卡。',
 };
 export default login;

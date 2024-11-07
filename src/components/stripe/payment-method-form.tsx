@@ -33,7 +33,7 @@ export const PaymentMethodForm = () => {
         if (company?.currency === 'cny') {
             setPaymentMethods(['card', 'alipay']);
         }
-    }, [company?.currency, paymentMethods]);
+    }, [company?.currency]);
 
     return (
         <>

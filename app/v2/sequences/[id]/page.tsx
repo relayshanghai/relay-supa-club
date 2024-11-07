@@ -160,7 +160,7 @@ export default function SequenceDetailPage({ params: { id } }: Readonly<Sequence
             />
             <ListVariableModal modalOpen={showVariableModal} setModalOpen={(open) => setShowVariableModal(open)} />
             <ConfirmModal
-                deleteHandler={() => handleDeleteInfluencer()}
+                positiveHandler={() => handleDeleteInfluencer()}
                 setShow={(show) => setOpenConfirmModal(show)}
                 show={openConfirmModal}
             />

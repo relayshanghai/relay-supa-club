@@ -4,7 +4,7 @@ import type { FC } from 'react';
 type ConfirmModalProps = {
     show: boolean;
     setShow: (show: boolean) => void;
-    deleteHandler: () => void;
+    positiveHandler: () => void;
     cancelHandler?: () => void;
     title?: string;
     description?: string;
@@ -15,7 +15,7 @@ type ConfirmModalProps = {
 export const ConfirmModal: FC<ConfirmModalProps> = ({
     show,
     setShow,
-    deleteHandler,
+    positiveHandler,
     cancelHandler,
     title,
     description,
@@ -34,7 +34,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
             okButtonText={okButtonText ?? 'Yes, Delete them'}
             onOkay={() => {
                 setShow(false);
-                deleteHandler();
+                positiveHandler();
             }}
         >
             <p className="mb-6 mt-4">{description}</p>
