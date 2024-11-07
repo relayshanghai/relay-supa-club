@@ -9,7 +9,7 @@ export const PaymentMethodPage = () => {
     const { company } = useCompany();
     const [confirmCurrencyModalOpen, setConfirmCurrencyModalOpen] = useState(false);
     useEffect(() => {
-        if (company?.currency.toUpperCase() === 'USD') {
+        if (company?.currency.toUpperCase() == 'USD') {
             setConfirmCurrencyModalOpen(true);
         }
     }, [company?.currency]);
