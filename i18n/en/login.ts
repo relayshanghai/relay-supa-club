@@ -81,6 +81,10 @@ const login = {
     sendResetPasswordEmail: 'Send reset password email',
     confirmCurrency:
         'You have selected {{currency}} as your currency. This choice is final and cannot be changed later. Do you wish to proceed?',
+    confirmCNYCurrency:
+        'You have selected RMB as the default currency, which cannot be changed after selection. Are you sure you want to continue?',
+    confirmUSDCurrency:
+        'You have selected USD as the default currency, which cannot be changed after selection. Are you sure you want to continue?',
     yesContinue: 'Yes, continue',
     usingUsd: 'Because you are using {{currency}}, available payment methods are limited to credit cards only.',
 };

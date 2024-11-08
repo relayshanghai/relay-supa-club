@@ -19,11 +19,7 @@ export const PaymentMethodPage = () => {
                 positiveHandler={() => setConfirmCurrencyModalOpen(false)}
                 setShow={(show) => setConfirmCurrencyModalOpen(show)}
                 show={confirmCurrencyModalOpen}
-                title={
-                    t('login.usingUsd', {
-                        currency: company?.currency.toUpperCase() || 'USD',
-                    }) as string
-                }
+                title={t('login.usingUsd') as string}
                 okButtonText={t('login.yesContinue') as string}
             />
             <div className="flex w-80 flex-col lg:w-[28rem]">

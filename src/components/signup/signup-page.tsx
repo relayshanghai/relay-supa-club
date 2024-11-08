@@ -343,12 +343,9 @@ const SignUpPage = ({
                 positiveHandler={() => onNext()}
                 setShow={(show) => setConfirmCurrencyModalOpen(show)}
                 show={confirmCurrencyModalOpen}
-                title={
-                    t('login.confirmCurrency', {
-                        currency: currency.toUpperCase(),
-                    }) as string
-                }
+                title={t(`login.confirm${currency.toUpperCase()}Currency`) as string}
                 okButtonText={t('login.yesContinue') as string}
+                cancelButtonText={t('account.cancel') as string}
             />
             {steps.map(
                 (step) =>
