@@ -306,17 +306,20 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             <div className="flex flex-col p-6 ">
                 <div className="mb-6 flex w-full gap-6">
                     <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <Button
-                        variant="ghost"
-                        onClick={() => {
-                            setShowNeedHelp(true);
-                            track(ClickNeedHelp);
-                        }}
-                        className="ml-auto flex items-center"
-                    >
-                        {t('website.needHelp')}
-                        <Question className="ml-2 h-6 w-6" />
-                    </Button>
+                    {/* hide help button */}
+                    {false && (
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setShowNeedHelp(true);
+                                track(ClickNeedHelp);
+                            }}
+                            className="ml-auto flex items-center"
+                        >
+                            {t('website.needHelp')}
+                            <Question className="ml-2 h-6 w-6" />
+                        </Button>
+                    )}
                 </div>
                 <SequenceStats
                     totalInfluencers={influencers?.length ?? 0}

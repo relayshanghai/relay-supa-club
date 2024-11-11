@@ -6,7 +6,7 @@ const navbar = {
     performance: 'Performance',
     boostbot: 'BoostBot',
     guide: 'Guide',
-    sequences: 'CRM',
+    sequences: 'Campaigns',
     inbox: 'Inbox',
     influencerManager: 'Manager',
     report: "{{influencerName}}'s Report",
