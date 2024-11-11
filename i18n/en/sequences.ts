@@ -17,8 +17,7 @@ const sequences = {
     replyRate: 'Reply rate',
     bounceRate: 'Bounce rate',
     totalInfluencersTooltip: 'Total influencers',
-    totalInfluencersTooltipDescription:
-        'This is all influencers you have added to this sequence, including Needs attention, In sequence, and Ignored.',
+    totalInfluencersTooltipDescription: 'This is all influencers you have added to this campaign.',
     openRateTooltip: 'Open rate',
     sequenceSendTooltip: 'Sequence send',
     sequenceSendTooltipDescription: 'This will schedule to send your sequence emails for this influencer.',

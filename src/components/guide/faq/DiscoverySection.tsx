@@ -8,8 +8,8 @@ const enQuestions: FAQAccordionType[] = [
         children: (
             <>
                 <ul>
-                    <li>1,200 searches (roughly 9000 creator search results), </li>
-                    <li>600 detailed reports each month*</li>
+                    <li>2,400 searches (roughly 9000 creator search results), </li>
+                    <li>1,200 detailed reports each month*</li>
                 </ul>
                 <b>
                     *Reports are also consumed when adding a creator to your sequences, because we use that data to get
@@ -37,26 +37,26 @@ const enQuestions: FAQAccordionType[] = [
             </>
         ),
     },
-    {
-        id: '3',
-        title: 'Do I have access to the Outreach CRM tools?',
-        children: (
-            <>
-                <p>
-                    Yes, but you don’t have the ability to send out emails. In the CRM section, you can still create
-                    “sequences” to group the creators you’ve selected in BoostBot AI Search or Classic Search.{' '}
-                </p>
+    // {
+    //     id: '3',
+    //     title: 'Do I have access to the Outreach CRM tools?',
+    //     children: (
+    //         <>
+    //             <p>
+    //                 Yes, but you don’t have the ability to send out emails. In the CRM section, you can still create
+    //                 “sequences” to group the creators you’ve selected in BoostBot AI Search or Classic Search.{' '}
+    //             </p>
 
-                <p>
-                    The CRM “sequences” is where you can easily access the creator’s email address if the creator’s
-                    detailed analysis report includes an email address. From here you can easily copy paste into your
-                    own email system to email the influencers.{' '}
-                </p>
+    //             <p>
+    //                 The CRM “sequences” is where you can easily access the creator’s email address if the creator’s
+    //                 detailed analysis report includes an email address. From here you can easily copy paste into your
+    //                 own email system to email the influencers.{' '}
+    //             </p>
 
-                <p>You can upgrade to Outreach if if you’d like to experience full access to the CRM.</p>
-            </>
-        ),
-    },
+    //             <p>You can upgrade to Outreach if if you’d like to experience full access to the CRM.</p>
+    //         </>
+    //     ),
+    // },
 ];
 const cnQuestions: FAQAccordionType[] = [
     {
@@ -90,24 +90,24 @@ const cnQuestions: FAQAccordionType[] = [
             </>
         ),
     },
-    {
-        id: '3',
-        title: '我可以使用外联CRM工具吗？',
-        children: (
-            <>
-                <p>
-                    可以的，虽然在此方案您暂未解锁我们平台上收发电子邮件的功能，您仍可创建“CRM邮件管理进程的序列”将您在雷宝
-                    AI搜索或传统搜索中所选择的KOL进行分组。
-                </p>
+    // {
+    //     id: '3',
+    //     title: '我可以使用外联CRM工具吗？',
+    //     children: (
+    //         <>
+    //             <p>
+    //                 可以的，虽然在此方案您暂未解锁我们平台上收发电子邮件的功能，您仍可创建“CRM邮件管理进程的序列”将您在雷宝
+    //                 AI搜索或传统搜索中所选择的KOL进行分组。
+    //             </p>
 
-                <p>
-                    如果KOL的详细分析报告包含了他们电子邮件地址，您即可在此处轻松获得，并复制粘贴到您的电子邮件系统向网红发送电子邮件。
-                </p>
+    //             <p>
+    //                 如果KOL的详细分析报告包含了他们电子邮件地址，您即可在此处轻松获得，并复制粘贴到您的电子邮件系统向网红发送电子邮件。
+    //             </p>
 
-                <p>如果您希望体验外联试用套餐中完整的CRM功能，可以随时升级套餐。</p>
-            </>
-        ),
-    },
+    //             <p>如果您希望体验外联试用套餐中完整的CRM功能，可以随时升级套餐。</p>
+    //         </>
+    //     ),
+    // },
 ];
 
 const questions: { en: FAQAccordionType[]; cn: FAQAccordionType[] } = {
