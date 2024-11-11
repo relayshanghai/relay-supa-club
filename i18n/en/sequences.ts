@@ -1,5 +1,5 @@
 const sequences = {
-    campaign: 'Campaign',
+    campaigns: 'Campaigns',
     sequences: 'Sequences',
     subtitle: 'List of influencers grouped by your campaigns.',
     updateTemplateVariables: 'View sequence templates',

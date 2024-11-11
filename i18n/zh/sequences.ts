@@ -1,5 +1,5 @@
 const sequences = {
-    campaign: '活动',
+    campaigns: '项目',
     sequences: '邮件进程管理',
     subtitle: '按活动分组的影响者列表。',
     updateTemplateVariables: '查看邮件进程模版',
