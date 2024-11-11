@@ -6,7 +6,7 @@ const navbar = {
     performance: '数据中心',
     boostbot: '雷宝搜索',
     guide: '指南',
-    sequences: 'CRM',
+    sequences: '活动',
     inbox: '收件箱',
     influencerManager: 'KOL管理',
     report: '{{influencerName}} 报告',

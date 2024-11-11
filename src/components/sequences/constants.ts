@@ -8,7 +8,7 @@ export const columnsNeedsAttention: SequenceColumn[] = [
     'email',
     'influencerTopics',
     'dateAdded',
-    'sequenceActions',
+    'campaignActions',
 ];
 export const columnsInSequence: SequenceColumn[] = ['name', 'lastEmailSent', 'status', 'sendTime', 'nextEmailPreview'];
 export const columnsIgnored: SequenceColumn[] = ['name', 'currentStep', 'status', 'restartSequence'];
@@ -22,7 +22,7 @@ export const sequenceColumns = (currentTab: SequenceInfluencer['funnel_status'])
         : [];
 
 export type SequenceIndexColumn = keyof (typeof sequences)['indexColumns'];
-export const sequencesIndexColumns: SequenceIndexColumn[] = ['sequence', 'influencers', 'manager', 'sequenceActions'];
+export const sequencesIndexColumns: SequenceIndexColumn[] = ['campaign', 'influencers', 'manager', 'campaignActions'];
 
 export type EmailStatus = EmailTrackingStatus | EmailDeliveryStatus | 'Ignored';
 

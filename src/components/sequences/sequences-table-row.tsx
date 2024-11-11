@@ -41,7 +41,7 @@ export const SequencesTableRow = ({
     return (
         <>
             <CreateSequenceModal
-                title={t('sequences.sequenceModalEdit') as string}
+                title={t('sequences.campaignModalEdit') as string}
                 showCreateSequenceModal={showSequenceModal}
                 setShowCreateSequenceModal={setShowSequenceModal}
                 selectedSequence={sequence}
