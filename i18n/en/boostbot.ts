@@ -44,7 +44,7 @@ Since most influencers you reach out to probably won't respond to you, you'll sa
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
-        outreachSelected: 'Add selected influencers to Sequence',
+        outreachSelected: 'Add selected influencers to Campaign',
         progress: {
             step1: 'Finding niches for your product',
             step2: 'Searching our database for relevant influencers',

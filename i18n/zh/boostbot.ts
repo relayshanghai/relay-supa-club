@@ -52,7 +52,7 @@ const boostbot = {
         sendPlaceholder: '请发送产品描述。',
         stop: '停止BoostBot搜索',
         stopped: 'Boostbot已停止搜索',
-        outreachSelected: '将已选中的网红达人添加至邮件进程管理项目',
+        outreachSelected: '将选定的影响者添加到活动中',
         progress: {
             step1: '定位您的产品至合适的细分领域',
             step2: '在数据库中浏览上亿名KOL信息中',
