@@ -86,6 +86,6 @@ const login = {
     confirmUSDCurrency:
         'You have selected USD as the default currency, which cannot be changed after selection. Are you sure you want to continue?',
     yesContinue: 'Yes, continue',
-    usingUsd: 'Because you are using {{currency}}, available payment methods are limited to credit cards only.',
+    usingUsd: 'Because you are using USD, available payment methods are limited to credit cards only.',
 };
 export default login;
