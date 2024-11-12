@@ -77,11 +77,16 @@ export class SubscriptionEntity<T = any> {
         const pausedAt = this.pausedAt as Date;
         // count day difference between cancelledAt to today date
         const { trial_days } = DISCOVERY_PLAN;
-        const isTrialSubscription = dayjs(activeAt).diff(dayjs(cancelledAt), 'day') <= +trial_days;
+        const isTrialSubscription =
+            dayjs(activeAt).diff(dayjs(cancelledAt), 'day') <= +trial_days ||
+            dayjs(activeAt).diff(dayjs(pausedAt), 'day') <= +trial_days;
 
         if (activeAt === null && currentTime < cancelledAt) {
             s = SubscriptionStatus.TRIAL;
-        } else if (activeAt === null && currentTime > cancelledAt) {
+        } else if (
+            (activeAt === null && currentTime > cancelledAt) ||
+            (activeAt !== null && currentTime > pausedAt && isTrialSubscription)
+        ) {
             s = SubscriptionStatus.TRIAL_EXPIRED;
         } else if (activeAt !== null && pausedAt !== null && currentTime >= pausedAt && cancelledAt === null) {
             s = SubscriptionStatus.PASS_DUE;
