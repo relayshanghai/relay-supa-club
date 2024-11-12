@@ -130,17 +130,17 @@ export const CreateSequenceModal = ({
     return (
         <Modal title={title} visible={showCreateSequenceModal} onClose={() => setShowCreateSequenceModal(false)}>
             <div className="space-y-4 py-6">
-                <div className="font-semibold text-gray-600">{t('sequences.sequenceInfo')}</div>
+                <div className="font-semibold text-gray-600">{t('sequences.campaignInfo')}</div>
                 <div>
                     <div className="py-2 text-xs font-semibold text-gray-500">
-                        {t('sequences.sequenceName')}
+                        {t('sequences.campaignName')}
                         {' *'}
                     </div>
                     <input
                         type="text"
                         required
                         className="w-full rounded-md border border-gray-200 shadow-sm placeholder:font-medium placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                        placeholder={t('sequences.sequenceNamePlaceholder') as string}
+                        placeholder={t('sequences.campaignNamePlaceholder') as string}
                         onChange={(e) => setSequenceName(e.target.value)}
                         value={sequenceName}
                     />
@@ -155,7 +155,7 @@ export const CreateSequenceModal = ({
                         </Button>
                     ) : (
                         <Button onClick={submitHandler} type="submit">
-                            {t('sequences.createNewSequence')}
+                            {t('sequences.createNewCampaign')}
                         </Button>
                     )}
                 </div>

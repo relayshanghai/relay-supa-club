@@ -216,12 +216,12 @@ export const StepThree = ({
                 label={t('signup.currency')}
                 options={[
                     {
-                        value: 'usd',
-                        label: 'USD',
-                    },
-                    {
                         value: 'cny',
                         label: 'RMB',
+                    },
+                    {
+                        value: 'usd',
+                        label: 'USD',
                     },
                 ]}
             />

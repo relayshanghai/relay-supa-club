@@ -1,7 +1,6 @@
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { SequencePage } from './sequence-page';
-import faq from 'i18n/en/faq';
 import { rest } from 'msw';
 import mockInfluencers from 'src/mocks/api/sequence/influencers/sequence-influencers-1';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
@@ -44,16 +43,16 @@ describe('<SequencePage />', () => {
         cy.contains('h1', "Joe's BoostBot Sequence");
         cy.contains('tr', 'Mario | Marketing & Motivation'); // Shows a sequence influencer
     });
-    it('opens up FAQ when clicking "Need help?"', () => {
-        testMount(
-            <StoreProvider>
-                <SequencePage {...props} />
-            </StoreProvider>,
-        );
-        cy.contains('Need help?').click();
-        cy.contains(faq.sequences[0].title);
-        cy.contains(faq.sequencesGetMoreInfo);
-    });
+    // it('opens up FAQ when clicking "Need help?"', () => {
+    //     testMount(
+    //         <StoreProvider>
+    //             <SequencePage {...props} />
+    //         </StoreProvider>,
+    //     );
+    //     cy.contains('Need help?').click();
+    //     cy.contains(faq.sequences[0].title);
+    //     cy.contains(faq.sequencesGetMoreInfo);
+    // });
     // it('shows invalid modal', () => {
     //     testMount(
     //         <StoreProvider>

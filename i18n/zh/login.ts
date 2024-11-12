@@ -76,5 +76,10 @@ const login = {
     emailDomainNotAllowed: '请使用真实的电子邮件地址',
     requestResetPassword: '重置密码的请求将发送至您账户附带的电子邮件地址',
     sendResetPasswordEmail: '发送重置密码的电子邮件',
+    confirmCurrency: '您已选择 {{currency}} 作为您的货币。此选择是最终的，无法更改。您确定要继续吗？',
+    confirmCNYCurrency: '您已选定人民币为默认货币，选定后不可更改。请问是否确定继续？',
+    confirmUSDCurrency: '您已选择美元作为默认货币，选择后不可更改。您确定要继续吗？',
+    yesContinue: '是的，继续',
+    usingUsd: '由于您已选定美元作为支付货币，因此目前仅支持信用卡支付',
 };
 export default login;

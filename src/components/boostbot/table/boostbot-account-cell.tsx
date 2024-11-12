@@ -30,7 +30,7 @@ export const BoostbotAccountCell = ({ row, table }: BoostbotAccountCellProps) =>
 
     return (
         <div className="flex max-w-[240px] items-center gap-6">
-            <div className="h-12 w-12 flex-shrink-0">
+            <div className="relative h-12 w-12 flex-shrink-0">
                 {isLoading ? (
                     <div className="h-12 w-12 animate-pulse rounded-full bg-gray-300" />
                 ) : (

@@ -79,5 +79,13 @@ const login = {
     emailDomainNotAllowed: 'Please use a real email address',
     requestResetPassword: 'A request to reset you password will be sent to the email address attached to your account',
     sendResetPasswordEmail: 'Send reset password email',
+    confirmCurrency:
+        'You have selected {{currency}} as your currency. This choice is final and cannot be changed later. Do you wish to proceed?',
+    confirmCNYCurrency:
+        'You have selected RMB as the default currency, which cannot be changed after selection. Are you sure you want to continue?',
+    confirmUSDCurrency:
+        'You have selected USD as the default currency, which cannot be changed after selection. Are you sure you want to continue?',
+    yesContinue: 'Yes, continue',
+    usingUsd: 'Because you are using USD, available payment methods are limited to credit cards only.',
 };
 export default login;

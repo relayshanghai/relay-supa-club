@@ -12,7 +12,7 @@ const creators = {
     clearFilter: 'Clear',
     failedToFetchReport: 'Failed to fetch report',
     retryLaterMessage: 'We are updating this influencer report. Please try again in 10-15 minutes',
-    accountExpired: 'Your free trial has expired. Please upgrade your account to use this feature.',
+    accountExpired: 'Your access period has ended. Please upgrade your account or subscribe to use this feature.',
     subscribers: 'Followers',
     avgViews: 'Avg. Views',
     actionButtons: 'Actions',

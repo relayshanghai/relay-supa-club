@@ -101,7 +101,7 @@ export const SequencesPage = () => {
                 source="Sequences"
             />
             <CreateSequenceModal
-                title={t('sequences.sequenceModal') as string}
+                title={t('sequences.campaignModal') as string}
                 showCreateSequenceModal={showCreateSequenceModal}
                 setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
@@ -109,22 +109,25 @@ export const SequencesPage = () => {
                 <div className="flex w-full justify-between">
                     <div className="md:w-1/2">
                         <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">
-                            {t('sequences.campaign')}
+                            {t('sequences.campaigns')}
                         </h1>
                         <h2 className="mt-2 text-gray-500">{t('sequences.subtitle')}</h2>
                     </div>
                     <div>
-                        <Button
-                            variant="ghost"
-                            onClick={() => {
-                                setShowNeedHelp(true);
-                                track(ClickNeedHelp);
-                            }}
-                            className="flex items-center"
-                        >
-                            {t('website.needHelp')}
-                            <Question className="ml-2 h-6 w-6" />
-                        </Button>
+                        {/* hide button */}
+                        {false && (
+                            <Button
+                                variant="ghost"
+                                onClick={() => {
+                                    setShowNeedHelp(true);
+                                    track(ClickNeedHelp);
+                                }}
+                                className="flex items-center"
+                            >
+                                {t('website.needHelp')}
+                                <Question className="ml-2 h-6 w-6" />
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <SequenceStats
@@ -166,7 +169,7 @@ export const SequencesPage = () => {
                         id="crm-new-sequence-button"
                     >
                         <Plus className="mr-2 h-4 w-4 flex-shrink-0" />
-                        <p className="self-center">{t('sequences.newSequence')}</p>
+                        <p className="self-center">{t('sequences.newCampaign')}</p>
                     </Button>
                 </div>
 

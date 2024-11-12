@@ -37,7 +37,7 @@ const account = {
         renewsOn: '续订日期',
         expirationDate: '到期日期',
         subscriptionStatus: '订阅状态',
-        pausedMessage: `您的试用账号已到期，请更新账户方案来继续使用 BoostBot雷宝 各项功能使用权限。`,
+        pausedMessage: `您的访问期限已结束。请升级您的账户或订阅以继续使用BoostBot。`,
         canceledMessage: `您的订阅已取消，该账号将在{{expirationDate}}后失去 BoostBot 各项功能使用权限。`,
         paymentCycle: '付款周期',
         usageLimits: '使用限制',
