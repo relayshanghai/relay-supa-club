@@ -5,6 +5,7 @@ import TopUpCardSkeleton from './topup-card-skeleton';
 import { TopUpDetailsCard } from './topup-details-card';
 import { type TopUpPrices, topUpPrices, type TopUpSizes } from 'src/hooks/use-topups';
 import { useRouter } from 'next/navigation';
+import { useLocalSelectedTopupBundle } from 'src/hooks/use-topups';
 
 const currencyFormatWithComma = (num: number) => {
     return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -22,6 +23,7 @@ const PriceDetail = ({ price, currency }: { price: TopUpPrices; currency: string
 };
 
 export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
+    const [, setSelectedTopupBundle] = useLocalSelectedTopupBundle();
     const { company } = useCompany();
     const router = useRouter();
 
@@ -32,7 +34,8 @@ export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
             </div>
         );
 
-    const choseButtonClicked = () => {
+    const choseButtonClicked = (topUpSize: TopUpSizes) => {
+        setSelectedTopupBundle({ topupPrice: topUpSize });
         router.push('/checkout');
     };
 
@@ -47,7 +50,7 @@ export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
                 <PriceDetail price={topUpPrices[topUpSize]} currency={company?.currency as string} />
                 <TopUpDetailsCard topUpSize={topUpSize} />
                 <Button
-                    onClick={() => choseButtonClicked()}
+                    onClick={() => choseButtonClicked(topUpSize)}
                     loading={false}
                     className="mt-auto"
                     data-testid="upgrade-button"

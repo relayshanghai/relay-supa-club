@@ -68,6 +68,20 @@ const pricing = {
         title: 'OUTREACH',
         subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
     },
+    // topup bundle
+    small: {
+        title: 'SMALL',
+        subTitle: 'A quick boost for your profile and search credits, perfect for occasional needs.',
+    },
+    medium: {
+        title: 'MEDIUM',
+        subTitle: 'An ideal choice for regular users, offering a balanced increase in profile and search credits.',
+    },
+    large: {
+        title: 'LARGE',
+        subTitle:
+            'Maximize your potential with this package, providing ample profile and search credits for power users.',
+    },
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',
     backToAccount: 'Back to account',

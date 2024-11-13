@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, CrossIcon } from '../icons';
-import { topUpBundleDetails } from 'src/hooks/use-topups';
+import { topUpBundleDetails, type TopUpSizes } from 'src/hooks/use-topups';
 
 /** priceTier can also be 'free' */
-export const TopUpDetailsCard = ({ topUpSize }: { topUpSize: 'small' | 'medium' | 'large' }) => {
+export const TopUpBundleDetailsCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -11,9 +11,9 @@ export const TopUpDetailsCard = ({ topUpSize }: { topUpSize: 'small' | 'medium' 
                 return (
                     <div
                         key={index}
-                        className={`relative mb-2 flex flex-col text-gray-500 ${
-                            topUpSize === 'small' ? 'text-sm font-semibold' : 'text-sm font-medium'
-                        } ${index === 0 ? 'font-bold' : ''}`}
+                        className={`relative mb-2 flex flex-col text-sm font-semibold text-gray-500 ${
+                            index === 0 ? 'font-bold' : ''
+                        }`}
                     >
                         <div className="flex items-center">
                             <span
