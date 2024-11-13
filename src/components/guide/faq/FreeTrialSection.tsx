@@ -2,11 +2,11 @@ import { Accordion } from 'shadcn/components/ui/accordion';
 import { FAQAccordion, type FAQAccordionType } from './FAQAccordion';
 
 const enQuestions: FAQAccordionType[] = [
-    {
-        id: '1',
-        title: 'Do I need to add a payment method first?',
-        children: <p>No need! You can signup and start using BoostBot just by verifying your phone number.</p>,
-    },
+    // {
+    //     id: '1',
+    //     title: 'Do I need to add a payment method first?',
+    //     children: <p>No need! You can signup and start using BoostBot just by verifying your phone number.</p>,
+    // },
     {
         id: '2',
         title: 'How long is the trial? And what are the limits?',
@@ -40,11 +40,11 @@ const enQuestions: FAQAccordionType[] = [
     // },
 ];
 const cnQuestions: FAQAccordionType[] = [
-    {
-        id: '1',
-        title: '我需要先添加付款方式吗？',
-        children: <p>不需要！只需验证您的电话号码即可注册使用雷宝。</p>,
-    },
+    // {
+    //     id: '1',
+    //     title: '我需要先添加付款方式吗？',
+    //     children: <p>不需要！只需验证您的电话号码即可注册使用雷宝。</p>,
+    // },
     {
         id: '2',
         title: '免费试用期有多长？有什么限制吗？',

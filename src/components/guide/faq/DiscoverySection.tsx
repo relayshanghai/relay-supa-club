@@ -12,8 +12,8 @@ const enQuestions: FAQAccordionType[] = [
                     <li>1,200 detailed reports each month*</li>
                 </ul>
                 <b>
-                    *Reports are also consumed when adding a creator to your sequences, because we use that data to get
-                    the creators contact info. 1 creator added to sequence = 1 report opened.
+                    *Reports are also consumed when adding a creator to your campaigns, because we use that data to get
+                    the creators contact info. 1 creator added to campaign = 1 report opened.
                 </b>
             </>
         ),
@@ -44,11 +44,11 @@ const enQuestions: FAQAccordionType[] = [
     //         <>
     //             <p>
     //                 Yes, but you don’t have the ability to send out emails. In the CRM section, you can still create
-    //                 “sequences” to group the creators you’ve selected in BoostBot AI Search or Classic Search.{' '}
+    //                 “campaigns” to group the creators you’ve selected in BoostBot AI Search or Classic Search.{' '}
     //             </p>
 
     //             <p>
-    //                 The CRM “sequences” is where you can easily access the creator’s email address if the creator’s
+    //                 The CRM “campaigns” is where you can easily access the creator’s email address if the creator’s
     //                 detailed analysis report includes an email address. From here you can easily copy paste into your
     //                 own email system to email the influencers.{' '}
     //             </p>
@@ -69,8 +69,8 @@ const cnQuestions: FAQAccordionType[] = [
                     <li>并解锁600份详细报告*</li>
                 </ul>
                 <b>
-                    *将KOL加到序列时也会使用报告，因为我们使用该数据来获取KOL的联系信息。 1 个KOL添加到序列 = 1
-                    个报告打开。
+                    *在将创作者添加到您的活动中时也会消耗报告，因为我们使用这些数据来获取创作者的联系信息。1
+                    个创作者添加到活动 = 1 份报告打开
                 </b>
             </>
         ),
