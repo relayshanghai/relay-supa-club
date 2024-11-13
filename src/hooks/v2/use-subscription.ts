@@ -135,7 +135,7 @@ export const useSubscription = () => {
                 },
             ),
         );
-        if (err) return;
+        if (err) throw err;
 
         return res.data;
     };

@@ -4,6 +4,9 @@ import { Spinner } from '../icons';
 import { Button } from '../button';
 import { type PaymentMethodResponse, useSubscription } from 'src/hooks/v2/use-subscription';
 import { type DefaultTFuncReturn } from 'i18next';
+import awaitToError from 'src/utils/await-to-error';
+import { type AxiosError } from 'axios';
+import type Stripe from 'stripe';
 
 type CheckoutFormProps = {
     onCompletion: (success: boolean) => void;
@@ -50,15 +53,18 @@ export const CheckoutForm: FC<CheckoutFormProps> = ({ onCompletion, buttonText, 
             handleError(error);
             return;
         }
-        const paymentMethodSetupIntent = await addPaymentMethod({
-            paymentMethodId: paymentMethod.id,
-            paymentMethodType: paymentMethod?.type as 'card' | 'alipay',
-            isDefault: forceDefaultPaymentMethod,
-        });
+        const [errPaymentMethodSetup, paymentMethodSetupIntent] = await awaitToError<AxiosError, Stripe.SetupIntent>(
+            addPaymentMethod({
+                paymentMethodId: paymentMethod.id,
+                paymentMethodType: paymentMethod?.type as 'card' | 'alipay',
+                isDefault: forceDefaultPaymentMethod,
+            }),
+        );
 
-        if (!paymentMethodSetupIntent || !paymentMethodSetupIntent.client_secret) {
+        if (errPaymentMethodSetup || !paymentMethodSetupIntent || !paymentMethodSetupIntent.client_secret) {
+            const reason = (errPaymentMethodSetup?.response?.data as any)?.originError.raw.message;
             setIsLoading(false);
-            handleError('Failed to add payment method');
+            handleError({ message: `Failed to add payment method${reason ? `: ${reason}` : ''}` });
             return;
         }
         if (paymentMethodSetupIntent.status === 'requires_action') {
