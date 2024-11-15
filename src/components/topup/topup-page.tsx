@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LanguageToggle } from '../common/language-toggle';
 import { type TopUpSizes } from 'src/hooks/use-topups';
+import { usePlans } from 'src/hooks/use-plans';
+import { useEffect, useState } from 'react';
 
 const ImageBackground = () => {
     return (
@@ -22,6 +24,20 @@ const ImageBackground = () => {
 
 export const TopUpPage = () => {
     const { t } = useTranslation();
+    const { getPlans, plans } = usePlans();
+    const [bundles, setBundles] = useState<string[]>([]);
+
+    useEffect(() => {
+        getPlans();
+    }, []);
+
+    useEffect(() => {
+        if (plans.length) {
+            const bundles = Array.from(new Set(plans.map((plan) => plan.itemName)));
+            setBundles(bundles);
+        }
+    }, [plans]);
+
     return (
         <>
             <ImageBackground />
@@ -46,7 +62,7 @@ export const TopUpPage = () => {
                     <div
                         className={`container m-auto flex min-h-[32rem] w-full max-w-screen-xl flex-wrap justify-center`}
                     >
-                        {['small', 'medium', 'large'].map((option) => (
+                        {bundles.map((option) => (
                             <TopUpCard key={option} topUpSize={option as TopUpSizes} />
                         ))}
                     </div>

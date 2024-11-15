@@ -371,6 +371,53 @@ export default class StripeService {
         return customers.filter((customer) => (customer as any).subscriptions.data.length > 0);
     }
 
+    async createPaymentIntent({
+        priceId,
+        quantity,
+        customerId,
+    }: {
+        priceId: string;
+        quantity: number;
+        customerId: string;
+    }) {
+        const price = await this.getPrice(priceId);
+        const pi = await StripeService.client.paymentIntents.create({
+            amount: (price.unit_amount ?? 0) * quantity,
+            currency: price.currency,
+            payment_method_types: ['card', 'alipay'],
+            customer: customerId,
+        });
+        return pi;
+    }
+
+    async createCheckoutSession({
+        priceId,
+        quantity,
+        customerId,
+        paymentMethodTypes = ['card', 'alipay'],
+    }: {
+        priceId: string;
+        quantity: number;
+        customerId: string;
+        paymentMethodTypes?: Stripe.Checkout.SessionCreateParams.PaymentMethodType[];
+    }): Promise<Stripe.Response<Stripe.Checkout.Session>> {
+        const session = await StripeService.client.checkout.sessions.create({
+            payment_method_types: paymentMethodTypes,
+            mode: 'payment',
+            line_items: [
+                {
+                    price: priceId,
+                    quantity,
+                },
+            ],
+            success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
+            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
+            customer: customerId,
+        });
+
+        return session;
+    }
+
     private async getSubscriptionByStatus(customerId: string, status: Stripe.SubscriptionListParams.Status = 'active') {
         const subscription = await StripeService.client.subscriptions.list({
             customer: customerId,

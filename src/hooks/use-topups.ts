@@ -1,16 +1,22 @@
 import { useApiClient } from 'src/utils/api-client/request';
 import { useLocalStorage } from './use-localstorage';
 import { useCompany } from './use-company';
+import { usePlans } from './use-plans';
+import { useEffect, useState } from 'react';
 
 export type TopUpSizes = 'small' | 'medium' | 'large';
+export type CurrencyDetails = {
+    price: number;
+    priceId: string;
+};
 export type TopUpDetails = {
     title: string;
     icon: string;
     amount: number;
 };
 export type TopUpPrices = {
-    usd: number;
-    cny: number;
+    usd: CurrencyDetails;
+    cny: CurrencyDetails;
 };
 export type TopUpOptions = Record<TopUpSizes, TopUpPrices>;
 export const topUpBundleDetails: Record<TopUpSizes, TopUpDetails[]> = {
@@ -27,30 +33,34 @@ export const topUpBundleDetails: Record<TopUpSizes, TopUpDetails[]> = {
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 500 },
     ],
 };
-export const topUpPrices: TopUpOptions = {
-    small: {
-        cny: 88,
-        usd: 13,
-    },
-    medium: {
-        cny: 188,
-        usd: 27,
-    },
-    large: {
-        cny: 288,
-        usd: 41,
-    },
-};
 
 export const STRIPE_SELECTED_TOPUP_BUNDLE = 'boostbot_stripe_bundle_response';
 export const selectedTopupBundle: {
-    topupPrice: TopUpSizes | undefined;
+    topupPrice?: TopUpSizes;
+    currencyDetails?: CurrencyDetails;
+    clientSecret?: string;
+    ipAddress?: string;
 } = { topupPrice: undefined };
 
 export const useLocalSelectedTopupBundle = () => useLocalStorage(STRIPE_SELECTED_TOPUP_BUNDLE, selectedTopupBundle);
 export const useTopUpPlan = () => {
-    const { apiClient, loading, error } = useApiClient();
-    const { company } = useCompany();
+    const [topUpPrices, setTopUpPrices] = useState<TopUpOptions>();
+    const { getPlans } = usePlans();
 
-    return {};
+    useEffect(() => {
+        getPlans().then((res) => {
+            const p = res.reduce((acc: TopUpOptions, item) => {
+                const { itemName, currency, price, priceId } = item;
+                if (!acc[itemName as TopUpSizes]) {
+                    acc[itemName as TopUpSizes] = {} as TopUpPrices;
+                }
+                acc[itemName as TopUpSizes][currency] = { price, priceId };
+
+                return acc;
+            }, {} as TopUpOptions);
+            setTopUpPrices(p);
+        });
+    }, []);
+
+    return { topUpPrices };
 };
