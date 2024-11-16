@@ -386,6 +386,7 @@ export default class StripeService {
             currency: price.currency,
             payment_method_types: ['card', 'alipay'],
             customer: customerId,
+            description: `Payment for ${price.product}`,
         });
         return pi;
     }

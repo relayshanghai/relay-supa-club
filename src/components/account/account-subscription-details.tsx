@@ -396,14 +396,20 @@ export const SubscriptionDetails = () => {
                                         <Progress className="h-3" value={(usagesSearch / usages.search.limit) * 100} />
                                     )}
                                 </section>
-                                <section className="flex justify-end">
-                                    <Link
-                                        href={'/topup'}
-                                        className="text-sm font-normal text-blue-500 hover:text-blue-900"
-                                    >
-                                        Need more credits?
-                                    </Link>
-                                </section>
+                                {![
+                                    SubscriptionStatus.TRIAL,
+                                    SubscriptionStatus.TRIAL_CANCELLED,
+                                    SubscriptionStatus.TRIAL_EXPIRED,
+                                ].includes(subscription?.status) && (
+                                    <section className="flex justify-end">
+                                        <Link
+                                            href={'/topup'}
+                                            className="text-sm font-normal text-blue-500 hover:text-blue-900"
+                                        >
+                                            Need more credits?
+                                        </Link>
+                                    </section>
+                                )}
                             </>
                         ) : (
                             <>

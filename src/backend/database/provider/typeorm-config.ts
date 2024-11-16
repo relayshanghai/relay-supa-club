@@ -23,6 +23,8 @@ import { PriceEntity } from '../price/price-entity';
 import { BalanceEntity } from '../balance/balance-entity';
 import { CompanyPromoEntity } from '../company-promo/company-promo-entity';
 import { PlanEntity } from '../plan/plan-entity';
+import { TopupCreditEntity } from '../topup-credits/topup-credits-entity';
+import { PaymentTransactionEntity } from '../payment-transaction/payment-transaction-entity';
 export const datasourceOptions = (): DataSourceOptions => {
     const url = process.env.SUPABASE_CONNECTION_URL as string;
     if (!url) throw new Error('SUPABASE_CONNECTION_URL is not defined');
@@ -62,6 +64,8 @@ export const datasourceOptions = (): DataSourceOptions => {
             BalanceEntity,
             CompanyPromoEntity,
             PlanEntity,
+            TopupCreditEntity,
+            PaymentTransactionEntity,
         ],
         synchronize: false,
         logger: 'advanced-console',

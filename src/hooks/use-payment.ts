@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
+import { PaymentCallbackRequest } from 'pages/api/payment/callback/request';
 import { type CheckoutRequest } from 'pages/api/payment/checkout/request';
 import { useApiClient } from 'src/utils/api-client/request';
-import Stripe from 'stripe';
 
 export const usePayment = () => {
     const { apiClient, loading, error } = useApiClient();
@@ -12,5 +12,9 @@ export const usePayment = () => {
         );
         return response.data;
     };
-    return { createCheckoutSession, loading, error };
+    const callback = async (data: PaymentCallbackRequest) => {
+        const response = await apiClient.post('/payment/callback', data);
+        return response.data;
+    };
+    return { createCheckoutSession, callback, loading, error };
 };

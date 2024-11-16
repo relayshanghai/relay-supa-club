@@ -7,7 +7,6 @@ import awaitToError from 'src/utils/await-to-error';
 import { useLocalSelectedTopupBundle, useTopUpPlan } from 'src/hooks/use-topups';
 import { type TopUpPrices, type TopUpSizes } from 'src/hooks/use-topups';
 import { useCompany } from 'src/hooks/use-company';
-import { usePayment } from 'src/hooks/use-payment';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
@@ -16,11 +15,9 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 const PaymentComponent = () => {
     const [selectedTopupBundle, setSelectedTopupBundle] = useLocalSelectedTopupBundle();
     const stripe = useStripe();
-    const elements = useElements();
     const { company } = useCompany();
     const { topUpPrices } = useTopUpPlan();
     const { defaultPaymentMethod, paymentMethods } = useSubscription();
-    const { createCheckoutSession } = usePayment();
     const [isLoading, setIsLoading] = useState(false);
     const [, setErrorMessage] = useState('');
 
@@ -78,8 +75,6 @@ const PaymentComponent = () => {
         if (err) {
             handleError(err);
             return;
-        } else {
-            setSelectedTopupBundle({ topupPrice: undefined });
         }
         setIsLoading(false);
     };
@@ -102,10 +97,6 @@ const PaymentComponent = () => {
                             {currentPrice} {company?.currency.toUpperCase()}
                         </p>
                     </div>
-                    {/* <div className="flex justify-between">
-                        <p className="text-gray-800">Discount</p>
-                        <p className="text-gray-800">0 {company?.currency.toUpperCase()}</p>
-                    </div> */}
                 </div>
                 <div className="border-b bg-white p-4">
                     <div className="flex justify-between">
