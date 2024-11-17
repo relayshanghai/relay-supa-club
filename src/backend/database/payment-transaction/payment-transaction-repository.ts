@@ -12,7 +12,9 @@ export default class PaymentTransactionRepository extends BaseRepository<Payment
         // to cover transactional operations
         const manager = RequestContext.getManager();
         if (manager) {
-            const contextRepository = RequestContext.getRepository<PaymentTransactionRepository>(PaymentTransactionRepository.name);
+            const contextRepository = RequestContext.getRepository<PaymentTransactionRepository>(
+                PaymentTransactionRepository.name,
+            );
             if (contextRepository) {
                 return contextRepository;
             }
