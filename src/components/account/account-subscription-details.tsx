@@ -279,7 +279,7 @@ export const SubscriptionDetails = () => {
     const periodStart = getPeriods().periodStart;
     const periodEnd = getPeriods().periodEnd;
 
-    const { usages, refreshUsages } = useUsages(
+    const { refreshUsages } = useUsages(
         true,
         periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }

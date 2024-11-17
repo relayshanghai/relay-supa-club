@@ -1,5 +1,5 @@
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements as StripeElementsProvider, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Elements as StripeElementsProvider, useStripe } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { Button } from '../button';
 import { Spinner } from '../icons';
@@ -13,7 +13,7 @@ const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 
 const PaymentComponent = () => {
-    const [selectedTopupBundle, setSelectedTopupBundle] = useLocalSelectedTopupBundle();
+    const [selectedTopupBundle] = useLocalSelectedTopupBundle();
     const stripe = useStripe();
     const { company } = useCompany();
     const { topUpPrices } = useTopUpPlan();
@@ -115,11 +115,8 @@ const PaymentComponent = () => {
 };
 
 export const CheckoutPaymentsSection = () => {
-    const [, setCouponId] = useState<string | undefined>(undefined);
-
     return (
         <div className="w-80 lg:w-[28rem]">
-            {/* <PromoCodeSectionV2 setCouponId={setCouponId} /> */}
             <StripeElementsProvider stripe={stripePromise}>
                 <PaymentComponent />
             </StripeElementsProvider>

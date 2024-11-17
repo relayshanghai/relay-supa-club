@@ -1,6 +1,7 @@
-import { CompanyEntity } from 'src/backend/database/company/company-entity';
+import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 import CompanyRepository from 'src/backend/database/company/company-repository';
-import { SubscriptionEntity, SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
+import type { SubscriptionEntity } from 'src/backend/database/subcription/subscription-entity';
+import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
 import TopupCreditRepository from 'src/backend/database/topup-credits/topup-credits-repository';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { IsNull, Not } from 'typeorm';
@@ -35,7 +36,7 @@ export class CreditService {
 
         if (topUpCredits.length > 0) {
             searchCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.searches, 0);
-            profileCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.profiles, 0);;
+            profileCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.profiles, 0);
         }
 
         return {

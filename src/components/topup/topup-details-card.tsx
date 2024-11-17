@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, CrossIcon } from '../icons';
-import { topUpBundleDetails, TopUpSizes } from 'src/hooks/use-topups';
+import type { TopUpSizes } from 'src/hooks/use-topups';
+import { topUpBundleDetails } from 'src/hooks/use-topups';
 
 /** priceTier can also be 'free' */
 export const TopUpDetailsCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {

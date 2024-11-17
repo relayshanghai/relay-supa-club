@@ -1,5 +1,5 @@
-import { AxiosError, AxiosResponse } from 'axios';
-import { PaymentCallbackRequest } from 'pages/api/payment/callback/request';
+import type { AxiosError, AxiosResponse } from 'axios';
+import type { PaymentCallbackRequest } from 'pages/api/payment/callback/request';
 import { type CheckoutRequest } from 'pages/api/payment/checkout/request';
 import { useApiClient } from 'src/utils/api-client/request';
 

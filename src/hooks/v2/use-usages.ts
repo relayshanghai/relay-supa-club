@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import type { AxiosError, AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { useApiClient } from 'src/utils/api-client/request';
 import { type CreditType } from 'types/credit';
@@ -14,6 +14,7 @@ export const useUsageV2 = () => {
         getUsage().then((data) => {
             setUsages(data);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getUsage = async () => {

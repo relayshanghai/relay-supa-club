@@ -1,6 +1,4 @@
-import { useApiClient } from 'src/utils/api-client/request';
 import { useLocalStorage } from './use-localstorage';
-import { useCompany } from './use-company';
 import { usePlans } from './use-plans';
 import { useEffect, useState } from 'react';
 
@@ -60,6 +58,7 @@ export const useTopUpPlan = () => {
             }, {} as TopUpOptions);
             setTopUpPrices(p);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return { topUpPrices };

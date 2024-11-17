@@ -13,9 +13,9 @@ export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
     @UseLogger()
-    async initBalance(param?: { companyId: string, force?: boolean }) {
-        let companyId = param?.companyId
-        let force = param?.force ?? false
+    async initBalance(param?: { companyId: string; force?: boolean }) {
+        let companyId = param?.companyId;
+        const force = param?.force ?? false;
         if (companyId) {
             companyId = RequestContext.getContext().companyId as string;
         }
@@ -39,12 +39,12 @@ export default class BalanceService {
 
         const usage = await UsageRepository.getRepository().getCountUsages(companyId as string, startDate, endDate);
         const credit = await CreditService.getService().getTotalCredit();
-        let searchLimit = parseInt(
+        const searchLimit = parseInt(
             ['trial', 'trialing'].includes(company.subscriptionStatus)
                 ? company.trialSearchesLimit
                 : credit.search + '',
         );
-        let profileLimit = parseInt(
+        const profileLimit = parseInt(
             ['trial', 'trialing'].includes(company.subscriptionStatus)
                 ? company.trialProfilesLimit
                 : credit.profile + '',

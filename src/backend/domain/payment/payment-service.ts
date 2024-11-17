@@ -1,11 +1,11 @@
-import { CheckoutRequest } from 'pages/api/payment/checkout/request';
-import { PriceType, type PlanEntity } from 'src/backend/database/plan/plan-entity';
+import type { CheckoutRequest } from 'pages/api/payment/checkout/request';
+import { PriceType } from 'src/backend/database/plan/plan-entity';
 import PlanRepository from 'src/backend/database/plan/plan-repository';
 import StripeService from 'src/backend/integration/stripe/stripe-service';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { CompanyIdRequired } from '../decorators/company-id';
 import { UseLogger } from 'src/backend/integration/logger/decorator';
-import { PaymentCallbackRequest } from 'pages/api/payment/callback/request';
+import type { PaymentCallbackRequest } from 'pages/api/payment/callback/request';
 import { NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-error';
 import PaymentTransactionRepository from 'src/backend/database/payment-transaction/payment-transaction-repository';
 import { IsNull } from 'typeorm';
