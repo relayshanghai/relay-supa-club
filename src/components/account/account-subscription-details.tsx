@@ -28,6 +28,7 @@ import toast from 'react-hot-toast';
 import { Tooltip } from '../library';
 import { useBalance } from 'src/hooks/use-balance';
 import { useRouter } from 'next/router';
+import { useUsageV2 } from 'src/hooks/v2/use-usages';
 
 const Tablet = ({
     children,
@@ -278,12 +279,13 @@ export const SubscriptionDetails = () => {
     const periodStart = getPeriods().periodStart;
     const periodEnd = getPeriods().periodEnd;
 
-    const { usages, refreshUsages } = useUsages(
+    const { refreshUsages } = useUsages(
         true,
         periodStart && periodEnd
             ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
             : undefined,
     );
+    const { usages: usagesV2 } = useUsageV2();
 
     useEffect(() => {
         refreshCompany();
@@ -313,8 +315,8 @@ export const SubscriptionDetails = () => {
     };
 
     const canceledOrLoading = subscription?.status === SubscriptionStatus.CANCELLED || balanceLoading;
-    const usagesSearch = canceledOrLoading ? 0 : usages.search.limit - balance.search;
-    const usagesProfiles = canceledOrLoading ? 0 : usages.profile.limit - balance.profile;
+    const usagesSearch = canceledOrLoading ? 0 : usagesV2.search - balance.search;
+    const usagesProfiles = canceledOrLoading ? 0 : usagesV2.profile - balance.profile;
     const subsStatusMustShowPopup = [
         SubscriptionStatus.CANCELLED,
         SubscriptionStatus.PASS_DUE,
@@ -353,7 +355,7 @@ export const SubscriptionDetails = () => {
 
                                 <section className="flex flex-col gap-6" id="account-search-and-report">
                                     <span>
-                                        {usagesProfiles}/{usages.profile.limit} {t('account.planSection.reportsCount')}
+                                        {usagesProfiles}/{usagesV2.profile} {t('account.planSection.reportsCount')}
                                     </span>
                                     {subsStatusMustShowPopup.includes(subscription.status) ? (
                                         <Tooltip
@@ -365,18 +367,15 @@ export const SubscriptionDetails = () => {
                                             <Link href={'/upgrade'}>
                                                 <Progress
                                                     className="h-3"
-                                                    value={(usagesProfiles / usages.profile.limit) * 100}
+                                                    value={(usagesProfiles / usagesV2.profile) * 100}
                                                 />
                                             </Link>
                                         </Tooltip>
                                     ) : (
-                                        <Progress
-                                            className="h-3"
-                                            value={(usagesProfiles / usages.profile.limit) * 100}
-                                        />
+                                        <Progress className="h-3" value={(usagesProfiles / usagesV2.profile) * 100} />
                                     )}
                                     <span>
-                                        {usagesSearch}/{usages.search.limit} {t('account.planSection.searchesCount')}
+                                        {usagesSearch}/{usagesV2.search} {t('account.planSection.searchesCount')}
                                     </span>
                                     {subsStatusMustShowPopup.includes(subscription.status) ? (
                                         <Tooltip
@@ -388,14 +387,24 @@ export const SubscriptionDetails = () => {
                                             <Link href={'/upgrade'}>
                                                 <Progress
                                                     className="h-3"
-                                                    value={(usagesSearch / usages.search.limit) * 100}
+                                                    value={(usagesSearch / usagesV2.search) * 100}
                                                 />
                                             </Link>
                                         </Tooltip>
                                     ) : (
-                                        <Progress className="h-3" value={(usagesSearch / usages.search.limit) * 100} />
+                                        <Progress className="h-3" value={(usagesSearch / usagesV2.search) * 100} />
                                     )}
                                 </section>
+                                {subscription?.status === SubscriptionStatus.ACTIVE && (
+                                    <section className="flex justify-end">
+                                        <Link
+                                            href={'/topup'}
+                                            className="text-sm font-normal text-blue-500 hover:text-blue-900"
+                                        >
+                                            Need more credits?
+                                        </Link>
+                                    </section>
+                                )}
                             </>
                         ) : (
                             <>

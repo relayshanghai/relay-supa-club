@@ -987,7 +987,7 @@ export default class SubscriptionV2Service {
                 },
             ),
         ]);
-        await BalanceService.getService().initBalance(companyId);
+        await BalanceService.getService().initBalance({ companyId });
     }
 
     private async syncSubscriptionProcess({

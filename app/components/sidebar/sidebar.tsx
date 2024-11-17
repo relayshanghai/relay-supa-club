@@ -77,9 +77,6 @@ export const Default = () => {
                         <ActiveLink href={'/v2/sequences'} expandedName={t('navbar.sequences')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
-                        <ActiveLink href="/inbox" expandedName={t('navbar.inbox')}>
-                            <p className={`whitespace-nowrap text-xs`}>{t('navbar.inbox')}</p>
-                        </ActiveLink>
                         <ActiveLink href="/guide" expandedName={t('navbar.guide')}>
                             <p className={`whitespace-nowrap text-xs`}>{t('navbar.guide')}</p>
                         </ActiveLink>
