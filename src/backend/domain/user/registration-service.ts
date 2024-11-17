@@ -252,7 +252,7 @@ export default class RegistrationService {
         const createdCompany = await this.createCompany(request);
         const createdProfile = await this.createProfile(request, createdCompany);
         await this.createBrevoContact(createdProfile, createdCompany);
-        await BalanceService.getService().initBalance(createdCompany.id);
+        await BalanceService.getService().initBalance({ companyId: createdCompany.id });
         return createdCompany;
     }
 

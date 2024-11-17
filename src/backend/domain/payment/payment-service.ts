@@ -11,6 +11,8 @@ import PaymentTransactionRepository from 'src/backend/database/payment-transacti
 import { IsNull } from 'typeorm';
 import TopupCreditRepository from 'src/backend/database/topup-credits/topup-credits-repository';
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
+import BalanceService from '../balance/balance-service';
+import awaitToError from 'src/utils/await-to-error';
 
 export default class PaymentService {
     public static readonly service: PaymentService = new PaymentService();
@@ -80,6 +82,7 @@ export default class PaymentService {
         }
         transaction.paidAt = new Date();
         transaction = await PaymentTransactionRepository.getRepository().save(transaction);
+        await awaitToError(BalanceService.getService().initBalance({ companyId, force: true }));
         return transaction;
     }
 }

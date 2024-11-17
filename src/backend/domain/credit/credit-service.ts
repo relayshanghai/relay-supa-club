@@ -14,7 +14,7 @@ export class CreditService {
         const company = await CompanyRepository.getRepository().findOneBy({
             id: companyId,
         });
-        const topUpCredit = await TopupCreditRepository.getRepository().findOne({
+        const topUpCredits = await TopupCreditRepository.getRepository().find({
             where: {
                 company: {
                     id: companyId,
@@ -33,9 +33,9 @@ export class CreditService {
         let searchCredit = company?.searchesLimit ? +company?.searchesLimit : 0;
         let profileCredit = company?.profilesLimit ? +company?.profilesLimit : 0;
 
-        if (topUpCredit) {
-            searchCredit += topUpCredit.plan.searches;
-            profileCredit += topUpCredit.plan.profiles;
+        if (topUpCredits.length > 0) {
+            searchCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.searches, 0);
+            profileCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.profiles, 0);;
         }
 
         return {
