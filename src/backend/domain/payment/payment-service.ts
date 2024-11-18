@@ -13,6 +13,8 @@ import TopupCreditRepository from 'src/backend/database/topup-credits/topup-cred
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
 import BalanceService from '../balance/balance-service';
 import awaitToError from 'src/utils/await-to-error';
+import CompanyRepository from 'src/backend/database/company/company-repository';
+import Stripe from 'stripe';
 
 export default class PaymentService {
     public static readonly service: PaymentService = new PaymentService();
@@ -23,6 +25,11 @@ export default class PaymentService {
     async checkout(data: CheckoutRequest) {
         const customerId = RequestContext.getContext().customerId as string;
         const companyId = RequestContext.getContext().companyId as string;
+        const company = await CompanyRepository.getRepository().getCompanyById(companyId);
+        const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = ['card'];
+        if (company?.currency === 'cny') {
+            paymentMethodTypes.push('alipay');
+        }
         const subscription = await SubscriptionRepository.getRepository().findOne({
             where: {
                 company: {
@@ -34,6 +41,7 @@ export default class PaymentService {
             priceId: data.priceId,
             quantity: data.quantity,
             customerId,
+            paymentMethodTypes,
         });
         const plan = await PlanRepository.getRepository().findOne({
             where: {

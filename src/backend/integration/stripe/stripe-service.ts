@@ -375,16 +375,18 @@ export default class StripeService {
         priceId,
         quantity,
         customerId,
+        paymentMethodTypes,
     }: {
         priceId: string;
         quantity: number;
         customerId: string;
+        paymentMethodTypes?: Stripe.Checkout.SessionCreateParams.PaymentMethodType[];
     }) {
         const price = await this.getPrice(priceId);
         const pi = await StripeService.client.paymentIntents.create({
             amount: (price.unit_amount ?? 0) * quantity,
             currency: price.currency,
-            payment_method_types: ['card', 'alipay'],
+            payment_method_types: paymentMethodTypes,
             customer: customerId,
             description: `Payment for ${price.product}`,
         });
