@@ -382,6 +382,7 @@ export default class StripeService {
         customerId: string;
         paymentMethodTypes?: Stripe.Checkout.SessionCreateParams.PaymentMethodType[];
     }) {
+        const defaultPaymentMethod = await this.getDefaultPaymentMethod(customerId);
         const price = await this.getPrice(priceId);
         const pi = await StripeService.client.paymentIntents.create({
             amount: (price.unit_amount ?? 0) * quantity,
@@ -389,6 +390,7 @@ export default class StripeService {
             payment_method_types: paymentMethodTypes,
             customer: customerId,
             description: `Payment for ${price.product}`,
+            payment_method: defaultPaymentMethod as string,
         });
         return pi;
     }

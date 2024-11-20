@@ -16,7 +16,7 @@ export default class BalanceService {
     async initBalance(param?: { companyId: string; force?: boolean }) {
         let companyId = param?.companyId;
         const force = param?.force ?? false;
-        if (companyId) {
+        if (!companyId) {
             companyId = RequestContext.getContext().companyId as string;
         }
         const balance = await BalanceRepository.getRepository().find({
