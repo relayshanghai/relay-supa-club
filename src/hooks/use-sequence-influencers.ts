@@ -100,6 +100,21 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         [refreshSequenceInfluencers],
     );
 
+    const exportInfluencersToCsv = useCallback(
+        async (influencers: string[]) => {
+            const i = influencers.map((id) => ({ id }));
+            const res = await apiClient.post(
+                '/sequence/influencers/export',
+                { influencers: i },
+                {
+                    responseType: 'blob',
+                },
+            );
+            return res.data;
+        },
+        [apiClient],
+    );
+
     return {
         loading:
             isLoading || (!sequenceInfluencers && isValidating) || (sequenceInfluencers.length === 0 && isValidating),
@@ -108,6 +123,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         updateSequenceInfluencer,
         refreshSequenceInfluencers,
         deleteSequenceInfluencers,
+        exportInfluencersToCsv,
         error,
     };
 };

@@ -87,6 +87,7 @@
     "clsx": "^2.0.0",
     "cookies-next": "^2.1.2",
     "cryptr": "^6.3.0",
+    "csv-stringify": "^6.5.2",
     "d3-selection": "^3.0.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",

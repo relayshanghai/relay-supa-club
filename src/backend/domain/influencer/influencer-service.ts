@@ -1,6 +1,10 @@
+import { type SequenceInfluencerEntity } from 'src/backend/database/sequence/sequence-influencer-entity';
+import SequenceInfluencerRepository from 'src/backend/database/sequence/sequence-influencer-repository';
 import IQDataService from 'src/backend/integration/iqdata/iqdata-service';
 import OpenAIService from 'src/backend/integration/openai/openai-service';
 import { NotFoundError } from 'src/utils/error/http-error';
+import { In } from 'typeorm';
+import { stringify } from 'csv-stringify';
 import type { CreatorDict, Platforms } from 'types';
 
 export default class InfluencerService {
@@ -46,5 +50,43 @@ export default class InfluencerService {
         }
 
         throw new NotFoundError('Influencer not found');
+    }
+
+    async exportInfluencersToCsv(influencers: string[]) {
+        const influencerData = await SequenceInfluencerRepository.getRepository().find({
+            where: { id: In(influencers) },
+            relations: {
+                influencerSocialProfile: true,
+            },
+        });
+        return this.exportInfluencersToCsvProcess(influencerData);
+    }
+
+    private async exportInfluencersToCsvProcess(data: SequenceInfluencerEntity[]) {
+        // Prepare CSV data
+        const csvData: any[] = [];
+        const headers = ['Username', 'Email', 'Platform', 'Topics', 'Added Date']; // CSV headers
+        csvData.push(headers);
+
+        data.forEach((item) => {
+            const formattedDate = new Date(item.createdAt).toLocaleDateString('en-US');
+            csvData.push([item.username, item.email, item.platform, item.tags.join(', '), formattedDate]);
+        });
+
+        const output = await this.stringifyCsv(csvData);
+        return output as string;
+    }
+
+    private async stringifyCsv(d: any) {
+        return new Promise((resolve, reject) => {
+            // Convert to CSV string
+            stringify(d, (err, output) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(output);
+                }
+            });
+        });
     }
 }
