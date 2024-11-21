@@ -283,9 +283,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const exportButtonText = () => {
         if (selection.length > 0) {
-            return 'Export selected';
+            return t('sequences.exportSelected');
         } else {
-            return 'Export this page';
+            return t('sequences.exportPage');
         }
     };
 

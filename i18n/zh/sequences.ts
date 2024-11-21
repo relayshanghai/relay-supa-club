@@ -223,5 +223,7 @@ const sequences = {
     unlocking: '解锁中',
     unlock: '解锁',
     unlockDisabled: '另一个影响者正在被解锁',
+    exportPage: '导出此页面',
+    exportSelected: '导出选中项',
 };
 export default sequences;
