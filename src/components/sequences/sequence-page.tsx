@@ -34,6 +34,8 @@ import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { calculateReplyRate } from './helpers';
 import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
+import { filterByPage } from 'src/utils/filter-sort/influencer';
+import { downloadFile } from 'src/utils/file/download-fe';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -42,8 +44,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { profile } = useUser();
     const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
     const { sequenceSteps } = useSequenceSteps(sequenceId);
-    const { sequenceInfluencers, deleteSequenceInfluencers, refreshSequenceInfluencers, updateSequenceInfluencer } =
-        useSequenceInfluencers(sequence && [sequenceId]);
+    const {
+        sequenceInfluencers,
+        deleteSequenceInfluencers,
+        refreshSequenceInfluencers,
+        updateSequenceInfluencer,
+        exportInfluencersToCsv,
+    } = useSequenceInfluencers(sequence && [sequenceId]);
 
     const { sequenceEmails, isLoading: loadingEmails } = useSequenceEmails(sequenceId);
     const { templateVariables, refreshTemplateVariables } = useTemplateVariables(sequenceId);
@@ -166,6 +173,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     ];
     const [currentTab] = useState(tabs[0].value);
     const [selection, setSelection] = useState<string[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const currentTabInfluencers = influencers
         ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
@@ -273,6 +281,23 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guiding, showUpdateTemplateVariables]);
 
+    const exportButtonText = () => {
+        if (selection.length > 0) {
+            return 'Export selected';
+        } else {
+            return 'Export this page';
+        }
+    };
+
+    const handleExport = async () => {
+        const filtered = filterByPage(currentPage, 25, currentTabInfluencers);
+        exportInfluencersToCsv(selection.length > 0 ? selection : filtered.map((i) => i.id))
+            .then((res) => downloadFile(res, `exported-${sequence?.name}-influencer-${Date.now()}.csv`))
+            .catch((e) => {
+                clientLogger(e);
+            });
+    };
+
     return (
         <Layout>
             <Banner
@@ -365,6 +390,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
                     <div className="flex w-full flex-row items-center justify-end">
                         <div className="flex space-x-4">
+                            <Button onClick={() => handleExport()}>{exportButtonText()}</Button>
                             <button
                                 data-testid="delete-influencers-button"
                                 className={`h-fit ${
@@ -397,6 +423,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                                 handleStartSequence={handleStartSequence}
                                 selection={selection}
                                 setSelection={setSelection}
+                                setCurrentPage={(page) => setCurrentPage(page)}
                             />
                         ) : (
                             <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />

@@ -14,7 +14,7 @@ import SubscriptionRepository from 'src/backend/database/subcription/subscriptio
 import BalanceService from '../balance/balance-service';
 import awaitToError from 'src/utils/await-to-error';
 import CompanyRepository from 'src/backend/database/company/company-repository';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export default class PaymentService {
     public static readonly service: PaymentService = new PaymentService();
