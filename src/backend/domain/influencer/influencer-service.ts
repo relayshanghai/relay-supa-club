@@ -55,9 +55,6 @@ export default class InfluencerService {
     async exportInfluencersToCsv(influencers: string[]) {
         const influencerData = await SequenceInfluencerRepository.getRepository().find({
             where: { id: In(influencers) },
-            relations: {
-                influencerSocialProfile: true,
-            },
         });
         return this.exportInfluencersToCsvProcess(influencerData);
     }
@@ -65,7 +62,7 @@ export default class InfluencerService {
     private async exportInfluencersToCsvProcess(data: SequenceInfluencerEntity[]) {
         // Prepare CSV data
         const csvData: any[] = [];
-        const headers = ['Username', 'Email', 'Platform', 'Topics', 'Added Date']; // CSV headers
+        const headers = ['username', 'email', 'platform', 'topics', 'added_date']; // CSV headers
         csvData.push(headers);
 
         data.forEach((item) => {
