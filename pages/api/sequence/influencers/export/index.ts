@@ -6,8 +6,6 @@ import { InfluencerExportRequest } from './request';
 import InfluencerService from 'src/backend/domain/influencer/influencer-service';
 import { Res } from 'src/utils/handler/decorators/api-res-decorator';
 import { type NextApiResponse } from 'next';
-import path from 'path';
-import fs from 'fs';
 import { RequestContext } from 'src/utils/request-context/request-context';
 
 export class APIHandler {
@@ -21,23 +19,14 @@ export class APIHandler {
             );
 
             // Define a temporary file path
-            const fileName = `exported-data-${companyId}-${Date.now()}.csv`;
-            const filePath = path.join(process.cwd(), 'temp', fileName);
 
-            // Ensure the directory exists
-            fs.mkdirSync(path.dirname(filePath), { recursive: true });
-
-            // Write CSV data to the file
-            fs.writeFileSync(filePath, csvData);
-
-            // Get the file buffer
-            const fileBuffer = fs.readFileSync(filePath);
-            fs.unlinkSync(filePath);
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const arrayBuffer = await blob.arrayBuffer();
 
             // Set headers for download
             res.setHeader('Content-Type', 'text/csv');
-            res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-            res.send(fileBuffer);
+            res.setHeader('Content-Disposition', `attachment; filename="exported-data-${companyId}-${Date.now()}.csv"`);
+            res.send(Buffer.from(arrayBuffer));
         } catch (error) {
             res.status(500).json({ error: 'Failed to export influencers to CSV' });
         }
