@@ -26,6 +26,7 @@ const pricing = {
     unlimitedFollowUpEmail: '无限次跟进邮件',
     personalEmailAccount: '{{amount}}个个性化电子邮件帐户',
     amount_EmailsPerMonth: '每月可向{{amount}}个KOL发送电子邮件',
+    creditExpiryDate: '此信用将在您的下一个计费周期到期',
 
     upgrade: '立即升级',
     upgradeSuccess: '升级成功',

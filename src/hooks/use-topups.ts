@@ -21,14 +21,17 @@ export const topUpBundleDetails: Record<TopUpSizes, TopUpDetails[]> = {
     small: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 300 },
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 100 },
+        { title: 'creditExpiryDate', icon: 'check', amount: 0 },
     ],
     medium: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 700 },
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 300 },
+        { title: 'creditExpiryDate', icon: 'check', amount: 0 },
     ],
     large: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 1000 },
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 500 },
+        { title: 'creditExpiryDate', icon: 'check', amount: 0 },
     ],
 };
 

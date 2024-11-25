@@ -26,6 +26,7 @@ const pricing = {
     unlimitedFollowUpEmail: 'Unlimited follow up emails',
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
+    creditExpiryDate: 'This credit will expire on your next billing cycle',
 
     upgrade: 'Upgrade',
     upgradeSuccess: 'Upgrade Success',

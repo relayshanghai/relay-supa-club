@@ -8,6 +8,7 @@ import { useLocalSelectedTopupBundle, useTopUpPlan } from 'src/hooks/use-topups'
 import { type TopUpPrices, type TopUpSizes } from 'src/hooks/use-topups';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
+import { useTranslation } from 'react-i18next';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -15,6 +16,7 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
 const PaymentComponent = () => {
     const [selectedTopupBundle] = useLocalSelectedTopupBundle();
     const stripe = useStripe();
+    const { t } = useTranslation();
     const { company } = useCompany();
     const { topUpPrices } = useTopUpPlan();
     const { defaultPaymentMethod, paymentMethods } = useSubscription();
@@ -80,7 +82,8 @@ const PaymentComponent = () => {
     };
 
     return (
-        <>
+        <div className="mt-24">
+            <div className="mb-4 text-lg">{t('pricing.creditExpiryDate')}</div>
             <div className="rounded shadow ">
                 {/* Your order text */}
                 <div className="border-b bg-white p-4">
@@ -110,7 +113,7 @@ const PaymentComponent = () => {
             <Button data-testid="pay-button" className="mt-10 w-full" type="button" onClick={() => handlePayment()}>
                 {isLoading ? <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" /> : 'Pay'}
             </Button>
-        </>
+        </div>
     );
 };
 

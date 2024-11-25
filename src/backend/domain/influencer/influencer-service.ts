@@ -62,12 +62,12 @@ export default class InfluencerService {
     private async exportInfluencersToCsvProcess(data: SequenceInfluencerEntity[]) {
         // Prepare CSV data
         const csvData: any[] = [];
-        const headers = ['username', 'email', 'platform', 'topics', 'added_date']; // CSV headers
+        const headers = ['username', 'email', 'platform', 'profile_link', 'topics', 'added_date']; // CSV headers
         csvData.push(headers);
 
         data.forEach((item) => {
             const formattedDate = new Date(item.createdAt).toLocaleDateString('en-US');
-            csvData.push([item.username, item.email, item.platform, item.tags.join(', '), formattedDate]);
+            csvData.push([item.username, item.email, item.platform, item.url, item.tags.join(', '), formattedDate]);
         });
 
         const output = await this.stringifyCsv(csvData);

@@ -27,7 +27,7 @@ const PriceDetail = ({ price, currency }: { price?: TopUpPrices; currency: strin
 };
 
 export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
-    const { createCheckoutSession } = usePayment();
+    const { createCheckoutSession, loading } = usePayment();
     const [, setSelectedTopupBundle] = useLocalSelectedTopupBundle();
     const { company } = useCompany();
     const { topUpPrices } = useTopUpPlan();
@@ -86,7 +86,7 @@ export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
                             ] as CurrencyDetails,
                         })
                     }
-                    loading={false}
+                    loading={loading}
                     className="mt-auto"
                     data-testid="upgrade-button"
                 >
