@@ -80,8 +80,8 @@ export class SubscriptionEntity<T = any> {
         const diffActiveAtToCancelledAt = Math.abs(getDayDifference(activeAt, cancelledAt));
         const diffActiveAtToPausedAt = Math.abs(getDayDifference(activeAt, pausedAt));
         const isTrialSubscription =
-            (diffActiveAtToCancelledAt && diffActiveAtToCancelledAt <= +trial_days) ||
-            (diffActiveAtToPausedAt && diffActiveAtToPausedAt <= +trial_days);
+            (diffActiveAtToCancelledAt && diffActiveAtToCancelledAt === +trial_days) ||
+            (diffActiveAtToPausedAt && diffActiveAtToPausedAt === +trial_days);
 
         if (activeAt === null && currentTime < cancelledAt) {
             s = SubscriptionStatus.TRIAL;
