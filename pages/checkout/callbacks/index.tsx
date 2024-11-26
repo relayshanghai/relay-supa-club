@@ -1,3 +1,4 @@
+import { type AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -18,17 +19,19 @@ const CheckoutCallback = () => {
     }, [payment_intent, payment_intent_client_secret, redirect_status]);
 
     const postConfirmation = async () => {
-        try {
-            await callback({
-                paymentIntentId: payment_intent as string,
-                paymentIntentSecret: payment_intent_client_secret as string,
-                redirectStatus: redirect_status as string,
+        await callback({
+            paymentIntentId: payment_intent as string,
+            paymentIntentSecret: payment_intent_client_secret as string,
+            redirectStatus: redirect_status as string,
+        })
+            .catch((e: AxiosError) => {
+                if (e.response?.status !== 404) {
+                    toast.error('Failed to pay');
+                }
+            })
+            .finally(() => {
+                router.push(`/account`);
             });
-        } catch (e) {
-            toast.error('Failed to pay');
-        } finally {
-            router.push(`/account`);
-        }
     };
 
     return <SuccessCallback />;
