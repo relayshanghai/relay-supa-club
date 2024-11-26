@@ -77,10 +77,8 @@ export class SubscriptionEntity<T = any> {
         const pausedAt = this.pausedAt as Date;
         // count day difference between cancelledAt to today date
         const { trial_days } = DISCOVERY_PLAN;
-
-        const diffActiveAtToCancelledAt = getDayDifference(activeAt, cancelledAt);
-        const diffActiveAtToPausedAt = getDayDifference(activeAt, pausedAt);
-
+        const diffActiveAtToCancelledAt = Math.abs(getDayDifference(activeAt, cancelledAt));
+        const diffActiveAtToPausedAt = Math.abs(getDayDifference(activeAt, pausedAt));
         const isTrialSubscription =
             (diffActiveAtToCancelledAt && diffActiveAtToCancelledAt <= +trial_days) ||
             (diffActiveAtToPausedAt && diffActiveAtToPausedAt <= +trial_days);
