@@ -390,7 +390,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 <div className="flex w-full flex-col gap-4 overflow-x-auto pt-9">
                     <div className="flex w-full flex-row items-center justify-end">
                         <div className="flex space-x-4">
-                            <Button onClick={() => handleExport()}>{exportButtonText()}</Button>
+                            {/* hide export button for now */}
+                            {false && <Button onClick={() => handleExport()}>{exportButtonText()}</Button>}
                             <button
                                 data-testid="delete-influencers-button"
                                 className={`h-fit ${
