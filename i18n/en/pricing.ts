@@ -26,6 +26,7 @@ const pricing = {
     unlimitedFollowUpEmail: 'Unlimited follow up emails',
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
+    creditExpiryDate: 'This credit will expire on your next billing cycle',
 
     upgrade: 'Upgrade',
     upgradeSuccess: 'Upgrade Success',
@@ -67,6 +68,20 @@ const pricing = {
     outreach: {
         title: 'OUTREACH',
         subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
+    },
+    // topup bundle
+    small: {
+        title: 'SMALL',
+        subTitle: 'A quick boost for your profile and search credits, perfect for occasional needs.',
+    },
+    medium: {
+        title: 'MEDIUM',
+        subTitle: 'An ideal choice for regular users, offering a balanced increase in profile and search credits.',
+    },
+    large: {
+        title: 'LARGE',
+        subTitle:
+            'Maximize your potential with this package, providing ample profile and search credits for power users.',
     },
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',

@@ -111,7 +111,7 @@ export default class SubscriptionV2Service {
         if (err || !cusId) {
             throw new NotFoundError('Company not found', err);
         }
-        return await StripeService.getService().getDefaultPaymentMethod(cusId);
+        return StripeService.getService().getDefaultPaymentMethod(cusId);
     }
 
     @CompanyIdRequired()
@@ -987,7 +987,7 @@ export default class SubscriptionV2Service {
                 },
             ),
         ]);
-        await BalanceService.getService().initBalance(companyId);
+        await BalanceService.getService().initBalance({ companyId });
     }
 
     private async syncSubscriptionProcess({

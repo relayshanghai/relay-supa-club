@@ -8,11 +8,14 @@ import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { UnprocessableEntityError } from 'src/utils/error/http-error';
 import awaitToError from 'src/utils/await-to-error';
+import { CreditService } from '../credit/credit-service';
 export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
     @UseLogger()
-    async initBalance(companyId?: string) {
+    async initBalance(param?: { companyId: string; force?: boolean }) {
+        let companyId = param?.companyId;
+        const force = param?.force ?? false;
         if (!companyId) {
             companyId = RequestContext.getContext().companyId as string;
         }
@@ -23,7 +26,7 @@ export default class BalanceService {
                 },
             },
         });
-        if (balance.length > 0) return;
+        if (balance.length > 0 && !force) return;
         const company = await CompanyRepository.getRepository().findOne({
             where: {
                 id: companyId,
@@ -34,16 +37,17 @@ export default class BalanceService {
         const startDate = new Date(company.subscription?.activeAt || (company.createdAt as Date));
         const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
-        const usage = await UsageRepository.getRepository().getCountUsages(companyId, startDate, endDate);
+        const usage = await UsageRepository.getRepository().getCountUsages(companyId as string, startDate, endDate);
+        const credit = await CreditService.getService().getTotalCredit();
         const searchLimit = parseInt(
             ['trial', 'trialing'].includes(company.subscriptionStatus)
                 ? company.trialSearchesLimit
-                : company.searchesLimit,
+                : credit.search + '',
         );
         const profileLimit = parseInt(
             ['trial', 'trialing'].includes(company.subscriptionStatus)
                 ? company.trialProfilesLimit
-                : company.profilesLimit,
+                : credit.profile + '',
         );
 
         await awaitToError(

@@ -241,6 +241,8 @@ const sequences = {
     unlocking: 'Unlocking',
     unlock: 'Unlock',
     unlockDisabled: 'Another influencer is being unlocked',
+    exportPage: 'Export this page',
+    exportSelected: 'Export selected',
 };
 
 export default sequences;

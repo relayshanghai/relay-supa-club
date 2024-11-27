@@ -26,6 +26,7 @@ const pricing = {
     unlimitedFollowUpEmail: '无限次跟进邮件',
     personalEmailAccount: '{{amount}}个个性化电子邮件帐户',
     amount_EmailsPerMonth: '每月可向{{amount}}个KOL发送电子邮件',
+    creditExpiryDate: '此信用将在您的下一个计费周期到期',
 
     upgrade: '立即升级',
     upgradeSuccess: '升级成功',
@@ -67,6 +68,19 @@ const pricing = {
     outreach: {
         title: '拓展方案',
         subTitle: '费时少，收效大：自动化邮件进程，大批量联系和管理红人',
+    },
+    // topup bundle
+    small: {
+        title: '小',
+        subTitle: '快速提升您的个人资料和搜索积分，非常适合偶尔的需求。',
+    },
+    medium: {
+        title: '中',
+        subTitle: '为常规用户提供理想选择，平衡增加个人资料和搜索积分。',
+    },
+    large: {
+        title: '大',
+        subTitle: '通过此套餐最大化您的潜力，为高级用户提供充足的个人资料和搜索积分。',
     },
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
