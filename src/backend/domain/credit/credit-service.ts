@@ -52,6 +52,15 @@ export class CreditService {
             exportCredit = EXPORT_CREDIT_TRIAL_TOTAL;
         }
 
+        if (
+            [SubscriptionStatus.TRIAL, SubscriptionStatus.TRIAL_EXPIRED, SubscriptionStatus.TRIAL_CANCELLED].includes(
+                subscription?.status as SubscriptionStatus,
+            )
+        ) {
+            searchCredit = company?.trialSearchesLimit ? +company?.trialSearchesLimit : 0;
+            profileCredit = company?.trialProfilesLimit ? +company?.trialProfilesLimit : 0;
+        }
+
         if (topUpCredits.length > 0) {
             searchCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.searches, 0);
             profileCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.profiles, 0);

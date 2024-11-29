@@ -35,7 +35,7 @@ You can change that in the 'Filters' section at the top 👆🏻 if you're looki
         influencersFound:
             'After you add your favourites to a sequence, let me know if you want to do another search 😄',
         influencersFoundFirstTimeA:
-            "Select the influencers you you'd like to collab with from the results and add them to a sequence to unlock their full profile and contact info.",
+            "Select the influencers you you'd like to collab with from the results and add them to a campaign to unlock their full profile and contact info.",
         influencersFoundFirstTimeB: `BoostBot Pro Tip:
 
 Cast a wide net, then spend your time vetting the responders!
@@ -105,6 +105,7 @@ Sequences are our email automation feature. You can set up your email templates,
         followersGrowth: 'Followers Growth',
         totalPosts: 'Total Posts',
         addToSequence: 'Add to Sequence',
+        addToCampaign: 'Add to Campaign',
         followers: 'Followers',
     },
 };

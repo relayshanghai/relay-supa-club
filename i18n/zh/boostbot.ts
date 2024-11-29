@@ -39,7 +39,7 @@ const boostbot = {
             '哎呀… 我暂时没能找到符合您当前筛选条件的红人。您可尝试调整上方的筛选条件，或在下一次搜索时添加更具体的描述。',
         influencersFound: `将您最心仪的红人添加至邮件进程管理项目中后，请告诉我您是否想要进行下一次搜索。😄`,
         influencersFoundFirstTimeA:
-            '您可从搜索结果中选择有合作意向的红人，将他们添加到邮件进程管理项目中解锁查看红人完整个人资料和联系方式。',
+            '从结果中选择您想合作的影响者，并将他们添加到活动中以解锁他们的完整资料和联系信息。',
         influencersFoundFirstTimeB: `雷宝为您提供的专业提示：
 
 广撒网，再筛选！
@@ -115,6 +115,7 @@ const boostbot = {
         followersGrowth: '粉丝增长率',
         totalPosts: '发布内容数',
         addToSequence: '添加至邮件进程管理',
+        addToCampaign: '添加到活动',
         followers: '粉丝数',
     },
 };

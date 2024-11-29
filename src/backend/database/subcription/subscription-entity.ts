@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, AfterLoad, type Relation } from 'typeorm';
 import { CompanyEntity } from '../company/company-entity';
 import { type Nullable } from 'types/nullable';
-import dayjs from 'dayjs';
 import { DISCOVERY_PLAN } from 'src/utils/api/stripe/constants';
+import { getDayDifference } from 'src/utils/time';
 
 export enum SubscriptionStatus {
     TRIAL = 'TRIAL',
@@ -77,9 +77,11 @@ export class SubscriptionEntity<T = any> {
         const pausedAt = this.pausedAt as Date;
         // count day difference between cancelledAt to today date
         const { trial_days } = DISCOVERY_PLAN;
+        const diffActiveAtToCancelledAt = Math.abs(getDayDifference(activeAt, cancelledAt));
+        const diffActiveAtToPausedAt = Math.abs(getDayDifference(activeAt, pausedAt));
         const isTrialSubscription =
-            dayjs(activeAt).diff(dayjs(cancelledAt), 'day') <= +trial_days ||
-            dayjs(activeAt).diff(dayjs(pausedAt), 'day') <= +trial_days;
+            (diffActiveAtToCancelledAt && diffActiveAtToCancelledAt === +trial_days) ||
+            (diffActiveAtToPausedAt && diffActiveAtToPausedAt === +trial_days);
 
         if (activeAt === null && currentTime < cancelledAt) {
             s = SubscriptionStatus.TRIAL;

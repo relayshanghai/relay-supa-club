@@ -13,6 +13,10 @@ export default class PlanService {
                 isActive: true,
                 priceType: PriceType.TOP_UP,
             },
+            order: {
+                profiles: 'ASC',
+                searches: 'ASC',
+            },
         });
         return plans;
     }
