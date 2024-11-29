@@ -4,7 +4,6 @@ import type { SubscriptionEntity } from 'src/backend/database/subcription/subscr
 import { SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
 import SubscriptionRepository from 'src/backend/database/subcription/subscription-repository';
 import TopupCreditRepository from 'src/backend/database/topup-credits/topup-credits-repository';
-import { EXPORT_CREDIT_MAX_TOTAL, EXPORT_CREDIT_TRIAL_TOTAL } from 'src/constants/credits';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { IsNull, Not } from 'typeorm';
 import { type CreditType } from 'types/credit';
@@ -40,7 +39,6 @@ export class CreditService {
 
         let searchCredit = company?.searchesLimit ? +company?.searchesLimit : 0;
         let profileCredit = company?.profilesLimit ? +company?.profilesLimit : 0;
-        let exportCredit = EXPORT_CREDIT_MAX_TOTAL;
 
         if (
             [SubscriptionStatus.TRIAL, SubscriptionStatus.TRIAL_EXPIRED, SubscriptionStatus.TRIAL_CANCELLED].includes(
@@ -49,7 +47,6 @@ export class CreditService {
         ) {
             searchCredit = company?.trialSearchesLimit ? +company?.trialSearchesLimit : 0;
             profileCredit = company?.trialProfilesLimit ? +company?.trialProfilesLimit : 0;
-            exportCredit = EXPORT_CREDIT_TRIAL_TOTAL;
         }
 
         if (topUpCredits.length > 0) {
@@ -60,7 +57,6 @@ export class CreditService {
         return {
             profile: profileCredit,
             search: searchCredit,
-            export: exportCredit,
         };
     }
 
