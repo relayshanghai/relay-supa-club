@@ -41,8 +41,8 @@ export class UsageRepository extends BaseRepository<UsageEntity> {
     async getCountUsages(companyId: string, startPeriod: Date, endPeriod: Date) {
         const usages: { type: string; usage: number }[] = await this.query(
             `
-            SELECT "type", count(*) as usage FROM usages 
-            where "company_id" = $1 
+            SELECT "type", count(*) as usage FROM usages
+            where "company_id" = $1
             and "created_at" between $2 and $3
             GROUP BY "type"
             `,
@@ -55,6 +55,7 @@ export class UsageRepository extends BaseRepository<UsageEntity> {
         return {
             profile: result.profile || 0,
             search: result.search || 0,
+            export: result.export || 0,
         };
     }
 }

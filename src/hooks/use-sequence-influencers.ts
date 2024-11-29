@@ -104,7 +104,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         async (influencers: string[]) => {
             const i = influencers.map((id) => ({ id }));
             const res = await apiClient.post(
-                '/sequence/influencers/export',
+                '/campaigns/influencers/export',
                 { influencers: i },
                 {
                     responseType: 'blob',

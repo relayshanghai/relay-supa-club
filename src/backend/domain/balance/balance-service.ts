@@ -6,9 +6,10 @@ import { UseLogger } from 'src/backend/integration/logger/decorator';
 import { v4 } from 'uuid';
 import { CompanyIdRequired } from '../decorators/company-id';
 import { RequestContext } from 'src/utils/request-context/request-context';
-import { UnprocessableEntityError } from 'src/utils/error/http-error';
+import { NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-error';
 import awaitToError from 'src/utils/await-to-error';
 import { CreditService } from '../credit/credit-service';
+import { EXPORT_CREDIT_MAX_TOTAL, EXPORT_CREDIT_TRIAL_TOTAL } from 'src/constants/credits';
 export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
@@ -34,10 +35,10 @@ export default class BalanceService {
             relations: ['subscription'],
         });
         if (!company) return;
-        const startDate = new Date(company.subscription?.activeAt || (company.createdAt as Date));
+        const startDate = new Date(company.subscription?.activeAt || company.createdAt);
         const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
-        const usage = await UsageRepository.getRepository().getCountUsages(companyId as string, startDate, endDate);
+        const usage = await UsageRepository.getRepository().getCountUsages(companyId, startDate, endDate);
         const credit = await CreditService.getService().getTotalCredit();
         const searchLimit = parseInt(
             ['trial', 'trialing'].includes(company.subscriptionStatus)
@@ -48,6 +49,11 @@ export default class BalanceService {
             ['trial', 'trialing'].includes(company.subscriptionStatus)
                 ? company.trialProfilesLimit
                 : credit.profile + '',
+        );
+        const exportLimit = parseInt(
+            ['trial', 'trialing'].includes(company.subscriptionStatus)
+                ? EXPORT_CREDIT_TRIAL_TOTAL + ''
+                : EXPORT_CREDIT_MAX_TOTAL + '',
         );
 
         await awaitToError(
@@ -68,6 +74,14 @@ export default class BalanceService {
                         },
                         type: BalanceType.SEARCH,
                         amount: searchLimit - usage.search,
+                    },
+                    {
+                        id: v4(),
+                        company: {
+                            id: companyId,
+                        },
+                        type: BalanceType.EXPORT,
+                        amount: exportLimit - usage.export,
                     },
                 ],
                 {
@@ -98,13 +112,20 @@ export default class BalanceService {
         if (!companyId) {
             throw new Error('company id is required');
         }
-        const balance = await BalanceRepository.getRepository().findOneByOrFail({
-            company: {
-                id: companyId,
-            },
-            type,
-        });
-        if (balance.amount - cost <= 0) throw new UnprocessableEntityError('insuficentbalance');
+        const [err, balance] = await awaitToError(
+            BalanceRepository.getRepository().findOneByOrFail({
+                company: {
+                    id: companyId,
+                },
+                type,
+            }),
+        );
+
+        if (err) {
+            throw new NotFoundError('balance not found');
+        }
+
+        if (balance.amount - cost < 0) throw new UnprocessableEntityError('insuficentbalance');
     }
 
     @UseLogger()

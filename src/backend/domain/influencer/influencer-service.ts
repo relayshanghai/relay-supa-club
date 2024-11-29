@@ -6,13 +6,17 @@ import { NotFoundError } from 'src/utils/error/http-error';
 import { In } from 'typeorm';
 import { stringify } from 'csv-stringify';
 import type { CreatorDict, Platforms } from 'types';
+import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import BalanceService from '../balance/balance-service';
+import { RequestContext } from 'src/utils/request-context/request-context';
+import awaitToError from 'src/utils/await-to-error';
 
 export default class InfluencerService {
     static service = new InfluencerService();
     static getService = () => InfluencerService.service;
 
     async getRelevantTopics(username: string, platform: string) {
-        const relevantTopics = await IQDataService.getService().getRelevantTopics(username, platform);
+        const relevantTopics = await IQDataService.getService().getRelevantTopics(platform, username);
         const calculated = await OpenAIService.getService().getTopicsAndRelevance(relevantTopics);
         return calculated;
     }
@@ -53,9 +57,18 @@ export default class InfluencerService {
     }
 
     async exportInfluencersToCsv(influencers: string[]) {
+        const companyId = RequestContext.getContext().companyId as string;
+        const [errNoBalance] = await awaitToError(BalanceService.getService().checkBalance(BalanceType.EXPORT, 1));
+        if (errNoBalance instanceof NotFoundError) {
+            await BalanceService.getService().initBalance({
+                companyId,
+                force: true,
+            });
+        }
         const influencerData = await SequenceInfluencerRepository.getRepository().find({
             where: { id: In(influencers) },
         });
+        await BalanceService.getService().deductBalanceInProcess(BalanceType.EXPORT, 1);
         return this.exportInfluencersToCsvProcess(influencerData);
     }
 
