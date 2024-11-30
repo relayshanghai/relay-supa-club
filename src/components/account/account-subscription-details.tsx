@@ -317,6 +317,7 @@ export const SubscriptionDetails = () => {
     const canceledOrLoading = subscription?.status === SubscriptionStatus.CANCELLED || balanceLoading;
     const usagesSearch = canceledOrLoading ? 0 : usagesV2.search - balance.search;
     const usagesProfiles = canceledOrLoading ? 0 : usagesV2.profile - balance.profile;
+    const usagesExports = canceledOrLoading ? 0 : usagesV2.export - balance.export;
     const subsStatusMustShowPopup = [
         SubscriptionStatus.CANCELLED,
         SubscriptionStatus.PASS_DUE,
@@ -393,6 +394,26 @@ export const SubscriptionDetails = () => {
                                         </Tooltip>
                                     ) : (
                                         <Progress className="h-3" value={(usagesSearch / usagesV2.search) * 100} />
+                                    )}
+                                    <span>
+                                        {usagesExports}/{usagesV2.export} {t('account.planSection.exportsCount')}
+                                    </span>
+                                    {subsStatusMustShowPopup.includes(subscription.status) ? (
+                                        <Tooltip
+                                            content={t('account.planSection.subscriptionExpired')}
+                                            detail={t('account.planSection.subscriptionExpiredAction')}
+                                            position={'top-left'}
+                                            className=""
+                                        >
+                                            <Link href={'/upgrade'}>
+                                                <Progress
+                                                    className="h-3"
+                                                    value={(usagesExports / usagesV2.export) * 100}
+                                                />
+                                            </Link>
+                                        </Tooltip>
+                                    ) : (
+                                        <Progress className="h-3" value={(usagesExports / usagesV2.export) * 100} />
                                     )}
                                 </section>
                                 {subscription?.status === SubscriptionStatus.ACTIVE && (

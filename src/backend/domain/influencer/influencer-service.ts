@@ -10,6 +10,7 @@ import { BalanceType } from 'src/backend/database/balance/balance-entity';
 import BalanceService from '../balance/balance-service';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import awaitToError from 'src/utils/await-to-error';
+import { UsageService } from '../usage/usage-service';
 
 export default class InfluencerService {
     static service = new InfluencerService();
@@ -68,7 +69,10 @@ export default class InfluencerService {
         const influencerData = await SequenceInfluencerRepository.getRepository().find({
             where: { id: In(influencers) },
         });
-        await BalanceService.getService().deductBalanceInProcess(BalanceType.EXPORT, 1);
+        await Promise.all([
+            BalanceService.getService().deductBalanceInProcess(BalanceType.EXPORT, 1),
+            UsageService.getService().recordUsage(''),
+        ]);
         return this.exportInfluencersToCsvProcess(influencerData);
     }
 

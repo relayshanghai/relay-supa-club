@@ -33,6 +33,7 @@ import type {
 } from 'pages/api/internal/subscriptions/request';
 import type { SyncBalanceRequest } from 'pages/api/internal/balance/request';
 import BalanceService from '../balance/balance-service';
+import { EXPORT_CREDIT_MAX_TOTAL } from 'src/constants/credits';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -476,6 +477,14 @@ export default class SubscriptionV2Service {
                     companyId,
                     BalanceType.SEARCH,
                     parseInt(productMetadata.searches),
+                    interval === 'annually' ? nextMonth : null,
+                ) as Promise<any>,
+            );
+            promises.push(
+                BalanceRepository.getRepository().resetBalance(
+                    companyId,
+                    BalanceType.EXPORT,
+                    EXPORT_CREDIT_MAX_TOTAL,
                     interval === 'annually' ? nextMonth : null,
                 ) as Promise<any>,
             );

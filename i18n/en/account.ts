@@ -167,6 +167,7 @@ Thank you for your patience.`,
     planSection: {
         reportsCount: 'Reports',
         searchesCount: 'Searches',
+        exportsCount: 'Exports',
         trialEnds: 'Trial Ends',
         canceledOn: 'Canceled on',
         cancelsOn: 'Cancels on',
