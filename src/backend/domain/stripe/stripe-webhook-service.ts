@@ -363,6 +363,10 @@ export class StripeWebhookService {
     }
 
     private async customerUpdate(data: StripeWebhookRequest<Stripe.Customer>['data']) {
+        /**
+         * @note this webhook is for:
+         * 1. the first time the customer is filling the payment method
+         */
         if (data?.previous_attributes?.invoice_settings?.default_payment_method !== null) return;
         const company = await CompanyRepository.getRepository().findOne({
             where: {
