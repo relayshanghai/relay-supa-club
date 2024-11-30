@@ -7,6 +7,7 @@ import awaitToError from 'src/utils/await-to-error';
 type CompanyBalanceType = {
     [BalanceType.PROFILE]: number;
     [BalanceType.SEARCH]: number;
+    [BalanceType.EXPORT]: number;
 };
 
 export const useBalance = () => {
@@ -14,6 +15,7 @@ export const useBalance = () => {
     const [balance, setBalance] = useState<CompanyBalanceType>({
         [BalanceType.PROFILE]: 0,
         [BalanceType.SEARCH]: 0,
+        [BalanceType.EXPORT]: 0,
     });
 
     const getCompanyBalance = async () => {
