@@ -8,6 +8,7 @@ export const useUsageV2 = () => {
     const [usages, setUsages] = useState<CreditType>({
         profile: 0,
         search: 0,
+        export: 0,
     });
 
     useEffect(() => {

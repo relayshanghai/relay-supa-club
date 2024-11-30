@@ -13,6 +13,7 @@ import { CompanyEntity } from '../company/company-entity';
 export enum BalanceType {
     SEARCH = 'search',
     PROFILE = 'profile',
+    EXPORT = 'export',
 }
 @Entity('balances')
 export class BalanceEntity {

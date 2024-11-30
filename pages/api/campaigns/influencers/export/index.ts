@@ -7,6 +7,7 @@ import InfluencerService from 'src/backend/domain/influencer/influencer-service'
 import { Res } from 'src/utils/handler/decorators/api-res-decorator';
 import { type NextApiResponse } from 'next';
 import { RequestContext } from 'src/utils/request-context/request-context';
+import { type HttpError } from 'src/utils/error/http-error';
 
 export class APIHandler {
     @POST()
@@ -27,8 +28,9 @@ export class APIHandler {
             res.setHeader('Content-Type', 'text/csv');
             res.setHeader('Content-Disposition', `attachment; filename="exported-data-${companyId}-${Date.now()}.csv"`);
             res.send(Buffer.from(arrayBuffer));
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to export influencers to CSV' });
+        } catch (error: unknown) {
+            const err = error as HttpError;
+            res.status(err.httpCode).json({ message: err.message });
         }
     }
 }

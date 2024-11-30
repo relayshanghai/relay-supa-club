@@ -294,6 +294,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         exportInfluencersToCsv(selection.length > 0 ? selection : filtered.map((i) => i.id))
             .then((res) => downloadFile(res, `exported-${sequence?.name}-influencer-${Date.now()}.csv`))
             .catch((e) => {
+                const status = e?.response?.status;
+                if (status === 422) {
+                    toast.error('Insufficient credits to export');
+                } else {
+                    toast.error('Error exporting');
+                }
                 clientLogger(e);
             });
     };
@@ -391,7 +397,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     <div className="flex w-full flex-row items-center justify-end">
                         <div className="flex space-x-4">
                             {/* hide export button for now */}
-                            {false && <Button onClick={() => handleExport()}>{exportButtonText()}</Button>}
+                            <Button onClick={() => handleExport()}>{exportButtonText()}</Button>
                             <button
                                 data-testid="delete-influencers-button"
                                 className={`h-fit ${

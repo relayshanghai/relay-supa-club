@@ -1,0 +1,4 @@
+export const EXPORT_CREDIT_TRIAL_TOTAL = process.env.EXPORT_CREDIT_TRIAL_TOTAL
+    ? +process.env.EXPORT_CREDIT_TRIAL_TOTAL
+    : 1;
+export const EXPORT_CREDIT_MAX_TOTAL = process.env.EXPORT_CREDIT_MAX_TOTAL ? +process.env.EXPORT_CREDIT_MAX_TOTAL : 5;
