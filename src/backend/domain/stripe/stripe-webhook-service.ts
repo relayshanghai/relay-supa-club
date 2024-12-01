@@ -87,10 +87,6 @@ export class StripeWebhookService {
                     request.data as StripeWebhookRequest<Stripe.Charge | Stripe.Invoice>['data'],
                     request.type,
                 );
-            case StripeWebhookType.CUSTOMER_SUBSCRIPTION_CREATED:
-                return this.customerSubscriptionCreatedHandler(
-                    request.data as StripeWebhookRequest<Stripe.Subscription>['data'],
-                );
             case StripeWebhookType.CUSTOMER_SUBSCRIPTION_UPDATED:
                 return this.customerSubscriptionUpdatedHandler(
                     request.data as StripeWebhookRequest<Stripe.Subscription & { plan: Stripe.Plan }>['data'],
@@ -99,6 +95,8 @@ export class StripeWebhookService {
                 return this.customerSubscriptionTrialWillEndHandler(
                     request.data as StripeWebhookRequest<Stripe.Subscription>['data'],
                 );
+            case StripeWebhookType.CUSTOMER_UPDATED:
+                return this.customerUpdate(request.data as unknown as StripeWebhookRequest<Stripe.Customer>['data']);
         }
     }
 
@@ -362,5 +360,30 @@ export class StripeWebhookService {
             profile,
             trialDayExpiring: Math.abs(diffInDays),
         });
+    }
+
+    private async customerUpdate(data: StripeWebhookRequest<Stripe.Customer>['data']) {
+        /**
+         * @note this webhook is for:
+         * 1. the first time the customer is filling the payment method
+         */
+        if (data?.previous_attributes?.invoice_settings?.default_payment_method !== null) return;
+        const company = await CompanyRepository.getRepository().findOne({
+            where: {
+                cusId: data?.object.id as string,
+            },
+            relations: {
+                profiles: true,
+            },
+            order: {
+                createdAt: 'ASC',
+            },
+        });
+        if (!company) {
+            throw new Error('Company not found');
+        }
+        const profile = await ProfileRepository.getRepository().isCompanyOwner(company.profiles as ProfileEntity[]);
+        if (!this.allowedToSendToSlack(profile.email as string)) return;
+        await SlackService.getService().sendSignupMessage({ company, profile });
     }
 }

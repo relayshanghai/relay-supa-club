@@ -10,6 +10,7 @@ export enum StripeWebhookType {
     CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
     CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
     CUSTOMER_SUBSCRIPTION_TRIAL_WILL_END = 'customer.subscription.trial_will_end',
+    CUSTOMER_UPDATED = 'customer.updated',
 }
 
 export class Data<T> {
