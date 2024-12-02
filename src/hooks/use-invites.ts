@@ -24,7 +24,7 @@ export const useInvites = () => {
         const res = await nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>('invites', {
             id: company?.id,
         });
-        setInvites(res);
+        setInvites(res.filter((d) => !d.used));
     }, [company?.id]);
 
     useEffect(() => {
