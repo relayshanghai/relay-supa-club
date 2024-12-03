@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
-import { useUsages } from 'src/hooks/use-usages';
 import { Button } from 'shadcn/components/ui/button';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -276,21 +275,13 @@ export const SubscriptionDetails = () => {
 
     // these we get from stripe directly
     // This is just the billing period, not the monthly 'usage' period
-    const periodStart = getPeriods().periodStart;
     const periodEnd = getPeriods().periodEnd;
 
-    const { refreshUsages } = useUsages(
-        true,
-        periodStart && periodEnd
-            ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
-            : undefined,
-    );
     const { usages: usagesV2 } = useUsageV2();
 
     useEffect(() => {
         refreshCompany();
-        refreshUsages();
-    }, [company, refreshCompany, refreshUsages]);
+    }, [company, refreshCompany]);
 
     const isAboutToCanceled = () => (dayjs().isBefore(subscription?.cancelledAt) ? subscription?.pausedAt : null);
 

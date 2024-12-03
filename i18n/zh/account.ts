@@ -54,8 +54,8 @@ const account = {
         beforePurchasingYouNeedPaymentMethod: '在购买订阅之前，您需要添加付款方式。',
         addPaymentMethod: {
             title: '添加付款方式',
-            success: 'Payment method added',
-            error: 'Unable to add payment method',
+            success: '付款方式已添加',
+            error: '无法添加付款方式',
         },
         availablePlans: '可用方案',
         planName: '名称',
@@ -159,11 +159,12 @@ const account = {
         addPaymentMethod: '添加新的付款方式',
     },
     paymentMethodModal: {
-        title: 'Add Payment Method',
+        title: '添加付款方式',
     },
     planSection: {
         reportsCount: '份报告',
         searchesCount: '次搜索',
+        exportsCount: '导出次数',
         trialEnds: '试用期结束日期',
         canceledOn: '取消日期',
         cancelsOn: '取消日期',
