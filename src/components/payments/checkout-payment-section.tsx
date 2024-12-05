@@ -9,6 +9,8 @@ import { type TopUpPrices, type TopUpSizes } from 'src/hooks/use-topups';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
 import { useTranslation } from 'react-i18next';
+import { CheckoutDetails } from './checkout-details';
+import { type CompanyDB } from 'src/utils/api/db';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -84,31 +86,12 @@ const PaymentComponent = () => {
     return (
         <div className="mt-24">
             <div className="mb-4 text-lg">{t('pricing.creditExpiryDate')}</div>
-            <div className="rounded shadow ">
-                {/* Your order text */}
-                <div className="border-b bg-white p-4">
-                    <h2 className="text-lg font-bold text-gray-800">Your order</h2>
-                </div>
-                {/* line */}
-                <div className="border-b bg-white p-4">
-                    <div className="flex justify-between">
-                        <span className="flex w-52 space-x-1">
-                            <strong>{planName}</strong>
-                            <p className="text-gray-800">Bundle</p>
-                        </span>
-                        <p className="text-gray-800">
-                            {currentPrice} {company?.currency.toUpperCase()}
-                        </p>
-                    </div>
-                </div>
-                <div className="border-b bg-white p-4">
-                    <div className="flex justify-between">
-                        <p className="text-xl font-semibold text-gray-800">Total</p>
-                        <p className="text-xl font-semibold text-gray-800">
-                            {currentPrice} {company?.currency.toUpperCase()}
-                        </p>
-                    </div>
-                </div>
+            <div className="rounded shadow">
+                <CheckoutDetails
+                    company={company as CompanyDB}
+                    currentPrice={currentPrice as number}
+                    planName={planName as string}
+                />
             </div>
             <Button data-testid="pay-button" className="mt-10 w-full" type="button" onClick={() => handlePayment()}>
                 {isLoading ? <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" /> : 'Pay'}

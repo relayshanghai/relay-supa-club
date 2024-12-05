@@ -223,7 +223,7 @@ export async function middleware(req: NextRequest) {
         if (!authData.session?.user?.email) {
             return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
         }
-        return await checkIsRelayEmployee(res, authData.session.user.email);
+        return checkIsRelayEmployee(res, authData.session.user.email);
     }
 
     if (req.nextUrl.pathname.includes('component-previews')) {
@@ -240,7 +240,7 @@ export async function middleware(req: NextRequest) {
     }
 
     if (authData.session?.user?.email) {
-        return await checkOnboardingStatus(req, res, authData.session, supabase);
+        return checkOnboardingStatus(req, res, authData.session, supabase);
     }
 
     // not logged in -- api requests, just return an error

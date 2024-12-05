@@ -10,6 +10,7 @@ import { useLocalSelectedTopupBundle } from 'src/hooks/use-topups';
 import { usePayment } from 'src/hooks/use-payment';
 import awaitToError from 'src/utils/await-to-error';
 import { useState } from 'react';
+import { PriceType } from 'src/backend/database/plan/plan-entity';
 
 const currencyFormatWithComma = (num: number) => {
     return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -52,6 +53,7 @@ export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
             createCheckoutSession({
                 priceId: currencyDetails.priceId,
                 quantity: 1,
+                type: PriceType.TOP_UP,
             }),
         );
         if (error) {

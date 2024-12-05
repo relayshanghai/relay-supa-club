@@ -4,7 +4,7 @@ import type {
     SequenceInfluencersDeleteResponse,
 } from 'pages/api/sequence/influencers/delete';
 import { type AddInfluencerRequest } from 'pages/api/v2/sequences/[id]/influencers/request';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useUser } from 'src/hooks/use-user';
 import { useApiClient } from 'src/utils/api-client/request';
 import { apiFetch } from 'src/utils/api/api-fetch';
@@ -18,6 +18,7 @@ import useSWR from 'swr';
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
     const { error, apiClient } = useApiClient();
+    const [exportInfluencerToCsvLoading, setExportInfluencerToCsvLoading] = useState(false);
     const {
         data,
         mutate: refreshSequenceInfluencers,
@@ -102,14 +103,19 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
 
     const exportInfluencersToCsv = useCallback(
         async (influencers: string[]) => {
+            setExportInfluencerToCsvLoading(true);
             const i = influencers.map((id) => ({ id }));
-            const res = await apiClient.post(
-                '/campaigns/influencers/export',
-                { influencers: i },
-                {
-                    responseType: 'blob',
-                },
-            );
+            const res = await apiClient
+                .post(
+                    '/campaigns/influencers/export',
+                    { influencers: i },
+                    {
+                        responseType: 'blob',
+                    },
+                )
+                .finally(() => {
+                    setExportInfluencerToCsvLoading(false);
+                });
             return res.data;
         },
         [apiClient],
@@ -124,6 +130,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         refreshSequenceInfluencers,
         deleteSequenceInfluencers,
         exportInfluencersToCsv,
+        exportInfluencerToCsvLoading,
         error,
     };
 };

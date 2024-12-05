@@ -3,11 +3,12 @@ import type { PaymentCallbackRequest } from 'pages/api/payment/callback/request'
 import { type CheckoutRequest } from 'pages/api/payment/checkout/request';
 import { type PaymentTransactionEntity } from 'src/backend/database/payment-transaction/payment-transaction-entity';
 import { useApiClient } from 'src/utils/api-client/request';
+import { type CheckoutSessionType } from 'types/checkout';
 
 export const usePayment = () => {
     const { apiClient, loading, error } = useApiClient();
     const createCheckoutSession = async (data: CheckoutRequest) => {
-        const response = await apiClient.post<AxiosError, AxiosResponse<{ clientSecret: string; ipAddress: string }>>(
+        const response = await apiClient.post<AxiosError, AxiosResponse<CheckoutSessionType>>(
             '/payment/checkout',
             data,
         );

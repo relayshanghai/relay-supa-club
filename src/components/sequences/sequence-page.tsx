@@ -36,13 +36,19 @@ import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
 import { filterByPage } from 'src/utils/filter-sort/influencer';
 import { downloadFile } from 'src/utils/file/download-fe';
+import { CheckoutModal } from '../payments/checkout-modal';
+import { usePlans } from 'src/hooks/use-plans';
+import { ONE_INFLUENCER_EXPORT_PLAN_NAME } from 'src/constants/plan';
+import { useCompany } from 'src/hooks/use-company';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
+    const { company } = useCompany();
     const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
+    const { getPlans } = usePlans();
     const { sequenceSteps } = useSequenceSteps(sequenceId);
     const {
         sequenceInfluencers,
@@ -50,6 +56,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         refreshSequenceInfluencers,
         updateSequenceInfluencer,
         exportInfluencersToCsv,
+        exportInfluencerToCsvLoading,
     } = useSequenceInfluencers(sequence && [sequenceId]);
 
     const { sequenceEmails, isLoading: loadingEmails } = useSequenceEmails(sequenceId);
@@ -174,6 +181,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [currentTab] = useState(tabs[0].value);
     const [selection, setSelection] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showPaymentModal, setshowPaymentModal] = useState<boolean>(false);
+    const [planDetails, setPlanDetails] = useState({
+        currentPriceId: '',
+        currentPrice: 0,
+        planName: '',
+    });
 
     const currentTabInfluencers = influencers
         ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
@@ -289,6 +302,22 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         }
     };
 
+    const preparePlans = () => {
+        getPlans('pay-as-you-go').then((res) => {
+            const plan = res.find(
+                (p) => p.itemName === ONE_INFLUENCER_EXPORT_PLAN_NAME || p.currency === (company?.currency ?? 'cny'),
+            );
+            if (plan) {
+                setPlanDetails({
+                    currentPriceId: plan.priceId,
+                    currentPrice: plan.price,
+                    planName: plan.itemName,
+                });
+                setshowPaymentModal(true);
+            }
+        });
+    };
+
     const handleExport = async () => {
         const filtered = filterByPage(currentPage, 25, currentTabInfluencers);
         exportInfluencersToCsv(selection.length > 0 ? selection : filtered.map((i) => i.id))
@@ -296,7 +325,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             .catch((e) => {
                 const status = e?.response?.status;
                 if (status === 422) {
-                    toast.error('Insufficient credits to export');
+                    preparePlans();
                 } else {
                     toast.error('Error exporting');
                 }
@@ -333,6 +362,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 onClose={() => setShowUpdateTemplateVariables(false)}
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
+            />
+            <CheckoutModal
+                currentPriceId={planDetails.currentPriceId}
+                currentPrice={planDetails.currentPrice}
+                planName={planDetails.planName}
+                visible={showPaymentModal}
+                onClose={(val) => setshowPaymentModal(val)}
             />
             <div className="flex flex-col p-6 ">
                 <div className="mb-6 flex w-full gap-6">
@@ -397,7 +433,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     <div className="flex w-full flex-row items-center justify-end">
                         <div className="flex space-x-4">
                             {/* hide export button for now */}
-                            <Button onClick={() => handleExport()}>{exportButtonText()}</Button>
+                            <Button loading={exportInfluencerToCsvLoading} onClick={() => handleExport()}>
+                                {exportButtonText()}
+                            </Button>
                             <button
                                 data-testid="delete-influencers-button"
                                 className={`h-fit ${

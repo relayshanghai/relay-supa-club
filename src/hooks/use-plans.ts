@@ -7,8 +7,8 @@ export const usePlans = () => {
     const { apiClient, loading, error } = useApiClient();
     const [plans, setPlans] = useState<PlanEntity[]>([]);
 
-    const getPlans = async () => {
-        const [err, response] = await awaitToError(apiClient.get<PlanEntity[]>('/plans'));
+    const getPlans = async (type = 'top-up') => {
+        const [err, response] = await awaitToError(apiClient.get<PlanEntity[]>(`/plans?type=${type}`));
         if (err) {
             throw err;
         }
@@ -16,9 +16,14 @@ export const usePlans = () => {
         return response.data;
     };
 
+    const getPlansByName = (name: string, currency = 'cny') => {
+        return plans.find((plan) => plan.itemName === name || plan.currency === currency);
+    };
+
     return {
         plans,
         getPlans,
+        getPlansByName,
         loading,
         error,
     };

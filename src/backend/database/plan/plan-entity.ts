@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 export enum PriceType {
     TOP_UP = 'top-up',
     SUBSCRIPTION = 'subscription',
+    PAY_AS_YOU_GO = 'pay-as-you-go',
 }
 
 export enum Currency {
@@ -56,6 +57,9 @@ export class PlanEntity {
 
     @Column({ type: 'int', name: 'searches' })
     searches!: number;
+
+    @Column({ type: 'int', name: 'exports' })
+    exports!: number;
 
     @Column({ type: 'boolean', name: 'is_active' })
     isActive!: boolean;

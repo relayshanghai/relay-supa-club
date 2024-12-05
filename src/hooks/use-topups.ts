@@ -49,7 +49,7 @@ export const useTopUpPlan = () => {
     const { getPlans } = usePlans();
 
     useEffect(() => {
-        getPlans().then((res) => {
+        getPlans('top-up').then((res) => {
             const p = res.reduce((acc: TopUpOptions, item) => {
                 const { itemName, currency, price, priceId } = item;
                 if (!acc[itemName as TopUpSizes]) {

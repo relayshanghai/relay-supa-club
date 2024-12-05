@@ -46,7 +46,7 @@ export default class PaymentService {
         const plan = await PlanRepository.getRepository().findOne({
             where: {
                 priceId: data.priceId,
-                priceType: PriceType.TOP_UP,
+                priceType: data.type,
             },
         });
         const paymentTransaction = await PaymentTransactionRepository.getRepository().save({
@@ -56,16 +56,18 @@ export default class PaymentService {
             providerTransactionId: pi.id,
             paidAt: null,
         });
-        await TopupCreditRepository.getRepository().save({
-            company: {
-                id: RequestContext.getContext().companyId as string,
-            },
-            paymentTransaction,
-            plan: {
-                id: plan?.id,
-            },
-            expiredAt: subscription?.pausedAt as Date,
-        });
+        if (data.type === PriceType.TOP_UP) {
+            await TopupCreditRepository.getRepository().save({
+                company: {
+                    id: RequestContext.getContext().companyId as string,
+                },
+                paymentTransaction,
+                plan: {
+                    id: plan?.id,
+                },
+                expiredAt: subscription?.pausedAt as Date,
+            });
+        }
         return {
             clientSecret: pi.client_secret,
         };

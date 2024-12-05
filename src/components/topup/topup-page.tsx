@@ -28,7 +28,7 @@ export const TopUpPage = () => {
     const [bundles, setBundles] = useState<string[]>([]);
 
     useEffect(() => {
-        getPlans();
+        getPlans('top-up');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
