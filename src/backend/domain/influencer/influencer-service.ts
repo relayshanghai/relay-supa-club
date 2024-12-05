@@ -69,10 +69,8 @@ export default class InfluencerService {
         const influencerData = await SequenceInfluencerRepository.getRepository().find({
             where: { id: In(influencers) },
         });
-        await Promise.all([
-            BalanceService.getService().deductBalanceInProcess(BalanceType.EXPORT, 1),
-            UsageService.getService().recordUsage(''),
-        ]);
+        await BalanceService.getService().deductBalanceInProcess(BalanceType.EXPORT, 1);
+        await UsageService.getService().recordUsage('');
         return this.exportInfluencersToCsvProcess(influencerData);
     }
 
