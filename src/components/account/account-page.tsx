@@ -14,6 +14,7 @@ import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { accountGuide } from 'src/guides/my-account.guide';
 import { useSubscription } from 'src/hooks/v2/use-subscription';
 import { useCompany } from 'src/hooks/use-company';
+import { TeamJoinRequest } from './account-team-join-requests';
 
 const AccountPageNavbar = ({ clientRoleCompanyId }: { clientRoleCompanyId: string }) => {
     const { t } = useTranslation();
@@ -173,6 +174,7 @@ export const AccountPage = () => {
                     {!clientRoleData.companyId && <PasswordDetails />}
                     <CompanyDetails />
                     <TeamDetails />
+                    <TeamJoinRequest />
                 </section>
             </div>
         </div>
