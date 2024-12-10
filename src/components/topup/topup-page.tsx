@@ -35,13 +35,9 @@ export const TopUpPage = () => {
 
     useEffect(() => {
         if (plans.length) {
-            const m = Array.from(
-                new Set(plans.filter((plan) => plan.exports === 0).map((plan) => plan.itemName)),
-            );
+            const m = Array.from(new Set(plans.filter((plan) => plan.exports === 0).map((plan) => plan.itemName)));
             setMainBundle(m);
-            const d = Array.from(
-                new Set(plans.filter((plan) => plan.exports > 0).map((plan) => plan.itemName)),
-            );
+            const d = Array.from(new Set(plans.filter((plan) => plan.exports > 0).map((plan) => plan.itemName)));
             setExportPlans(d);
         }
     }, [plans]);
