@@ -320,7 +320,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         : undefined;
 
     const signup = useCallback(
-        async (body: SignupPostBody, requestToJoin: boolean = false) => {
+        async (body: SignupPostBody, requestToJoin = false) => {
             const [err, result] = await awaitToError<AxiosError, { data: SignupPostResponse }>(
                 apiClient.post<SignupPostResponse>(`/users`, { ...body, requestToJoin }),
             );

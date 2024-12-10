@@ -260,7 +260,7 @@ const SignUpPage = ({
     };
 
     const handleSignup = useCallback(
-        async (data: SignupPostBody, requestToJoin: boolean = false) => {
+        async (data: SignupPostBody, requestToJoin = false) => {
             try {
                 setLoading(true);
 
