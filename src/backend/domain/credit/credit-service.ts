@@ -55,6 +55,7 @@ export class CreditService {
         if (topUpCredits.length > 0) {
             searchCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.searches, 0);
             profileCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.profiles, 0);
+            exportCredit += topUpCredits.reduce((acc, topUpCredit) => acc + topUpCredit.plan.exports, 0);
         }
 
         return {
