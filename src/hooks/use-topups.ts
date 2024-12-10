@@ -2,7 +2,13 @@ import { useLocalStorage } from './use-localstorage';
 import { usePlans } from './use-plans';
 import { useEffect, useState } from 'react';
 
-export type TopUpSizes = 'small' | 'medium' | 'large';
+export type TopUpSizes =
+    | 'small'
+    | 'medium'
+    | 'large'
+    | '10 influencer page export'
+    | '15 influencer page export'
+    | '100 influencer page export';
 export type CurrencyDetails = {
     price: number;
     priceId: string;
@@ -31,6 +37,18 @@ export const topUpBundleDetails: Record<TopUpSizes, TopUpDetails[]> = {
     large: [
         { title: 'upTo_amount_Searches', icon: 'check', amount: 1000 },
         { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 500 },
+        { title: 'creditExpiryDate', icon: 'check', amount: 0 },
+    ],
+    '10 influencer page export': [
+        { title: 'upToAmountExports', icon: 'check', amount: 10 },
+        { title: 'creditExpiryDate', icon: 'check', amount: 0 },
+    ],
+    '15 influencer page export': [
+        { title: 'upToAmountExports', icon: 'check', amount: 15 },
+        { title: 'creditExpiryDate', icon: 'check', amount: 0 },
+    ],
+    '100 influencer page export': [
+        { title: 'upToAmountExports', icon: 'check', amount: 100 },
         { title: 'creditExpiryDate', icon: 'check', amount: 0 },
     ],
 };

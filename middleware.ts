@@ -269,6 +269,8 @@ export async function middleware(req: NextRequest) {
             return res;
         } else if (req.nextUrl.pathname.includes('internal')) {
             return res;
+        } else if (req.nextUrl.pathname.includes('join-requests')) {
+            return res;
         }
         return NextResponse.json({ error: 'forbidden' }, { status: httpCodes.FORBIDDEN });
     }

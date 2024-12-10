@@ -57,6 +57,9 @@ export class PlanEntity {
     @Column({ type: 'int', name: 'searches' })
     searches!: number;
 
+    @Column({ type: 'int', name: 'exports' })
+    exports!: number;
+
     @Column({ type: 'boolean', name: 'is_active' })
     isActive!: boolean;
 

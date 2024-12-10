@@ -153,6 +153,8 @@ const SignUpPage = ({
     };
     const [currency, setCurrency] = useState('cny');
     const [confirmCurrencyModalOpen, setConfirmCurrencyModalOpen] = useState(false);
+    const [confirmJoinToCompany, setConfirmJoinToCompany] = useState(false);
+    const [needToJoinCompany, setNeedToJoinCompany] = useState(false);
     const [rewardfulReferral, setRewardfulReferral] = useState<string>();
     const setFieldValue = useCallback(
         (type: SignupInputTypes, value: string) => {
@@ -258,15 +260,15 @@ const SignUpPage = ({
     };
 
     const handleSignup = useCallback(
-        async (data: SignupPostBody) => {
+        async (data: SignupPostBody, requestToJoin: boolean = false) => {
             try {
                 setLoading(true);
 
-                const signupCompanyRes: any = await signup(data);
+                const signupCompanyRes: any = await signup(data, requestToJoin);
                 if (!signupCompanyRes?.cusId) {
                     throw new Error('no cusId, error creating company');
                 } else {
-                    await login(email, password);
+                    if (!requestToJoin) await login(email, password);
                     return 'success';
                 }
             } catch (e: any) {
@@ -279,7 +281,10 @@ const SignUpPage = ({
                 } else if (hasCustomError(e, signupErrors)) {
                     toast.error(t(`login.${e.message}`));
                 } else if (e instanceof AxiosError) {
-                    if (e.response?.status === 409) {
+                    if (e.response?.status === 409 && e.response.data.message === 'companyWithSameNameExists') {
+                        setConfirmJoinToCompany(true);
+                        setNeedToJoinCompany(true);
+                    } else if (e.response?.status === 409) {
                         toast.error(e.response.data.message);
                     }
                 } else {
@@ -296,11 +301,18 @@ const SignUpPage = ({
         if (currentStep === PROFILE_FORM_STEP) {
             logout(false);
         }
-        if (currentStep === COMPANY_FORM_STEP) {
+        if (currentStep === COMPANY_FORM_STEP && !needToJoinCompany) {
             const result = await handleSignup(formData);
             if (result === 'success') {
                 clearForm();
                 router.push('/payments/details');
+            }
+        } else if (currentStep === COMPANY_FORM_STEP && needToJoinCompany) {
+            const result = await handleSignup(formData, true);
+            if (result === 'success') {
+                clearForm();
+                toast.success(t('login.joinRequestSent', { companyName }));
+                router.push('/login');
             }
         } else {
             setCurrentStep(currentStep + 1);
@@ -344,6 +356,14 @@ const SignUpPage = ({
                 setShow={(show) => setConfirmCurrencyModalOpen(show)}
                 show={confirmCurrencyModalOpen}
                 title={t(`login.confirm${currency.toUpperCase()}Currency`) as string}
+                okButtonText={t('login.yesContinue') as string}
+                cancelButtonText={t('account.cancel') as string}
+            />
+            <ConfirmModal
+                positiveHandler={() => onNext()}
+                setShow={(show) => setConfirmJoinToCompany(show)}
+                show={confirmJoinToCompany}
+                title={t(`login.confirmJoinToCompany`, { companyName }) as string}
                 okButtonText={t('login.yesContinue') as string}
                 cancelButtonText={t('account.cancel') as string}
             />

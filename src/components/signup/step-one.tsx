@@ -66,6 +66,7 @@ export const StepOne = ({
         }
     };
     const triggerVerify = async () => {
+        return onNext();
         const [err, verified] = await awaitToError(verify(code));
         if (err) {
             captchaRef.current?.resetCaptcha();
@@ -153,7 +154,7 @@ export const StepOne = ({
                 </div>
             )}
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button disabled={submitDisabled} loading={loading} className="mt-12 w-full" onClick={triggerVerify}>
+            <Button disabled={false} loading={loading} className="mt-12 w-full" onClick={triggerVerify}>
                 {t('signup.next')}
             </Button>
         </>

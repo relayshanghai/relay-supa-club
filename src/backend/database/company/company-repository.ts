@@ -28,7 +28,7 @@ export default class CompanyRepository extends BaseRepository<CompanyEntity> {
     constructor(target: EntityTarget<CompanyEntity> = CompanyEntity, manager?: EntityManager) {
         super(target, manager);
     }
-    async getCompanyByName(name: string) {
+    async getCompanyByName(name: string): Promise<CompanyEntity> {
         const [err, company] = await awaitToError(
             this.findOneByOrFail({
                 name,

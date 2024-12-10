@@ -10,6 +10,7 @@ import { NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-er
 import awaitToError from 'src/utils/await-to-error';
 import { CreditService } from '../credit/credit-service';
 import { EXPORT_CREDIT_MAX_TOTAL, EXPORT_CREDIT_TRIAL_TOTAL } from 'src/constants/credits';
+import { CompanyEntity } from 'src/backend/database/company/company-entity';
 export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;
@@ -35,27 +36,7 @@ export default class BalanceService {
             relations: ['subscription'],
         });
         if (!company) return;
-        const startDate = new Date(company.subscription?.activeAt || company.createdAt);
-        const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
-
-        const usage = await UsageRepository.getRepository().getCountUsages(companyId, startDate, endDate);
-        const credit = await CreditService.getService().getTotalCredit();
-        const searchLimit = parseInt(
-            ['trial', 'trialing'].includes(company.subscriptionStatus)
-                ? company.trialSearchesLimit
-                : credit.search + '',
-        );
-        const profileLimit = parseInt(
-            ['trial', 'trialing'].includes(company.subscriptionStatus)
-                ? company.trialProfilesLimit
-                : credit.profile + '',
-        );
-        const exportLimit = parseInt(
-            ['trial', 'trialing'].includes(company.subscriptionStatus)
-                ? EXPORT_CREDIT_TRIAL_TOTAL + ''
-                : EXPORT_CREDIT_MAX_TOTAL + '',
-        );
-
+        const usages = await this.getCompanyUsage(company);
         await awaitToError(
             BalanceRepository.getRepository().upsert(
                 [
@@ -65,7 +46,7 @@ export default class BalanceService {
                             id: companyId,
                         },
                         type: BalanceType.PROFILE,
-                        amount: profileLimit - usage.profile,
+                        amount: usages.profile,
                     },
                     {
                         id: v4(),
@@ -73,7 +54,7 @@ export default class BalanceService {
                             id: companyId,
                         },
                         type: BalanceType.SEARCH,
-                        amount: searchLimit - usage.search,
+                        amount: usages.search,
                     },
                     {
                         id: v4(),
@@ -81,7 +62,7 @@ export default class BalanceService {
                             id: companyId,
                         },
                         type: BalanceType.EXPORT,
-                        amount: exportLimit - usage.export,
+                        amount: usages.export,
                     },
                 ],
                 {
@@ -130,15 +111,42 @@ export default class BalanceService {
 
     @UseLogger()
     @CompanyIdRequired()
-    getAllBalance() {
+    async getAllBalance() {
         const companyId = RequestContext.getContext().companyId as string;
-        return BalanceRepository.getRepository().find({
+        const balances = await BalanceRepository.getRepository().find({
             where: {
                 company: {
                     id: companyId,
                 },
             },
         });
+        const company = await CompanyRepository.getRepository().findOne({
+            where: {
+                id: companyId,
+            },
+        });
+        if (!company) return;
+        const usages = await this.getCompanyUsage(company);
+        const existedTypes = balances.map((balance) => balance.type);
+        const nonExistedTypes = Object.values(BalanceType).filter((type) => !existedTypes.includes(type));
+        const newBalances = nonExistedTypes.map((type) => ({
+            id: v4(),
+            company: {
+                id: companyId,
+            },
+            type,
+            amount: usages[type],
+        }));
+        if (newBalances.length > 0) {
+            await BalanceRepository.getRepository().upsert(newBalances, {
+                conflictPaths: ['company', 'type'],
+            });
+            return [
+                ...balances,
+                ...newBalances.map((balance) => ({ ...balance, amount: balance.amount + '', company: undefined })),
+            ];
+        }
+        return balances;
     }
 
     @UseLogger()
@@ -187,5 +195,33 @@ export default class BalanceService {
         await UsageRepository.getRepository().delete({
             id: usage?.id,
         });
+    }
+
+    private async getCompanyUsage(company: CompanyEntity) {
+        const startDate = new Date(company.subscription?.activeAt || company.createdAt);
+        const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
+
+        const usage = await UsageRepository.getRepository().getCountUsages(company.id, startDate, endDate);
+        const credit = await CreditService.getService().getTotalCredit();
+        const searchLimit = parseInt(
+            ['trial', 'trialing'].includes(company.subscriptionStatus)
+                ? company.trialSearchesLimit
+                : credit.search + '',
+        );
+        const profileLimit = parseInt(
+            ['trial', 'trialing'].includes(company.subscriptionStatus)
+                ? company.trialProfilesLimit
+                : credit.profile + '',
+        );
+        const exportLimit = parseInt(
+            ['trial', 'trialing'].includes(company.subscriptionStatus)
+                ? EXPORT_CREDIT_TRIAL_TOTAL + ''
+                : EXPORT_CREDIT_MAX_TOTAL + '',
+        );
+        return {
+            profile: profileLimit - usage.profile,
+            search: searchLimit - usage.search,
+            export: exportLimit - usage.export,
+        };
     }
 }
