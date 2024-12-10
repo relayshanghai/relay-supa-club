@@ -28,6 +28,7 @@ import { Tooltip } from '../library';
 import { useBalance } from 'src/hooks/use-balance';
 import { useRouter } from 'next/router';
 import { useUsageV2 } from 'src/hooks/v2/use-usages';
+import { isTrial } from 'src/utils/subscription';
 
 const Tablet = ({
     children,
@@ -386,25 +387,33 @@ export const SubscriptionDetails = () => {
                                     ) : (
                                         <Progress className="h-3" value={(usagesSearch / usagesV2.search) * 100} />
                                     )}
-                                    <span>
-                                        {usagesExports}/{usagesV2.export} {t('account.planSection.exportsCount')}
-                                    </span>
-                                    {subsStatusMustShowPopup.includes(subscription.status) ? (
-                                        <Tooltip
-                                            content={t('account.planSection.subscriptionExpired')}
-                                            detail={t('account.planSection.subscriptionExpiredAction')}
-                                            position={'top-left'}
-                                            className=""
-                                        >
-                                            <Link href={'/upgrade'}>
+                                    {!isTrial(subscription.status) && (
+                                        <>
+                                            <span>
+                                                {usagesExports}/{usagesV2.export}{' '}
+                                                {t('account.planSection.exportsCount')}
+                                            </span>
+                                            {subsStatusMustShowPopup.includes(subscription.status) ? (
+                                                <Tooltip
+                                                    content={t('account.planSection.subscriptionExpired')}
+                                                    detail={t('account.planSection.subscriptionExpiredAction')}
+                                                    position={'top-left'}
+                                                    className=""
+                                                >
+                                                    <Link href={'/upgrade'}>
+                                                        <Progress
+                                                            className="h-3"
+                                                            value={(usagesExports / usagesV2.export) * 100}
+                                                        />
+                                                    </Link>
+                                                </Tooltip>
+                                            ) : (
                                                 <Progress
                                                     className="h-3"
                                                     value={(usagesExports / usagesV2.export) * 100}
                                                 />
-                                            </Link>
-                                        </Tooltip>
-                                    ) : (
-                                        <Progress className="h-3" value={(usagesExports / usagesV2.export) * 100} />
+                                            )}
+                                        </>
                                     )}
                                 </section>
                                 {subscription?.status === SubscriptionStatus.ACTIVE && (
