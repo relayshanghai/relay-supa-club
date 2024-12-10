@@ -206,7 +206,7 @@ export default class RegistrationService {
             });
         }
     }
-    async createProfile(request: RegisterRequest, company: CompanyEntity, ignoreExisted: boolean = false) {
+    async createProfile(request: RegisterRequest, company: CompanyEntity, ignoreExisted = false) {
         const profile = new ProfileEntity();
         profile.company = company;
         profile.firstName = request.firstName;
@@ -265,8 +265,8 @@ export default class RegistrationService {
     @UseTransaction()
     async register(request: RegisterRequest, cookie: Cookies) {
         const requestCookie = cookie.get<OtpCookieStore>('otpFlow');
-        // if (!requestCookie) throw new Error('No otp flow found');
-        // if (!requestCookie.verified) throw new Error('Phone number not verified');
+        if (!requestCookie) throw new Error('No otp flow found');
+        if (!requestCookie.verified) throw new Error('Phone number not verified');
         const validators: Promise<any>[] = [
             this.isPhoneNumberDoesNotExist(request.phoneNumber),
             this.isEmailDoesNotExist(request.email),
@@ -274,7 +274,7 @@ export default class RegistrationService {
         if (!request.requestToJoin) validators.push(this.isCompanyDoesNotExists(request.companyName));
         await Promise.all(validators);
 
-        let [errCompany, company] = await awaitToError(
+        const [errCompany, company] = await awaitToError(
             CompanyRepository.getRepository().getCompanyByName(request.companyName),
         );
 
@@ -308,7 +308,7 @@ export default class RegistrationService {
         return deletedUser;
     }
     async addtoCompanyRequest(profile: ProfileEntity) {
-        const c = await CompanyJoinRequestRepository.getRepository().save({
+        await CompanyJoinRequestRepository.getRepository().save({
             company: profile.company,
             profile,
         });

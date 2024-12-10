@@ -10,7 +10,7 @@ import { NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-er
 import awaitToError from 'src/utils/await-to-error';
 import { CreditService } from '../credit/credit-service';
 import { EXPORT_CREDIT_MAX_TOTAL, EXPORT_CREDIT_TRIAL_TOTAL } from 'src/constants/credits';
-import { CompanyEntity } from 'src/backend/database/company/company-entity';
+import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 export default class BalanceService {
     static service = new BalanceService();
     static getService = () => BalanceService.service;

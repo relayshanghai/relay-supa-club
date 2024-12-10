@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'shadcn/components/ui/button';
-import { useUser } from 'src/hooks/use-user';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import { Tooltip } from '../library';
 import { useJoinRequests } from 'src/hooks/use-join-requests';
@@ -11,6 +10,7 @@ export const TeamJoinRequest = () => {
 
     useEffect(() => {
         getJoinRequests();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const { t } = useTranslation();
@@ -47,7 +47,7 @@ export const TeamJoinRequest = () => {
                                         </p>
                                         <div className="flex flex-row gap-x-1">
                                             <Button
-                                                className="text-sm font-semibold h-6 px-2"
+                                                className="h-6 px-2 text-sm font-semibold"
                                                 onClick={() => {
                                                     acceptRequest(req.id);
                                                 }}
@@ -55,7 +55,7 @@ export const TeamJoinRequest = () => {
                                                 {t('account.company.acceptRequest')}
                                             </Button>
                                             <Button
-                                                className="text-sm font-semibold h-6 px-2"
+                                                className="h-6 px-2 text-sm font-semibold"
                                                 onClick={() => {
                                                     ignoreRequest(req.id);
                                                 }}
