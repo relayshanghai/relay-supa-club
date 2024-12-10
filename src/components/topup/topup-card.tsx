@@ -27,8 +27,6 @@ const PriceDetail = ({ price, currency }: { price?: TopUpPrices; currency: strin
 };
 
 export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
-    console.log(topUpSize.toLowerCase());
-
     const { createCheckoutSession, loading } = usePayment();
     const [, setSelectedTopupBundle] = useLocalSelectedTopupBundle();
     const { company } = useCompany();
