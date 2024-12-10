@@ -25,7 +25,8 @@ const ImageBackground = () => {
 export const TopUpPage = () => {
     const { t } = useTranslation();
     const { getPlans, plans } = usePlans();
-    const [bundles, setBundles] = useState<string[]>([]);
+    const [mainBundle, setMainBundle] = useState<string[]>([]);
+    const [exportPlans, setExportPlans] = useState<string[]>([]);
 
     useEffect(() => {
         getPlans();
@@ -34,8 +35,14 @@ export const TopUpPage = () => {
 
     useEffect(() => {
         if (plans.length) {
-            const bundles = Array.from(new Set(plans.map((plan) => plan.itemName)));
-            setBundles(bundles);
+            const m = Array.from(
+                new Set(plans.filter((plan) => plan.exports === 0).map((plan) => plan.itemName)),
+            );
+            setMainBundle(m);
+            const d = Array.from(
+                new Set(plans.filter((plan) => plan.exports > 0).map((plan) => plan.itemName)),
+            );
+            setExportPlans(d);
         }
     }, [plans]);
 
@@ -61,9 +68,16 @@ export const TopUpPage = () => {
                         </h4>
                     </div>
                     <div
-                        className={`container m-auto flex min-h-[32rem] w-full max-w-screen-xl flex-wrap justify-center`}
+                        className={`container m-auto grid min-h-[32rem] w-full max-w-screen-xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3`}
                     >
-                        {bundles.map((option) => (
+                        {mainBundle.map((option) => (
+                            <TopUpCard key={option} topUpSize={option as TopUpSizes} />
+                        ))}
+                    </div>
+                    <div
+                        className={`container m-auto grid min-h-[32rem] w-full max-w-screen-xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3`}
+                    >
+                        {exportPlans.map((option) => (
                             <TopUpCard key={option} topUpSize={option as TopUpSizes} />
                         ))}
                     </div>
