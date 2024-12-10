@@ -36,12 +36,16 @@ import { useDriverV2 } from 'src/hooks/use-driver-v2';
 import { discoveryInfluencerGuide, emailTemplateModal, outreachInfluencerGuide } from 'src/guides/crm.guide';
 import { filterByPage } from 'src/utils/filter-sort/influencer';
 import { downloadFile } from 'src/utils/file/download-fe';
+import { useSubscription } from 'src/hooks/v2/use-subscription';
+import { type SubscriptionStatus } from 'src/backend/database/subcription/subscription-entity';
+import { isTrial } from 'src/utils/subscription';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { push } = useRouter();
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
+    const { subscription } = useSubscription();
     const { sequence, sendSequence, updateSequence } = useSequence(sequenceId);
     const { sequenceSteps } = useSequenceSteps(sequenceId);
     const {
@@ -397,7 +401,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     <div className="flex w-full flex-row items-center justify-end">
                         <div className="flex space-x-4">
                             {/* hide export button for now */}
-                            <Button onClick={() => handleExport()}>{exportButtonText()}</Button>
+                            {!isTrial(subscription?.status as SubscriptionStatus) && (
+                                <Button onClick={() => handleExport()}>{exportButtonText()}</Button>
+                            )}
                             <button
                                 data-testid="delete-influencers-button"
                                 className={`h-fit ${
