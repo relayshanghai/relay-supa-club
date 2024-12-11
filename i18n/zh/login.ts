@@ -81,5 +81,7 @@ const login = {
     confirmUSDCurrency: '您已选择美元作为默认货币，选择后不可更改。您确定要继续吗？',
     yesContinue: '是的，继续',
     usingUsd: '由于您已选定美元作为支付货币，因此目前仅支持信用卡支付',
+    confirmJoinToCompany: '已存在具有 {{companyName}} 名称的公司。您是否要发送加入请求？',
+    joinRequestSent: '加入请求已发送至 {{companyName}}',
 };
 export default login;

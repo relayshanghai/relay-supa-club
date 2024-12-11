@@ -23,7 +23,7 @@ import awaitToError from 'src/utils/await-to-error';
 import type { PaymentMethod } from 'types/stripe/setup-intent-failed-webhook';
 import { appCacheDBKey } from 'src/constants';
 import { useApiClient } from 'src/utils/api-client/request';
-import { type AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
 export type SignupData = {
     email: string;
@@ -54,7 +54,7 @@ export interface IUserContext {
     refreshProfile: KeyedMutator<ProfileWithCompany> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
-    signup: (body: SignupPostBody) => Promise<SignupPostResponse>;
+    signup: (body: SignupPostBody, requestToJoin: boolean) => Promise<SignupPostResponse>;
 
     paymentMethods: Record<string, PaymentMethod>;
     refreshCustomerInfo: KeyedMutator<Record<string, PaymentMethod>> | (() => void);
@@ -177,7 +177,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const login = useCallback(
         async (email: string, password: string) => {
             setLoading(true);
+            // const [checkErr] = await awaitToError(apiClient.get(`/join-requests/${email}/check`));
+            // if (checkErr) {
+            //     setLoading(false);
+            //     return;
+            // }
+            // console.log(checkErr);
             try {
+                await apiClient.get(`/join-requests/${email}/check`);
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email,
                     password,
@@ -211,6 +218,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 clientLogger(e, 'error');
                 let message = 'Unknown error';
                 if (e instanceof Error) message = e.message ?? 'Unknown error';
+                if (e instanceof AxiosError) {
+                    if (e.response?.status === 403) {
+                        message = 'You have no access to this account, please contact you company admin';
+                    }
+                }
                 throw new Error(message);
             } finally {
                 setLoading(false);
@@ -308,9 +320,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         : undefined;
 
     const signup = useCallback(
-        async (body: SignupPostBody) => {
+        async (body: SignupPostBody, requestToJoin = false) => {
             const [err, result] = await awaitToError<AxiosError, { data: SignupPostResponse }>(
-                apiClient.post<SignupPostResponse>(`/users`, body),
+                apiClient.post<SignupPostResponse>(`/users`, { ...body, requestToJoin }),
             );
             if (err) {
                 if (err.response?.status === 409) {
