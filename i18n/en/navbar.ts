@@ -12,6 +12,7 @@ const navbar = {
     report: "{{influencerName}}'s Report",
     support: 'Contact Support',
     products: 'Products',
+    creditUsages: 'Credit Usages',
 };
 
 export default navbar;

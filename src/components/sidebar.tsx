@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, type MutableRefObject, type ReactNode } from 'react';
+import { useRef, useState, type MutableRefObject, type ReactNode } from 'react';
 import { useUser } from 'src/hooks/use-user';
 import { OldSearch, Team, Guide, BarGraph, ThunderSearch, FourSquare, ThunderMail } from './icons';
 import { Title } from './title';
@@ -10,6 +10,11 @@ import { Button } from './button';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { OpenAccountModal, ToggleNavbarSize, NavigateToPage } from 'src/utils/analytics/events';
 import { Tooltip } from './library';
+import { Battery100Icon, Battery50Icon, Battery0Icon } from '@heroicons/react/24/solid';
+import { useHover } from 'src/hooks/use-hover';
+import { SidebarCredit } from './sidebar/credit';
+import { useUsageV2 } from 'src/hooks/v2/use-usages';
+import { useBalance } from 'src/hooks/use-balance';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <OldSearch height={20} width={20} className="my-0.5 stroke-inherit" />,
@@ -73,9 +78,26 @@ const NavBarInner = ({
     isRelayEmployee: boolean;
 }) => {
     const { t } = useTranslation();
+    const creditPopOverElement = useRef<HTMLDivElement>(null);
+    const hovered = useHover(creditPopOverElement);
     const { track } = useRudderstackTrack();
     const { profile } = useUser();
+    const { usages: usagesV2 } = useUsageV2();
+    const { balance, loading: balanceLoading } = useBalance();
     const { defaultPage } = { defaultPage: '/sequences' };
+
+    const CreditBattery = () => {
+        const totalCreditAvailable = balanceLoading ? 0 : balance.profile + balance.search + balance.export;
+        const totalUsages = balanceLoading ? 0 : usagesV2.profile + usagesV2.search + usagesV2.export;
+        const totalUsagesPercentage = (totalCreditAvailable / totalUsages) * 100;
+        if (totalUsagesPercentage > 50) {
+            return <Battery100Icon className="fill-primary-700" />;
+        } else if (totalUsagesPercentage > 10) {
+            return <Battery50Icon className="fill-primary-500" />;
+        } else {
+            return <Battery0Icon className="fill-primary-300" />;
+        }
+    };
 
     return (
         <>
@@ -122,7 +144,25 @@ const NavBarInner = ({
                     )}
                 </section>
                 {loggedIn && profileFirstName && (
-                    <div className="mb-4 flex w-full flex-row items-center justify-center">
+                    <div className="mb-4 flex w-full flex-col items-center justify-center">
+                        <div
+                            data-testid="credits"
+                            className="relative mb-6 flex items-center justify-center"
+                            ref={creditPopOverElement}
+                        >
+                            <div className="flex h-12 w-12 cursor-pointer p-2">
+                                <CreditBattery />
+                            </div>
+                            <div
+                                className={`${
+                                    hovered ? 'flex' : 'hidden'
+                                } border-gray absolute bottom-[80%] left-[60%] w-[300px] origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white px-4 py-6 shadow-lg`}
+                                ref={accountMenuRef}
+                            >
+                                <SidebarCredit />
+                            </div>
+                        </div>
+
                         <div
                             data-testid="layout-account-menu"
                             onClick={() => {

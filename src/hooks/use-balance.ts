@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BalanceType, type BalanceEntity } from 'src/backend/database/balance/balance-entity';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
@@ -18,7 +18,7 @@ export const useBalance = () => {
         [BalanceType.EXPORT]: 0,
     });
 
-    const getCompanyBalance = async () => {
+    const getCompanyBalance = useCallback(async () => {
         const [err, data] = await awaitToError(apiClient.get<BalanceEntity[]>(`/v2/balances`));
         if (err) {
             return;
@@ -27,7 +27,7 @@ export const useBalance = () => {
             .map((balance) => ({ [balance.type as BalanceType]: +balance.amount }))
             .reduce((acc, val) => ({ ...acc, ...val }), {}) as CompanyBalanceType;
         setBalance(d);
-    };
+    }, [apiClient]);
     useEffect(() => {
         getCompanyBalance();
     }, []);
