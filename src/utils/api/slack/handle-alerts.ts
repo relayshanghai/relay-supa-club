@@ -10,6 +10,7 @@ import type { BrevoEvent } from 'pages/api/brevo/webhook';
 const time = new Date().toISOString();
 
 export const logRateLimitError = async (action: string, context: ServerContext, errorTag: string) => {
+    return; // disable it for a while
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
     const queryParams = new URLSearchParams({
