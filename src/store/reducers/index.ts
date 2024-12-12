@@ -8,6 +8,7 @@ import sequenceInfluencer from './sequence-influencer';
 import inboxFilter from './inbox-filter';
 import report from './report';
 import classicSearchParams from './classic-search-params';
+import teammates from './teammates';
 
 const rootReducer = combineReducers({
     product,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     inboxFilter,
     report,
     classicSearchParams,
+    teammates,
 });
 
 export default rootReducer;

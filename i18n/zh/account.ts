@@ -34,6 +34,12 @@ const account = {
         member: '成员',
         companyProfileUpdated: '公司信息已更新',
         oopsWentWrong: '哎呀，出错了',
+        acceptConfirmation: '您确定要接受 {{email}} 的请求吗？',
+        successAccept: '请求已接受',
+        errorAccept: '无法接受请求',
+        ignoreConfirmation: '您确定要忽略 {{email}} 的请求吗？',
+        successIgnore: '请求已忽略',
+        errorIgnore: '无法忽略请求',
     },
     subscription: {
         plan: '当前方案',
