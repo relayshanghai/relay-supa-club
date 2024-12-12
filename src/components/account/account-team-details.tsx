@@ -16,9 +16,10 @@ import {
     DropdownMenuTrigger,
 } from 'shadcn/components/ui/dropdown-menu';
 import { ChevronDown, ProfilePlus } from '../icons';
-import type { CompanyTeammatesGetResponse } from 'pages/api/company/teammates';
 import { truncatedText } from 'src/utils/outreach/helpers';
 import { Tooltip } from '../library';
+import { type AccountRole } from 'types';
+import { type ProfileEntity } from 'src/backend/database/profile/profile-entity';
 
 export const TeamDetails = () => {
     const { profile } = useUser();
@@ -35,8 +36,8 @@ export const TeamDetails = () => {
     const { t } = useTranslation();
 
     const handleChangeRole = useCallback(
-        async (teammateProfile: CompanyTeammatesGetResponse[number], role: 'company_owner' | 'company_teammate') => {
-            if (teammateProfile.user_role === role || !profile?.id) {
+        async (teammateProfile: ProfileEntity, role: 'company_owner' | 'company_teammate') => {
+            if (teammateProfile.userRole === role || !profile?.id) {
                 return;
             }
             await updateTeammate(profile?.id, teammateProfile.id, role);
@@ -74,11 +75,11 @@ export const TeamDetails = () => {
                                     >
                                         <p className="basis-1/5 whitespace-nowrap text-sm font-medium">
                                             <Tooltip
-                                                content={teammateProfile.first_name + ' ' + teammateProfile.last_name}
+                                                content={teammateProfile.firstName + ' ' + teammateProfile.lastName}
                                                 position="top-left"
                                             >
                                                 {truncatedText(
-                                                    teammateProfile.first_name + ' ' + teammateProfile.last_name,
+                                                    teammateProfile.firstName + ' ' + teammateProfile.lastName,
                                                     15,
                                                 )}
                                             </Tooltip>
@@ -96,7 +97,7 @@ export const TeamDetails = () => {
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger>
                                                     <section className="flex w-32 flex-shrink-0 flex-grow-0 basis-1/5 items-center justify-between gap-3 rounded-lg border px-2 py-1 font-semibold shadow">
-                                                        {isAdmin(teammateProfile?.user_role)
+                                                        {isAdmin(teammateProfile?.userRole as AccountRole)
                                                             ? t('account.company.admin')
                                                             : t('account.company.member')}
                                                         <ChevronDown className="h-4 w-4 text-black" />
@@ -123,12 +124,13 @@ export const TeamDetails = () => {
                                             </DropdownMenu>
                                         ) : (
                                             <p className="basis-1/5 text-sm font-semibold">
-                                                {isAdmin(teammateProfile?.user_role)
+                                                {isAdmin(teammateProfile?.userRole as AccountRole)
                                                     ? t('account.company.admin')
                                                     : t('account.company.member')}
                                             </p>
                                         )}
-                                        {isAdmin(profile?.user_role) && !isAdmin(teammateProfile?.user_role) ? (
+                                        {isAdmin(profile?.user_role) &&
+                                        !isAdmin(teammateProfile?.userRole as AccountRole) ? (
                                             <Dialog>
                                                 <DialogTrigger className="basis-1/5">
                                                     <button className="font-semibold text-red-400">Remove</button>

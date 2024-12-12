@@ -17,6 +17,7 @@ export default class JoinRequestService {
                     id: companyId,
                 },
                 joinedAt: IsNull(),
+                ignoredAt: IsNull(),
             },
             relations: {
                 profile: true,
