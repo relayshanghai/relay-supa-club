@@ -3,20 +3,21 @@ import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 import { useTeammates } from './use-teammates';
 import { useTeammatesStore } from 'src/store/reducers/teammates';
+import { useCallback } from 'react';
 
 export const useJoinRequests = () => {
     const { apiClient, loading, error } = useApiClient();
     const { refreshTeammates } = useTeammates();
     const { joinRequests, setJoinRequests } = useTeammatesStore();
 
-    const getJoinRequests = async () => {
+    const getJoinRequests = useCallback(async () => {
         const [err, response] = await awaitToError(apiClient.get<CompanyJoinRequestEntity[]>(`/join-requests`));
         if (err) {
             throw err;
         }
         setJoinRequests(response.data);
         return response.data;
-    };
+    }, [apiClient, setJoinRequests]);
 
     const acceptRequest = async (id: string) => {
         const [err, response] = await awaitToError(apiClient.put<CompanyJoinRequestEntity[]>(`/join-requests/${id}`));

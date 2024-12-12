@@ -34,6 +34,12 @@ const account = {
         member: 'Member',
         companyProfileUpdated: 'Company profile updated',
         oopsWentWrong: 'Oops, something went wrong',
+        acceptConfirmation: "Are you sure want to accept {{email}}'s request?",
+        successAccept: 'Request accepted',
+        errorAccept: 'Unable to accept request',
+        ignoreConfirmation: "Are you sure want to ignore {{email}}'s request?",
+        successIgnore: 'Request ignored',
+        errorIgnore: 'Unable to ignore request',
     },
     subscription: {
         plan: 'Current Plan',
