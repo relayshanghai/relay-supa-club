@@ -12,9 +12,17 @@ export const useUsageV2 = () => {
     });
 
     useEffect(() => {
-        getUsage().then((data) => {
-            setUsages(data);
-        });
+        getUsage()
+            .then((data) => {
+                setUsages(data);
+            })
+            .catch(() => {
+                setUsages({
+                    profile: 0,
+                    search: 0,
+                    export: 0,
+                });
+            });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
