@@ -5,7 +5,7 @@ import type { EntityManager, EntityTarget } from 'typeorm';
 import { CompanyJoinRequestEntity } from './company-join-request-entity';
 
 @InjectInitializeDatabaseOnAllProps
-export default class CompanyJoinRequestRepository extends BaseRepository<CompanyJoinRequestEntity> {
+export class CompanyJoinRequestRepository extends BaseRepository<CompanyJoinRequestEntity> {
     static readonly repository = new CompanyJoinRequestRepository();
     static getRepository(): CompanyJoinRequestRepository {
         // when request context is not available, use the default repository, otherwise use the manager from the request context

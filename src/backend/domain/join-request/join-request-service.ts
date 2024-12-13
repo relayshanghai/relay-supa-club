@@ -1,4 +1,4 @@
-import CompanyJoinRequestRepository from 'src/backend/database/company-join-request/company-join-request-repository';
+import { CompanyJoinRequestRepository } from 'src/backend/database/company-join-request/company-join-request-repository';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 import awaitToError from 'src/utils/await-to-error';
 import { ForbiddenError } from 'src/utils/error/http-error';
@@ -65,21 +65,16 @@ export default class JoinRequestService {
     }
 
     async checkByEmail(email: string) {
-        const request = await CompanyJoinRequestRepository.getRepository().findOne({
+        const request = await ProfileRepository.getRepository().findOne({
             where: {
-                company: {
-                    profiles: {
-                        email,
-                    },
-                },
+                email,
             },
             relations: {
-                company: {
-                    profiles: true,
-                },
+                companyJoinRequests: true,
+                company: true,
             },
         });
-        if (!request?.joinedAt && request?.company?.profiles?.[0].userRole !== 'company_owner') {
+        if (!request?.companyJoinRequests?.joinedAt && request?.company?.profiles?.[0].userRole !== 'company_owner') {
             throw new ForbiddenError('Request not found');
         }
         return request;

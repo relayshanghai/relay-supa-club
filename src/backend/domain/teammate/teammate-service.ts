@@ -1,4 +1,4 @@
-import CompanyJoinRequestRepository from 'src/backend/database/company-join-request/company-join-request-repository';
+import { CompanyJoinRequestRepository } from 'src/backend/database/company-join-request/company-join-request-repository';
 import { ProfileRepository } from 'src/backend/database/profile/profile-repository';
 import { RequestContext } from 'src/utils/request-context/request-context';
 import { CompanyIdRequired } from '../decorators/company-id';

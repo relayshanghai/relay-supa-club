@@ -26,7 +26,7 @@ import PriceRepository from 'src/backend/database/price/price-repository';
 import { SubscriptionType } from 'src/backend/database/price/price-entity';
 import BalanceService from '../balance/balance-service';
 import type { Cookies } from 'src/utils/handler/cookie';
-import CompanyJoinRequestRepository from 'src/backend/database/company-join-request/company-join-request-repository';
+import { CompanyJoinRequestRepository } from 'src/backend/database/company-join-request/company-join-request-repository';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 

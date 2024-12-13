@@ -12,6 +12,7 @@ import {
 import { CompanyEntity } from '../company/company-entity';
 import { SequenceEntity } from '../sequence/sequence-entity';
 import { JobEntity } from '../job/job-entity';
+import { CompanyJoinRequestEntity } from '../company-join-request/company-join-request-entity';
 
 @Entity('profiles')
 export class ProfileEntity {
@@ -57,6 +58,9 @@ export class ProfileEntity {
 
     @OneToMany(() => JobEntity, (job) => job.owner)
     jobs?: Relation<JobEntity>;
+
+    @OneToMany(() => CompanyJoinRequestEntity, (joinRequest) => joinRequest.profile)
+    companyJoinRequests?: Relation<CompanyJoinRequestEntity>;
 
     @Column({ name: 'language', nullable: true })
     language?: string;
