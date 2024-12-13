@@ -9,7 +9,7 @@ import { RequestContext } from 'src/utils/request-context/request-context';
 import { NotFoundError, UnprocessableEntityError } from 'src/utils/error/http-error';
 import awaitToError from 'src/utils/await-to-error';
 import { CreditService } from '../credit/credit-service';
-import { EXPORT_CREDIT_MAX_TOTAL, EXPORT_CREDIT_TRIAL_TOTAL } from 'src/constants/credits';
+import { EXPORT_CREDIT_TRIAL_TOTAL } from 'src/constants/credits';
 import type { CompanyEntity } from 'src/backend/database/company/company-entity';
 export default class BalanceService {
     static service = new BalanceService();
@@ -216,7 +216,7 @@ export default class BalanceService {
         const exportLimit = parseInt(
             ['trial', 'trialing'].includes(company.subscriptionStatus)
                 ? EXPORT_CREDIT_TRIAL_TOTAL + ''
-                : EXPORT_CREDIT_MAX_TOTAL + '',
+                : credit.export + '',
         );
         return {
             profile: profileLimit - usage.profile,
