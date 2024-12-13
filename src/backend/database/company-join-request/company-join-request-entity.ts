@@ -21,7 +21,7 @@ export class CompanyJoinRequestEntity {
     company?: Relation<CompanyEntity>;
 
     @JoinColumn({ name: 'user_id' })
-    @ManyToOne(() => ProfileEntity)
+    @ManyToOne(() => ProfileEntity, (profile) => profile.companyJoinRequests)
     profile?: Relation<ProfileEntity>;
 
     @Column({ type: 'timestamp', name: 'joined_at', nullable: true })
