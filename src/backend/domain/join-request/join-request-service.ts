@@ -74,7 +74,7 @@ export default class JoinRequestService {
                 company: true,
             },
         });
-        if (!request?.companyJoinRequests?.joinedAt && request?.company?.profiles?.[0].userRole !== 'company_owner') {
+        if (!request?.companyJoinRequests?.joinedAt && request?.userRole !== 'company_owner') {
             throw new ForbiddenError('Request not found');
         }
         return request;
