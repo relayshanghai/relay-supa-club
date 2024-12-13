@@ -206,14 +206,24 @@ export default class RegistrationService {
             });
         }
     }
-    async createProfile(request: RegisterRequest, company: CompanyEntity, ignoreExisted = false) {
+    async createProfile({
+        company,
+        ignoreExisted,
+        request,
+        userRole = 'company_owner',
+    }: {
+        request: RegisterRequest;
+        company: CompanyEntity;
+        ignoreExisted: boolean;
+        userRole?: string;
+    }) {
         const profile = new ProfileEntity();
         profile.company = company;
         profile.firstName = request.firstName;
         profile.lastName = request.lastName;
         profile.email = request.email;
         profile.phone = request.phoneNumber;
-        profile.userRole = 'company_owner';
+        profile.userRole = userRole;
         if (ignoreExisted) {
             const user = await supabase.auth.admin.createUser({
                 email: request.email,
@@ -280,13 +290,22 @@ export default class RegistrationService {
 
         if (request.requestToJoin && !errCompany) {
             // only create profile
-            const p = await this.createProfile(request, company, true);
+            const p = await this.createProfile({
+                company,
+                ignoreExisted: true,
+                request,
+                userRole: 'company_teammate',
+            });
             await this.addtoCompanyRequest(p);
             return company;
         }
 
         const createdCompany = await this.createCompany(request);
-        const createdProfile = await this.createProfile(request, createdCompany);
+        const createdProfile = await this.createProfile({
+            company: createdCompany,
+            ignoreExisted: false,
+            request,
+        });
         await this.createBrevoContact(createdProfile, createdCompany);
         await BalanceService.getService().initBalance({ companyId: createdCompany.id });
         return createdCompany;
