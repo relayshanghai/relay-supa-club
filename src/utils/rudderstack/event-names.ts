@@ -42,7 +42,7 @@ export const CAMPAIGN_INFLUENCER_ROW = generateEventName('Campaign Influencer Ro
 
 export const ANALYZE_PAGE = generateEventName('Analyze Page');
 // Analyze Page, Similar Influencer Section, open report
-// Analyze Page, add to campaign
+// Analyze Page, Add to Campaign
 
 export const SEARCH_FILTER_MODAL = generateEventName('Search Filter Modal');
 // Search Filter Modal, Clear search filters
@@ -77,7 +77,7 @@ export const SEARCH_RESULT = generateEventName('Search Result');
 // Search Result, load more
 
 export const SEARCH_RESULT_ROW = generateEventName('Search Result Row');
-// Search Result Row, add to campaign
+// Search Result Row, Add to Campaign
 // Search Result Row, open report
 // Search Result Row, open social link
 

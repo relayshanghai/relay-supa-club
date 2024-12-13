@@ -44,7 +44,7 @@ Since most influencers you reach out to probably won't respond to you, you'll sa
         sendPlaceholder: 'Send me a product description',
         stop: 'Stop BoostBot',
         stopped: 'BoostBot stopped',
-        outreachSelected: 'Add selected influencers to Campaign',
+        outreachSelected: 'Add Selected Influencers to Campaign',
         progress: {
             step1: 'Finding niches for your product',
             step2: 'Searching our database for relevant influencers',
@@ -58,9 +58,7 @@ You can check them out here <customLink>{{sequenceName}}</customLink>`,
         outreachDoneB: 'Change up your description to help me think of different influencers to recommend!',
         outreachDoneFirstTime: `Done!
 
-You can check them out here <customLink>{{sequenceName}}</customLink>
-
-Sequences are our email automation feature. You can set up your email templates, schedule your outreach and follow-up emails to make contacting influencers a breeze!`,
+You can check them out here <customLink>{{sequenceName}}</customLink>`,
         and: 'and',
         clearChatModal: {
             open: 'Clear chat and filters',

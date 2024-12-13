@@ -82,7 +82,7 @@ const creators = {
     },
     show: {
         lastUpdate: '报告更新于',
-        searchInfluencerPlaceholder: '请搜索达人的用户名，例如：@mrbeast',
+        searchInfluencerPlaceholder: '请搜索红人的用户名，例如: @mrbeast',
         noInfluencerSearchResults: `很抱歉，我们暂时没有 {{ username }}上{{ platform }}的报告`,
         noSearchResults: '没有搜索结果, 请尝试其他关键词',
         noTopicResults: {
@@ -189,7 +189,7 @@ const creators = {
     },
     cancel: '取消',
     sequence: '选择项目',
-    campaign: '活动',
+    campaign: '项目',
     translate: 'KOL 将自动收到来自',
     addToSequenceNotes: '在此处添加的KOL将显示在邮件进程管理的“急需回复”中。',
     addToSequenceNotes2: '将KOL加入“邮件进程管理”后，可以进入“邮件进程管理”页面，开始给KOL发送邮件。',

@@ -54,7 +54,7 @@ export const BillingDetails = () => {
                         <>
                             <div className="w-full">
                                 <Input
-                                    label="Invoice receiving email"
+                                    label={t('account.billingInfoSection.invoiceEmail')}
                                     disabled={updating}
                                     type="email"
                                     value={invoiceEmailText || ''}

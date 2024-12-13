@@ -1,7 +1,7 @@
 const sequences = {
     campaigns: '项目',
     sequences: '邮件进程管理',
-    subtitle: '按活动分组的影响者列表。',
+    subtitle: '按项目分组的红人列表。',
     updateTemplateVariables: '查看邮件进程模版',
     needsAttention: '等待处理',
     autoStart: '开启自动处理',
@@ -40,6 +40,7 @@ const sequences = {
         influencerTopics: 'KOL主题',
         dateAdded: '添加日期',
         sequenceActions: '序列操作',
+        campaignActions: '运动行动',
         currentStep: '当前步骤',
         status: '状态',
         sendTime: '发送时间',
@@ -62,7 +63,7 @@ const sequences = {
         Ignored: '被忽略',
     },
     indexColumns: {
-        campaign: '活动',
+        campaign: '项目',
         sequence: '项目',
         influencers: 'KOL总数',
         openRate: '打开率',

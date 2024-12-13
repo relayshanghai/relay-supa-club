@@ -40,6 +40,7 @@ const account = {
         ignoreConfirmation: "Are you sure want to ignore {{email}}'s request?",
         successIgnore: 'Request ignored',
         errorIgnore: 'Unable to ignore request',
+        inviteTeammate: 'Invite Teammate',
     },
     subscription: {
         plan: 'Current Plan',
@@ -193,6 +194,7 @@ Thank you for your patience.`,
     },
     billingInfoSection: {
         title: 'Billing Info',
+        invoiceEmail: 'Invoice Receiving Email',
     },
     companyInfoSection: {
         title: 'Company Info',

@@ -197,7 +197,7 @@ export const TeamDetails = () => {
                                 }}
                             >
                                 <ProfilePlus className="h-4 w-4 flex-shrink-0" />
-                                Invite teammate
+                                {t('account.company.inviteTeammate')}
                             </Button>
                         </div>
                     )}
