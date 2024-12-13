@@ -60,7 +60,7 @@ export class ProfileEntity {
     jobs?: Relation<JobEntity>;
 
     @OneToMany(() => CompanyJoinRequestEntity, (joinRequest) => joinRequest.profile)
-    companyJoinRequests?: Relation<CompanyJoinRequestEntity>;
+    companyJoinRequests?: Relation<CompanyJoinRequestEntity[]>;
 
     @Column({ name: 'language', nullable: true })
     language?: string;

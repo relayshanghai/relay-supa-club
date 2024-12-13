@@ -65,6 +65,14 @@ export default class JoinRequestService {
     }
 
     async checkByEmail(email: string) {
+        const profileExists = await ProfileRepository.getRepository().findOne({
+            where: {
+                email,
+            },
+        });
+        if (!profileExists) {
+            return;
+        }
         const request = await ProfileRepository.getRepository().findOne({
             where: {
                 email,
@@ -74,7 +82,8 @@ export default class JoinRequestService {
                 company: true,
             },
         });
-        if (!request?.companyJoinRequests?.joinedAt && request?.userRole !== 'company_owner') {
+        const joinRequest = request?.companyJoinRequests?.[0];
+        if (!joinRequest?.joinedAt && request?.userRole !== 'company_owner') {
             throw new ForbiddenError('Request not found');
         }
         return request;

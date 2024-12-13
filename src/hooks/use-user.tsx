@@ -190,6 +190,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     password,
                 });
 
+                if (error) throw new Error(error.message || 'Unknown error');
+
                 /**
                  * sync subscription metadata with the backend
                  * using [GET] /v2/subscriptions/sync
@@ -206,11 +208,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 let hasDefaultPaymentMethod = false;
                 const [, paymentMethodsRes] = await awaitToError(apiClient.get('/v2/subscriptions/payment-method'));
                 const paymentMethods = paymentMethodsRes?.data;
-                if (paymentMethods.defaultPaymentMethod) {
+                if (paymentMethods?.defaultPaymentMethod) {
                     hasDefaultPaymentMethod = true;
                 }
-
-                if (error) throw new Error(error.message || 'Unknown error');
                 trackEvent('Log In', { email: email, $add: { total_sessions: 1 } });
                 identify(data?.user?.email || '');
                 return { ...data, hasDefaultPaymentMethod };
