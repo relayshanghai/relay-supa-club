@@ -31,6 +31,7 @@ const account = {
         member: '成员',
         companyProfileUpdated: '公司信息已更新',
         oopsWentWrong: '哎呀，出错了',
+        inviteTeammate: '邀请团队成员',
     },
     subscription: {
         plan: '当前方案',
@@ -164,6 +165,7 @@ const account = {
     planSection: {
         reportsCount: '份报告',
         searchesCount: '次搜索',
+        exportsCount: '份导出',
         trialEnds: '试用期结束日期',
         canceledOn: '取消日期',
         cancelsOn: '取消日期',
@@ -179,6 +181,7 @@ const account = {
     },
     billingInfoSection: {
         title: '账单信息',
+        invoiceEmail: '收取invoice的邮箱',
     },
     companyInfoSection: {
         title: '公司信息',

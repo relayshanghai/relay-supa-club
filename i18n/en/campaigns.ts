@@ -19,7 +19,7 @@ const campaigns = {
         search: 'Search',
     },
     modal: {
-        addToCampaign: 'Add To Campaign',
+        addToCampaign: 'Add to Campaign',
         addThisInfluencer: 'Add this influencer to your existing campaigns',
         moveToCampaign: 'Move To Campaign',
         moveThisInfluencer: 'Move this influencer to an existing campaign',

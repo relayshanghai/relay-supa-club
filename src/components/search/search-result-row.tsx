@@ -182,7 +182,7 @@ export const SearchResultRow = ({
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent(SEARCH_RESULT_ROW('add to campaign'), { platform, user_id });
+        trackEvent(SEARCH_RESULT_ROW('Add to Campaign'), { platform, user_id });
     };
 
     const desktop = useAboveScreenWidth(500);

@@ -8,7 +8,7 @@ const campaigns = {
             all: '全部',
             archived: '已存档项目',
         },
-        createCampaign: '创建项目',
+        createCampaign: '新建项目',
         noCampaigns: '您没有任何项目',
         noCampaignsAvailable: '哎呀！ 您没有可用的项目。',
         clickCreate: '单击此处创建项目。',

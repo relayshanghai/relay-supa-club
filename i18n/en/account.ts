@@ -31,6 +31,7 @@ const account = {
         member: 'Member',
         companyProfileUpdated: 'Company profile updated',
         oopsWentWrong: 'Oops, something went wrong',
+        inviteTeammate: 'Invite Teammate',
     },
     subscription: {
         plan: 'Current Plan',
@@ -184,6 +185,7 @@ Thank you for your patience.`,
     },
     billingInfoSection: {
         title: 'Billing Info',
+        invoiceEmail: 'Invoice Receiving Email',
     },
     companyInfoSection: {
         title: 'Company Info',

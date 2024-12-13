@@ -77,7 +77,7 @@ const login = {
     activateSuccess: 'Success',
     companyNameRequired: 'Company name is required',
     emailDomainNotAllowed: 'Please use a real email address',
-    requestResetPassword: 'A request to reset you password will be sent to the email address attached to your account',
+    requestResetPassword: 'A request to reset you password will be sent to the email address attached to your account.',
     sendResetPasswordEmail: 'Send reset password email',
     confirmCurrency:
         'You have selected {{currency}} as your currency. This choice is final and cannot be changed later. Do you wish to proceed?',

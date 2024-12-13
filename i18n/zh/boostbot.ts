@@ -4,7 +4,7 @@ const boostbot = {
         modalTitle: '设置筛选的条件',
         modalTitleSubtitle: '设置的筛选条件有助于让雷宝为您推荐关联度更高的红人',
         fromPlatform: '我想要看以下平台的红人',
-        audienceLocation: '受众地区',
+        audienceLocation: '受众所在地',
         fromGeos: '他们的粉丝所在地区位于',
         addMoreGeos: '添加更多',
         selectGeo: '选择一个国家地区',
@@ -39,12 +39,12 @@ const boostbot = {
             '哎呀… 我暂时没能找到符合您当前筛选条件的红人。您可尝试调整上方的筛选条件，或在下一次搜索时添加更具体的描述。',
         influencersFound: `将您最心仪的红人添加至邮件进程管理项目中后，请告诉我您是否想要进行下一次搜索。😄`,
         influencersFoundFirstTimeA:
-            '从结果中选择您想合作的影响者，并将他们添加到活动中以解锁他们的完整资料和联系信息。',
+            '从搜索结果中，选择您觉得具有合作潜质的红人，并将他们添加到项目中，并可以解锁他们完整的红人报告和联系信息。',
         influencersFoundFirstTimeB: `雷宝为您提供的专业提示：
 
 广撒网，再筛选！
 
-由于您联系的大多数红人可能不会回复您，所以如果你联系的是更具合作潜质的红人，并只在收到他们的回复后再做筛选的考量，能为您节省大量的时间！
+大多数你联系的红人可能不会回复您的邮件。因此，如果你联系大量的具有潜质的红人，再红人回复邮件后，再花时间认真考虑，将为您节省大量的时间！
         `,
         influencersFoundAddToSequence:
             '你可以将这些网红达人添加到名为<customLink>Sequence</customLink>「邮件进程管理」的邮件列表中。「邮件进程管理」功能可以让你直接向网红达人发送电子邮件。',
@@ -52,7 +52,7 @@ const boostbot = {
         sendPlaceholder: '请发送产品描述。',
         stop: '停止BoostBot搜索',
         stopped: 'Boostbot已停止搜索',
-        outreachSelected: '将选定的影响者添加到活动中',
+        outreachSelected: '将选定的红人添加到项目中',
         progress: {
             step1: '定位您的产品至合适的细分领域',
             step2: '在数据库中浏览上亿名KOL信息中',
@@ -67,8 +67,6 @@ const boostbot = {
         outreachDoneFirstTime: `添加成功！
 
 您可点击<customLink>{{sequenceName}}</customLink>查看。
-
-邮件进程管理是我们的电子邮件自动化功能。您可以设置属于自己的电子邮件模板，安排您的外联和跟进邮件，与红人的联系沟通将变得轻而易举！
         `,
         and: '和',
         clearChatModal: {
@@ -80,10 +78,10 @@ const boostbot = {
     },
     table: {
         account: '账号',
-        score: '雷宝搜索的评分',
+        score: '雷宝评分',
         followers: '粉丝数',
         audienceGender: '粉丝性别',
-        audienceGeolocations: '受众位于',
+        audienceGeolocations: '受众所在地',
         noResults: '没有结果',
         pagination: '{{current}} / {{total}}',
         selectAll: '选定全部达人',
@@ -115,7 +113,7 @@ const boostbot = {
         followersGrowth: '粉丝增长率',
         totalPosts: '发布内容数',
         addToSequence: '添加至邮件进程管理',
-        addToCampaign: '添加到活动',
+        addToCampaign: '添加到项目',
         followers: '粉丝数',
     },
 };

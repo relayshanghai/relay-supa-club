@@ -18,7 +18,7 @@ const creators = {
     actionButtons: 'Actions',
     engagements: 'Engagements',
     engagementRate: 'Engagement Rate',
-    addToCampaign: 'Add to campaign',
+    addToCampaign: 'Add to Campaign',
     analyzeProfile: 'Analyze',
     similarInfluencer: 'Find Similar',
     account: 'Account',
@@ -84,7 +84,7 @@ const creators = {
     },
     show: {
         lastUpdate: 'The report was last updated on',
-        searchInfluencerPlaceholder: 'Search for influencer username eg. @mrbeast',
+        searchInfluencerPlaceholder: 'Search for Influencers Username eg. @mrbeast',
         noInfluencerSearchResults: `Sorry, we don't have a report for {{ username }} on {{ platform }}`,
         noSearchResults: 'No results found, please try another keyword',
         noTopicResults: {
@@ -100,7 +100,7 @@ const creators = {
         noRegion: 'No Region Set Yet',
         hashtags: 'Hashtags',
         mentions: 'Mentions',
-        addToCampaign: 'Add To Campaign',
+        addToCampaign: 'Add to Campaign',
         audienceInformation: 'Audience Information',
         audienceCountries: 'Audience Countries',
         audienceGender: 'Audience Gender',

@@ -133,7 +133,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent(ANALYZE_PAGE('add to campaign'), { platform, user_id: selectedCreatorUserId });
+        trackEvent(ANALYZE_PAGE('Add to Campaign'), { platform, user_id: selectedCreatorUserId });
     };
 
     const isMaintenancePage = isInMaintenance('report');
