@@ -68,7 +68,7 @@ export const TopUpCard = ({ topUpSize }: { topUpSize: TopUpSizes }) => {
     };
 
     return (
-        <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
+        <div className="min-h-[510px] w-full p-4 transition-all ease-in-out hover:-translate-y-3">
             <div
                 data-testid="price-card-wrapper"
                 className="relative flex min-h-full flex-col overflow-hidden rounded-lg border-2 bg-white  p-6"

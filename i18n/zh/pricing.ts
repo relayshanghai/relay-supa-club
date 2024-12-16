@@ -26,6 +26,7 @@ const pricing = {
     unlimitedFollowUpEmail: '无限次跟进邮件',
     personalEmailAccount: '{{amount}}个个性化电子邮件帐户',
     amount_EmailsPerMonth: '每月可向{{amount}}个KOL发送电子邮件',
+    upToAmountExports: '{{amount}}个红人页面导出',
     creditExpiryDate: '此信用将在您的下一个计费周期到期',
 
     upgrade: '立即升级',
@@ -81,6 +82,19 @@ const pricing = {
     large: {
         title: '大',
         subTitle: '通过此套餐最大化您的潜力，为高级用户提供充足的个人资料和搜索积分。',
+    },
+    // credit top up
+    '10 influencer page export': {
+        title: '10 影响者页面导出',
+        subTitle: '为您的影响者页面导出积分提供快速提升，适合偶尔的需求。',
+    },
+    '15 influencer page export': {
+        title: '15 影响者页面导出',
+        subTitle: '为常规用户提供理想选择，平衡增加影响者页面导出积分。',
+    },
+    '100 influencer page export': {
+        title: '100 影响者页面导出',
+        subTitle: '以此价格最大化您的潜力，为高级用户提供充足的影响者页面导出积分。',
     },
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',

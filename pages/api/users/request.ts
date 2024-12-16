@@ -30,6 +30,9 @@ export class RegisterRequest {
 
     @IsEnum(['usd', 'cny'])
     currency!: string;
+
+    @IsOptional()
+    requestToJoin?: boolean;
 }
 
 export class SendOtpRequest {

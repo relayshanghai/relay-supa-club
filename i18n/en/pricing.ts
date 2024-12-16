@@ -26,6 +26,7 @@ const pricing = {
     unlimitedFollowUpEmail: 'Unlimited follow up emails',
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
+    upToAmountExports: '{{amount}} Influencer Page Exports',
     creditExpiryDate: 'This credit will expire on your next billing cycle',
 
     upgrade: 'Upgrade',
@@ -82,6 +83,20 @@ const pricing = {
         title: 'LARGE',
         subTitle:
             'Maximize your potential with this package, providing ample profile and search credits for power users.',
+    },
+    // credit top up
+    '10 influencer page export': {
+        title: '10 Influencer Page Export',
+        subTitle: 'A quick boost for your influencer page export credits, perfect for occasional needs.',
+    },
+    '15 influencer page export': {
+        title: '15 Influencer Page Export',
+        subTitle: 'An ideal choice for regular users, offering a balanced increase in influencer page export credits.',
+    },
+    '100 influencer page export': {
+        title: '100 Influencer Page Export',
+        subTitle:
+            'Maximize your potential with this price, providing ample influencer page export credits for power users.',
     },
     saveUpTo33Percent: 'up to 33% off',
     beta: 'BETA',

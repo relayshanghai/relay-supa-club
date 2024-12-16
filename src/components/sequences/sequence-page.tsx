@@ -301,6 +301,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 const status = e?.response?.status;
                 if (status === 422) {
                     toast.error('Insufficient credits to export');
+                    push('/topup');
                 } else {
                     toast.error('Error exporting');
                 }

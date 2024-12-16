@@ -22,6 +22,9 @@ const account = {
         websiteAddress: '网站地址',
         title: '公司信息',
         members: '团队成员',
+        joinRequest: '加入请求',
+        acceptRequest: '接受',
+        ignoreRequest: '忽略',
         fullName: '全名',
         role: '角色',
         pendingInvitations: '待处理的邀请',
@@ -31,6 +34,12 @@ const account = {
         member: '成员',
         companyProfileUpdated: '公司信息已更新',
         oopsWentWrong: '哎呀，出错了',
+        acceptConfirmation: '您确定要接受 {{email}} 的请求吗？',
+        successAccept: '请求已接受',
+        errorAccept: '无法接受请求',
+        ignoreConfirmation: '您确定要忽略 {{email}} 的请求吗？',
+        successIgnore: '请求已忽略',
+        errorIgnore: '无法忽略请求',
         inviteTeammate: '邀请团队成员',
     },
     subscription: {
@@ -55,8 +64,8 @@ const account = {
         beforePurchasingYouNeedPaymentMethod: '在购买订阅之前，您需要添加付款方式。',
         addPaymentMethod: {
             title: '添加付款方式',
-            success: 'Payment method added',
-            error: 'Unable to add payment method',
+            success: '付款方式已添加',
+            error: '无法添加付款方式',
         },
         availablePlans: '可用方案',
         planName: '名称',
@@ -160,7 +169,7 @@ const account = {
         addPaymentMethod: '添加新的付款方式',
     },
     paymentMethodModal: {
-        title: 'Add Payment Method',
+        title: '添加付款方式',
     },
     planSection: {
         reportsCount: '份报告',

@@ -1,4 +1,4 @@
-import type { RegisterRequest } from 'pages/api/users/request';
+import type { OtpCookieStore, RegisterRequest } from 'pages/api/users/request';
 import type { DeleteTeammateRequest, UpdateTeammateRoleRequest } from 'pages/api/v2/company/request';
 import { CompanyEntity } from 'src/backend/database/company/company-entity';
 import CompanyRepository from 'src/backend/database/company/company-repository';
@@ -25,6 +25,8 @@ import HcaptchaService from 'src/backend/integration/hcaptcha/hcaptcha-service';
 import PriceRepository from 'src/backend/database/price/price-repository';
 import { SubscriptionType } from 'src/backend/database/price/price-entity';
 import BalanceService from '../balance/balance-service';
+import type { Cookies } from 'src/utils/handler/cookie';
+import { CompanyJoinRequestRepository } from 'src/backend/database/company-join-request/company-join-request-repository';
 /** Brevo List ID of the newly signed up trial users that will be funneled to an marketing automation */
 const BREVO_NEWTRIALUSERS_LIST_ID = process.env.BREVO_NEWTRIALUSERS_LIST_ID ?? null;
 
@@ -204,14 +206,37 @@ export default class RegistrationService {
             });
         }
     }
-    async createProfile(request: RegisterRequest, company: CompanyEntity) {
+    async createProfile({
+        company,
+        ignoreExisted,
+        request,
+        userRole = 'company_owner',
+    }: {
+        request: RegisterRequest;
+        company: CompanyEntity;
+        ignoreExisted: boolean;
+        userRole?: string;
+    }) {
         const profile = new ProfileEntity();
         profile.company = company;
         profile.firstName = request.firstName;
         profile.lastName = request.lastName;
         profile.email = request.email;
         profile.phone = request.phoneNumber;
-        profile.userRole = 'company_owner';
+        profile.userRole = userRole;
+        if (ignoreExisted) {
+            const user = await supabase.auth.admin.createUser({
+                email: request.email,
+                password: request.password,
+                phone_confirm: true,
+                email_confirm: true,
+            });
+            if (!user.data?.user) {
+                throw new BadRequestError('User already registered');
+            }
+            profile.id = user.data?.user.id;
+            return ProfileRepository.getRepository().save(profile);
+        }
         const supportProfile = Object.assign(new ProfileEntity(), profile);
         const supportPassword = process.env.SERVICE_ACCOUNT_PASSWORD ?? 'password123!';
         supportProfile.phone = undefined;
@@ -248,9 +273,39 @@ export default class RegistrationService {
         return true;
     }
     @UseTransaction()
-    async register(request: RegisterRequest) {
+    async register(request: RegisterRequest, cookie: Cookies) {
+        const requestCookie = cookie.get<OtpCookieStore>('otpFlow');
+        if (!requestCookie) throw new Error('No otp flow found');
+        if (!requestCookie.verified) throw new Error('Phone number not verified');
+        const validators: Promise<any>[] = [
+            this.isPhoneNumberDoesNotExist(request.phoneNumber),
+            this.isEmailDoesNotExist(request.email),
+        ];
+        if (!request.requestToJoin) validators.push(this.isCompanyDoesNotExists(request.companyName));
+        await Promise.all(validators);
+
+        const [errCompany, company] = await awaitToError(
+            CompanyRepository.getRepository().getCompanyByName(request.companyName),
+        );
+
+        if (request.requestToJoin && !errCompany) {
+            // only create profile
+            const p = await this.createProfile({
+                company,
+                ignoreExisted: true,
+                request,
+                userRole: 'company_teammate',
+            });
+            await this.addtoCompanyRequest(p);
+            return company;
+        }
+
         const createdCompany = await this.createCompany(request);
-        const createdProfile = await this.createProfile(request, createdCompany);
+        const createdProfile = await this.createProfile({
+            company: createdCompany,
+            ignoreExisted: false,
+            request,
+        });
         await this.createBrevoContact(createdProfile, createdCompany);
         await BalanceService.getService().initBalance({ companyId: createdCompany.id });
         return createdCompany;
@@ -270,5 +325,11 @@ export default class RegistrationService {
         await UsageRepository.getRepository().deleteUsagesByProfile(teammateProfile.id);
         const deletedUser = await ProfileRepository.getRepository().deleteProfileById(teammateProfile.id);
         return deletedUser;
+    }
+    async addtoCompanyRequest(profile: ProfileEntity) {
+        await CompanyJoinRequestRepository.getRepository().save({
+            company: profile.company,
+            profile,
+        });
     }
 }
