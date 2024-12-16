@@ -40,7 +40,7 @@ const sequences = {
         influencerTopics: 'KOL主题',
         dateAdded: '添加日期',
         sequenceActions: '序列操作',
-        campaignActions: '运动行动',
+        campaignActions: '项目参数',
         currentStep: '当前步骤',
         status: '状态',
         sendTime: '发送时间',
@@ -50,7 +50,7 @@ const sequences = {
     },
     addEmail: '添加邮件',
     newSequence: '新建序列',
-    newCampaign: '新活动',
+    newCampaign: '新建项目',
     status: {
         Unscheduled: '未安排',
         Scheduled: '已计划',
