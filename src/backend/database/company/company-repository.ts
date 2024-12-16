@@ -4,7 +4,7 @@ import { InjectInitializeDatabaseOnAllProps } from '../provider/inject-db-initia
 import { CompanyEntity } from './company-entity';
 import { NotFoundError } from 'src/utils/error/http-error';
 import { RequestContext } from 'src/utils/request-context/request-context';
-import type { EntityManager, EntityTarget } from 'typeorm';
+import { ILike, type EntityManager, type EntityTarget } from 'typeorm';
 
 @InjectInitializeDatabaseOnAllProps
 export default class CompanyRepository extends BaseRepository<CompanyEntity> {
@@ -31,7 +31,7 @@ export default class CompanyRepository extends BaseRepository<CompanyEntity> {
     async getCompanyByName(name: string): Promise<CompanyEntity> {
         const [err, company] = await awaitToError(
             this.findOneByOrFail({
-                name,
+                name: ILike(name),
             }),
         );
         if (err) {
