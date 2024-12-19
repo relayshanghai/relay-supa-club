@@ -96,7 +96,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                     operator: 'gte',
                     value: 0,
                 },
-                lang: { code: 'en' },
+                /**
+                 * remove language filter
+                 */
                 posts_count: {
                     left_number: 0,
                 },
