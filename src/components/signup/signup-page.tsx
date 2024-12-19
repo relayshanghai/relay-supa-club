@@ -360,6 +360,7 @@ const SignUpPage = ({
                 cancelButtonText={t('account.cancel') as string}
             />
             <ConfirmModal
+                cancelHandler={() => setNeedToJoinCompany(false)}
                 positiveHandler={() => onNext()}
                 setShow={(show) => setConfirmJoinToCompany(show)}
                 show={confirmJoinToCompany}
