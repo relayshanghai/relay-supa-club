@@ -12,7 +12,7 @@ export interface SelectProps {
     label: string;
     required?: boolean;
     isRelative?: boolean;
-    hint: string;
+    hint?: string;
 }
 export default function Select(props: SelectProps) {
     return (

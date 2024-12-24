@@ -1,4 +1,4 @@
-import { type GetPlansQuery } from 'pages/api/plans/request';
+import { type CreatePlanRequest, type GetPlansQuery } from 'pages/api/plans/request';
 import { PriceType, type PlanEntity } from 'src/backend/database/plan/plan-entity';
 import PlanRepository from 'src/backend/database/plan/plan-repository';
 import { type FindOptionsWhere } from 'typeorm';
@@ -36,5 +36,20 @@ export default class PlanService {
             },
         });
         return plans;
+    }
+
+    async createPlan(data: CreatePlanRequest): Promise<PlanEntity> {
+        const plan = await PlanRepository.getRepository().save(data);
+        return plan;
+    }
+
+    async updatePlan(id: string, data: CreatePlanRequest): Promise<PlanEntity> {
+        const existingPlan = await PlanRepository.getRepository().findOne({
+            where: {
+                id,
+            },
+        });
+        const plan = await PlanRepository.getRepository().save({ ...existingPlan, ...data });
+        return plan;
     }
 }
