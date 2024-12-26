@@ -23,6 +23,7 @@ export default class JoinRequestService {
                 ignoredAt: IsNull(),
             },
             relations: {
+                company: true,
                 profile: true,
             },
         });
@@ -84,6 +85,7 @@ export default class JoinRequestService {
             },
         });
         const joinRequest = request?.companyJoinRequests?.[0];
+        if (!joinRequest) return request;
         if (
             request?.createdAt &&
             request.createdAt > this.shouldCheckRequestDateFrom &&
