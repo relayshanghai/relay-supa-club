@@ -30,3 +30,4 @@ export const DISCOVERY_PLAN = {
     trial_profiles: DISCOVERY_PLAN_TRIAL_PROFILES,
     trial_searches: DISCOVERY_PLAN_TRIAL_SEARCHES,
 };
+export const COMPANY_IGNORE_DEFAULT_PAYMENT_CHECK = ['ced1fb9a-773e-4a6a-a83f-0ba9c0528ca6'];

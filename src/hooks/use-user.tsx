@@ -177,12 +177,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const login = useCallback(
         async (email: string, password: string) => {
             setLoading(true);
-            // const [checkErr] = await awaitToError(apiClient.get(`/join-requests/${email}/check`));
-            // if (checkErr) {
-            //     setLoading(false);
-            //     return;
-            // }
-            // console.log(checkErr);
             try {
                 await apiClient.get(`/join-requests/${email}/check`);
                 const { data, error } = await supabaseClient.auth.signInWithPassword({

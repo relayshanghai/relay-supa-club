@@ -34,6 +34,7 @@ import type {
 import type { SyncBalanceRequest } from 'pages/api/internal/balance/request';
 import BalanceService from '../balance/balance-service';
 import { EXPORT_CREDIT_MAX_TOTAL } from 'src/constants/credits';
+import { COMPANY_IGNORE_DEFAULT_PAYMENT_CHECK } from 'src/utils/api/stripe/constants';
 const REWARDFUL_COUPON_CODE = process.env.REWARDFUL_COUPON_CODE;
 // will be on unix timestamp from 27-06-2024 on 12:00:00 AM UTC
 const PRICE_UPDATE_DATE = process.env.PRICE_UPDATE_DATE ?? '1719446760';
@@ -111,6 +112,11 @@ export default class SubscriptionV2Service {
         const [err, { cusId }] = await awaitToError(CompanyRepository.getRepository().getCompanyById(companyId));
         if (err || !cusId) {
             throw new NotFoundError('Company not found', err);
+        }
+        // handle the logic for several company that need whitelist
+        // next need to be handled using database and admin page
+        if (COMPANY_IGNORE_DEFAULT_PAYMENT_CHECK.includes(companyId)) {
+            return true;
         }
         return StripeService.getService().getDefaultPaymentMethod(cusId);
     }
