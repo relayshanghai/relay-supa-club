@@ -10,6 +10,7 @@ export default class JoinRequestService {
     static getService(): JoinRequestService {
         return JoinRequestService.service;
     }
+    private readonly shouldCheckRequestDateFrom = new Date('2024-12-17T00:00:00.000Z');
 
     async getJoinRequestCompany() {
         const companyId = RequestContext.getContext().companyId as string;
@@ -83,7 +84,12 @@ export default class JoinRequestService {
             },
         });
         const joinRequest = request?.companyJoinRequests?.[0];
-        if (!joinRequest?.joinedAt && request?.userRole !== 'company_owner') {
+        if (
+            request?.createdAt &&
+            request.createdAt > this.shouldCheckRequestDateFrom &&
+            !joinRequest?.joinedAt &&
+            request?.userRole !== 'company_owner'
+        ) {
             throw new ForbiddenError('Request not found');
         }
         return request;
