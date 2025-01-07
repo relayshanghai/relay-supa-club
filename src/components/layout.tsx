@@ -25,6 +25,10 @@ const pageNameMap: { [key: string]: string } = {
     guide: 'guide',
     boostbot: 'boostbot',
     outreach: 'outreach-campaigns',
+    admin: 'admin',
+    clients: 'clients',
+    'onboard-outreach': 'onboard-outreach',
+    plans: 'plans',
 };
 
 export interface LayoutProps {
