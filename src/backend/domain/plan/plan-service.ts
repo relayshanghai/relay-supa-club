@@ -10,8 +10,9 @@ export default class PlanService {
         return PlanService.service;
     }
 
-    async getPlans(query: GetPlansQuery): Promise<PlanSummary[]> {
+    async getPlanSummaries(query: GetPlansQuery): Promise<PlanSummary[] | PlanEntity[]> {
         const where: FindOptionsWhere<PlanEntity> = {};
+        const summarizedPlans = query.summarized ?? false;
         switch (query.type) {
             case 'top-up':
                 where.isActive = true;
@@ -37,12 +38,15 @@ export default class PlanService {
             },
         });
 
-        const reducedPlans = plans
-            .toSorted((a) => (a.currency === Currency.CNY ? -1 : 1))
-            .reduce((acc, plan) => {
-                acc[plan.itemName] = plan;
-                return acc;
-            }, {} as Record<string, PlanEntity>);
+        if (!summarizedPlans) {
+            return plans;
+        }
+
+        const sortedPlans = plans.sort((a) => (a.currency === Currency.CNY ? -1 : 1));
+        const reducedPlans = sortedPlans.reduce((acc, plan) => {
+            acc[plan.itemName] = plan;
+            return acc;
+        }, {} as Record<string, PlanEntity>);
         const plansData = Object.values(reducedPlans);
 
         return plansData.map((plan) => ({

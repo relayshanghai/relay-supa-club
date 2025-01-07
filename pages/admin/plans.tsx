@@ -21,10 +21,10 @@ const columnHeaders = [
 
 const Plans = () => {
     const [manageModalOpen, setManageModalOpen] = useState(false);
-    const { getPlans, loading, plans, planData, setPlanData } = usePlans();
+    const { getPlanSummaries, loading, planSummaries, planData, setPlanData } = usePlans();
 
     useEffect(() => {
-        getPlans(null).catch((err) => {
+        getPlanSummaries().catch((err) => {
             toast.error(err.message);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,7 +65,11 @@ const Plans = () => {
                                     ))}
                                 </tr>
                             </thead>
-                            <PlansRow data={plans} columnHeaders={columnHeaders} setManageData={manageDataHandler} />
+                            <PlansRow
+                                data={planSummaries}
+                                columnHeaders={columnHeaders}
+                                setManageData={manageDataHandler}
+                            />
                         </table>
                     </div>
                 )}

@@ -1,7 +1,7 @@
 import qs from 'query-string';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import type { PlanEntity} from 'src/backend/database/plan/plan-entity';
+import type { PlanEntity } from 'src/backend/database/plan/plan-entity';
 import { BillingPeriod, PriceType } from 'src/backend/database/plan/plan-entity';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
@@ -21,11 +21,22 @@ export const initialPlanData = {
 export const usePlans = () => {
     const { apiClient, loading, error } = useApiClient();
     const [planData, setPlanData] = useState<PlanSummary>(initialPlanData);
-    const [plans, setPlans] = useState<PlanSummary[]>([]);
+    const [planSummaries, setPlanSummaries] = useState<PlanSummary[]>([]);
+    const [plans, setPlans] = useState<PlanEntity[]>([]);
+
+    const getPlanSummaries = async () => {
+        const query = qs.stringify({ summarized: true });
+        const [err, response] = await awaitToError(apiClient.get<PlanSummary[]>(`/plans?${query}`));
+        if (err) {
+            throw err;
+        }
+        setPlanSummaries(response.data);
+        return response.data;
+    };
 
     const getPlans = async (type: string | null = 'top-up') => {
         const query = qs.stringify({ type });
-        const [err, response] = await awaitToError(apiClient.get<PlanSummary[]>(`/plans?${query}`));
+        const [err, response] = await awaitToError(apiClient.get<PlanEntity[]>(`/plans?${query}`));
         if (err) {
             throw err;
         }
@@ -68,12 +79,14 @@ export const usePlans = () => {
             throw err;
         }
         toast.success(`Plan ${planSummary.details[0].id ? 'Updated' : 'Created'} successfully`);
-        getPlans(null).then().catch();
+        getPlanSummaries().then().catch();
         return response.map((r) => r.data);
     };
 
     return {
         plans,
+        planSummaries,
+        getPlanSummaries,
         getPlans,
         createPlan,
         loading,

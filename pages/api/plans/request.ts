@@ -4,6 +4,9 @@ import type { BillingPeriod, Currency, PriceType } from 'src/backend/database/pl
 export class GetPlansQuery {
     @IsOptional()
     type?: 'top-up' | 'subscription' | 'all';
+
+    @IsOptional()
+    summarized?: boolean;
 }
 export class CreatePlanRequest {
     @IsString()
