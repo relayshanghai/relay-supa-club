@@ -1,11 +1,31 @@
 import qs from 'query-string';
 import { useState } from 'react';
-import { type PlanEntity } from 'src/backend/database/plan/plan-entity';
+import toast from 'react-hot-toast';
+import { BillingPeriod, Currency, PriceType, type PlanEntity } from 'src/backend/database/plan/plan-entity';
 import { useApiClient } from 'src/utils/api-client/request';
 import awaitToError from 'src/utils/await-to-error';
 
+export const initialPlanData = {
+    id: '',
+    itemName: '',
+    priceType: PriceType.TOP_UP,
+    currency: Currency.CNY,
+    billingPeriod: BillingPeriod.ONE_TIME,
+    price: 0,
+    originalPrice: 0,
+    existingUserPrice: 0,
+    priceId: '',
+    originalPriceId: '',
+    existingUserPriceId: '',
+    profiles: 0,
+    searches: 0,
+    exports: 0,
+    isActive: false,
+} as PlanEntity;
+
 export const usePlans = () => {
     const { apiClient, loading, error } = useApiClient();
+    const [planData, setPlanData] = useState<PlanEntity>(initialPlanData);
     const [plans, setPlans] = useState<PlanEntity[]>([]);
 
     const getPlans = async (type: string | null = 'top-up') => {
@@ -28,8 +48,10 @@ export const usePlans = () => {
         }
         const [err, response] = await awaitToError(p);
         if (err) {
-            throw err;
+            toast.error('Error saving plans');
+            return;
         }
+        toast.success(`Plan ${data.id ? 'Updated' : 'Created'} successfully`);
         setPlans([...plans, response.data]);
         return response.data;
     };
@@ -40,5 +62,7 @@ export const usePlans = () => {
         createPlan,
         loading,
         error,
+        planData,
+        setPlanData,
     };
 };

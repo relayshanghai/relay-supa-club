@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { type PlanEntity } from 'src/backend/database/plan/plan-entity';
 import { PlansModal } from 'src/components/admin/PlansModal';
 import { PlansRow } from 'src/components/admin/PlansRow';
+import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import { usePlans } from 'src/hooks/use-plans';
@@ -27,9 +28,7 @@ const columnHeaders = [
 
 const Plans = () => {
     const [manageModalOpen, setManageModalOpen] = useState(false);
-    const [planData, setPlanData] = useState<PlanEntity | null>(null);
-
-    const { getPlans, loading, plans } = usePlans();
+    const { getPlans, loading, plans, planData, setPlanData } = usePlans();
 
     useEffect(() => {
         getPlans(null).catch((err) => {
@@ -55,22 +54,27 @@ const Plans = () => {
                 {loading ? (
                     <Spinner className="h-5 w-5 fill-primary-600 text-white" />
                 ) : (
-                    <table className="w-full  divide-y divide-gray-200 overflow-y-visible bg-white">
-                        <thead>
-                            <tr>
-                                {columnHeaders.map((header) => (
-                                    <th
-                                        key={header}
-                                        scope="col"
-                                        className="min-w-fit px-6 py-3 text-left text-sm tracking-wider text-gray-600 "
-                                    >
-                                        {header}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <PlansRow data={plans} columnHeaders={columnHeaders} setManageData={manageDataHandler} />
-                    </table>
+                    <div>
+                        <Button className="mb-4" onClick={() => setManageModalOpen(true)}>
+                            Add Plan
+                        </Button>
+                        <table className="w-full  divide-y divide-gray-200 overflow-y-visible bg-white">
+                            <thead>
+                                <tr>
+                                    {columnHeaders.map((header) => (
+                                        <th
+                                            key={header}
+                                            scope="col"
+                                            className="min-w-fit px-6 py-3 text-left text-sm tracking-wider text-gray-600 "
+                                        >
+                                            {header}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <PlansRow data={plans} columnHeaders={columnHeaders} setManageData={manageDataHandler} />
+                        </table>
+                    </div>
                 )}
             </div>
         </Layout>

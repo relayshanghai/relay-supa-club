@@ -1,5 +1,5 @@
 import { type CreatePlanRequest, type GetPlansQuery } from 'pages/api/plans/request';
-import { PriceType, type PlanEntity } from 'src/backend/database/plan/plan-entity';
+import { PlanEntity, PriceType } from 'src/backend/database/plan/plan-entity';
 import PlanRepository from 'src/backend/database/plan/plan-repository';
 import { type FindOptionsWhere } from 'typeorm';
 
@@ -39,7 +39,22 @@ export default class PlanService {
     }
 
     async createPlan(data: CreatePlanRequest): Promise<PlanEntity> {
-        const plan = await PlanRepository.getRepository().save(data);
+        const planEntity = new PlanEntity();
+        planEntity.itemName = data.itemName;
+        planEntity.priceType = data.priceType;
+        planEntity.billingPeriod = data.billingPeriod;
+        planEntity.price = data.price;
+        planEntity.currency = data.currency;
+        planEntity.priceId = data.priceId;
+        planEntity.originalPrice = (data.originalPrice ?? 0) > 0 ? data.originalPrice : null;
+        planEntity.originalPriceId = data.originalPriceId !== '' ? data.originalPriceId : null;
+        planEntity.existingUserPrice = (data.existingUserPrice ?? 0) > 0 ? data.existingUserPrice : null;
+        planEntity.existingUserPriceId = data.existingUserPriceId !== '' ? data.existingUserPriceId : null;
+        planEntity.profiles = data.profiles;
+        planEntity.searches = data.searches;
+        planEntity.exports = data.exports;
+        planEntity.isActive = data.isActive;
+        const plan = await PlanRepository.getRepository().save(planEntity);
         return plan;
     }
 

@@ -6,28 +6,25 @@ import { Input } from '../input';
 import Select from '../form/select';
 import { enumToArray } from 'src/utils/enum';
 import { Button } from '../button';
-import { usePlans } from 'src/hooks/use-plans';
-import toast from 'react-hot-toast';
+import { initialPlanData, usePlans } from 'src/hooks/use-plans';
 
 type Props = {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
     planData: PlanEntity | null;
-    setPlanData: (data: PlanEntity | null) => void;
+    setPlanData: (data: PlanEntity) => void;
 };
 
 export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData }) => {
     const { createPlan, loading } = usePlans();
     const onOpenModal = (o: boolean) => {
         setIsOpen(o);
-        setPlanData(null);
+        setPlanData(initialPlanData);
     };
 
     const handleCreatePlan = async () => {
         if (planData) {
-            createPlan(planData).then(() => {
-                toast.success(`Plan ${planData.id ? 'Updated' : 'Created'} successfully`);
-            });
+            createPlan(planData);
         }
     };
 
@@ -42,7 +39,7 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             type="text"
                             value={planData?.itemName}
                             onChange={(e) => setPlanData({ ...planData, itemName: e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'20 Credits'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -63,7 +60,7 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                         <Select
                             onChange={(v) => setPlanData({ ...planData, currency: v as Currency } as PlanEntity)}
                             value={planData?.currency as Currency}
-                            label={'Currency'}
+                            label={'Price Currency'}
                             options={enumToArray(Currency).map((v) => ({
                                 value: v,
                                 label: v.replace(/-/g, ' ').toUpperCase(),
@@ -92,7 +89,7 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             type="text"
                             value={planData?.price}
                             onChange={(e) => setPlanData({ ...planData, price: +e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'100'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -103,7 +100,7 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             type="text"
                             value={planData?.priceId}
                             onChange={(e) => setPlanData({ ...planData, priceId: e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'price_abcdefghijklmnopqrstuvwxyz'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -114,9 +111,9 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             noBottomMargin
                             label={'Original Price'}
                             type="text"
-                            value={planData?.originalPrice}
+                            value={planData?.originalPrice ?? ''}
                             onChange={(e) => setPlanData({ ...planData, originalPrice: +e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'120'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -125,11 +122,11 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             noBottomMargin
                             label={'Original Price Id'}
                             type="text"
-                            value={planData?.originalPriceId}
+                            value={planData?.originalPriceId ?? ''}
                             onChange={(e) =>
                                 setPlanData({ ...planData, originalPriceId: e.target.value } as PlanEntity)
                             }
-                            placeholder={'Insert item name'}
+                            placeholder={'price_abcdefghijklmnopqrstuvwxyz'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -140,11 +137,11 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             noBottomMargin
                             label={'Existing User Price'}
                             type="text"
-                            value={planData?.existingUserPrice}
+                            value={planData?.existingUserPrice ?? ''}
                             onChange={(e) =>
                                 setPlanData({ ...planData, existingUserPrice: +e.target.value } as PlanEntity)
                             }
-                            placeholder={'Insert item name'}
+                            placeholder={'50'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -153,11 +150,11 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                             noBottomMargin
                             label={'Existing User Price Id'}
                             type="text"
-                            value={planData?.existingUserPriceId}
+                            value={planData?.existingUserPriceId ?? ''}
                             onChange={(e) =>
                                 setPlanData({ ...planData, existingUserPriceId: e.target.value } as PlanEntity)
                             }
-                            placeholder={'Insert item name'}
+                            placeholder={'price_abcdefghijklmnopqrstuvwxyz'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -166,22 +163,22 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                         <Input
                             noBottomMargin
-                            label={'Profiles'}
+                            label={'Profile Credit Amount'}
                             type="text"
                             value={planData?.profiles}
                             onChange={(e) => setPlanData({ ...planData, profiles: +e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'100'}
                             data-testid="product-name-input"
                         />
                     </div>
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                         <Input
                             noBottomMargin
-                            label={'Searches'}
+                            label={'Search Credit Amount'}
                             type="text"
                             value={planData?.searches}
                             onChange={(e) => setPlanData({ ...planData, searches: +e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'200'}
                             data-testid="product-name-input"
                         />
                     </div>
@@ -190,11 +187,11 @@ export const PlansModal: FC<Props> = ({ isOpen, setIsOpen, planData, setPlanData
                     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1">
                         <Input
                             noBottomMargin
-                            label={'Exports'}
+                            label={'Export Credit Amount'}
                             type="text"
                             value={planData?.exports}
                             onChange={(e) => setPlanData({ ...planData, exports: +e.target.value } as PlanEntity)}
-                            placeholder={'Insert item name'}
+                            placeholder={'50'}
                             data-testid="product-name-input"
                         />
                     </div>

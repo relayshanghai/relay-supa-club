@@ -37,19 +37,19 @@ export class PlanEntity {
     price!: number;
 
     @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true, name: 'original_price' })
-    originalPrice?: number;
+    originalPrice?: number | null;
 
     @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true, name: 'existing_user_price' })
-    existingUserPrice?: number;
+    existingUserPrice?: number | null;
 
     @Column({ type: 'varchar', length: 50, nullable: true, name: 'price_id' })
     priceId!: string;
 
     @Column({ type: 'varchar', length: 50, nullable: true, name: 'original_price_id' })
-    originalPriceId?: string;
+    originalPriceId?: string | null;
 
     @Column({ type: 'varchar', length: 50, nullable: true, name: 'existing_user_price_id' })
-    existingUserPriceId?: string;
+    existingUserPriceId?: string | null;
 
     @Column({ type: 'int', name: 'profiles' })
     profiles!: number;
