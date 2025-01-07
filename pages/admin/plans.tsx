@@ -1,24 +1,17 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { type PlanEntity } from 'src/backend/database/plan/plan-entity';
 import { PlansModal } from 'src/components/admin/PlansModal';
 import { PlansRow } from 'src/components/admin/PlansRow';
 import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import { usePlans } from 'src/hooks/use-plans';
+import { type PlanSummary } from 'types/plans';
 
 const columnHeaders = [
     'Item Name',
     'Price Type',
     'Billing Period',
-    'Price',
-    'Currency',
-    'Price Id',
-    'Original Price',
-    'Original Price Id',
-    'Existing User Price',
-    'Existing User Price Id',
     'Profiles',
     'Searches',
     'Exports',
@@ -37,7 +30,7 @@ const Plans = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const manageDataHandler = (data: PlanEntity) => {
+    const manageDataHandler = (data: PlanSummary) => {
         setManageModalOpen(true);
         setPlanData(data);
     };

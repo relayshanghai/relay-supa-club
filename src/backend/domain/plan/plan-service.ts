@@ -1,7 +1,8 @@
 import { type CreatePlanRequest, type GetPlansQuery } from 'pages/api/plans/request';
-import { PlanEntity, PriceType } from 'src/backend/database/plan/plan-entity';
+import { Currency, PlanEntity, PriceType } from 'src/backend/database/plan/plan-entity';
 import PlanRepository from 'src/backend/database/plan/plan-repository';
 import { type FindOptionsWhere } from 'typeorm';
+import type { PlanSummary } from 'types/plans';
 
 export default class PlanService {
     public static readonly service: PlanService = new PlanService();
@@ -9,7 +10,7 @@ export default class PlanService {
         return PlanService.service;
     }
 
-    async getPlans(query: GetPlansQuery): Promise<PlanEntity[]> {
+    async getPlans(query: GetPlansQuery): Promise<PlanSummary[]> {
         const where: FindOptionsWhere<PlanEntity> = {};
         switch (query.type) {
             case 'top-up':
@@ -35,7 +36,36 @@ export default class PlanService {
                 exports: 'ASC',
             },
         });
-        return plans;
+
+        const reducedPlans = plans
+            .toSorted((a) => (a.currency === Currency.CNY ? -1 : 1))
+            .reduce((acc, plan) => {
+                acc[plan.itemName] = plan;
+                return acc;
+            }, {} as Record<string, PlanEntity>);
+        const plansData = Object.values(reducedPlans);
+
+        return plansData.map((plan) => ({
+            itemName: plan.itemName,
+            priceType: plan.priceType,
+            billingPeriod: plan.billingPeriod,
+            profiles: plan.profiles,
+            searches: plan.searches,
+            exports: plan.exports,
+            details: plans
+                .filter((p) => p.itemName === plan.itemName)
+                .map((p) => ({
+                    currency: p.currency,
+                    price: p.price,
+                    priceId: p.priceId,
+                    originalPrice: p.originalPrice,
+                    originalPriceId: p.originalPriceId,
+                    existingUserPrice: p.existingUserPrice,
+                    existingUserPriceId: p.existingUserPriceId,
+                    isActive: p.isActive,
+                    id: p.id,
+                })),
+        }));
     }
 
     async createPlan(data: CreatePlanRequest): Promise<PlanEntity> {
