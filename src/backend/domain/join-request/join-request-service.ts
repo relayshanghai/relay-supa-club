@@ -85,13 +85,7 @@ export default class JoinRequestService {
             },
         });
         const joinRequest = request?.companyJoinRequests?.[0];
-        if (!joinRequest) return request;
-        if (
-            request?.createdAt &&
-            request.createdAt > this.shouldCheckRequestDateFrom &&
-            !joinRequest?.joinedAt &&
-            request?.userRole !== 'company_owner'
-        ) {
+        if (joinRequest && !joinRequest.joinedAt && request?.userRole !== 'company_owner') {
             throw new ForbiddenError('Request not found');
         }
         return request;
