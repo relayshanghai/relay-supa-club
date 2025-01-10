@@ -15,8 +15,8 @@ export const PlansRow = ({ data, columnHeaders, setManageData }: ClientsRowProps
                 const [firstDetail] = plan.details;
                 const dataPoints = [
                     plan.itemName,
-                    plan.priceType.replace(/-/g, ' ').toUpperCase(),
-                    plan.billingPeriod.replace(/-/g, ' ').toUpperCase(),
+                    plan.priceType.replace(/-/g, ' ').toUpperCase() ?? '',
+                    plan.billingPeriod.replace(/-/g, ' ').toUpperCase() ?? '',
                     plan.profiles,
                     plan.searches,
                     plan.exports,
@@ -24,11 +24,11 @@ export const PlansRow = ({ data, columnHeaders, setManageData }: ClientsRowProps
                     'Manage',
                 ];
                 return (
-                    <tr key={firstDetail.id} className=" hover:bg-gray-100">
+                    <tr key={firstDetail.id} className="hover:bg-gray-100">
                         {dataPoints.map((dataPoint, index) => (
                             <td
                                 key={columnHeaders[index] + dataPoint}
-                                className="max-w-[400px] overflow-scroll whitespace-nowrap px-6 py-4 text-sm text-gray-900"
+                                className="max-w-[400px] whitespace-nowrap px-6 py-4 text-sm text-gray-900"
                             >
                                 {columnHeaders[index] === 'Manage' ? (
                                     <Button onClick={() => setManageData && setManageData(plan)}>{dataPoint}</Button>

@@ -51,14 +51,14 @@ const Plans = () => {
                         <Button className="mb-4" onClick={() => setManageModalOpen(true)}>
                             Add Plan
                         </Button>
-                        <table className="w-full  divide-y divide-gray-200 overflow-y-visible bg-white">
+                        <table className="w-full divide-y divide-gray-200 overflow-y-visible bg-white">
                             <thead>
                                 <tr>
                                     {columnHeaders.map((header) => (
                                         <th
                                             key={header}
                                             scope="col"
-                                            className="min-w-fit px-6 py-3 text-left text-sm tracking-wider text-gray-600 "
+                                            className="min-w-fit px-6 py-3 text-left text-sm tracking-wider text-gray-600"
                                         >
                                             {header}
                                         </th>
