@@ -13,6 +13,10 @@ const navbar = {
     support: 'Contact Support',
     products: 'Products',
     creditUsages: 'Credit Usages',
+    admin: 'Admin',
+    clients: 'Clients',
+    'onboard-outreach': 'Onboard Outreach',
+    plans: 'Plans',
 };
 
 export default navbar;

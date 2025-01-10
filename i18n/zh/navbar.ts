@@ -13,5 +13,9 @@ const navbar = {
     support: '联系客服',
     products: '产品',
     creditUsages: '积分使用',
+    admin: 'Admin',
+    clients: 'Clients',
+    'onboard-outreach': 'Onboard Outreach',
+    plans: 'Plans',
 };
 export default navbar;
