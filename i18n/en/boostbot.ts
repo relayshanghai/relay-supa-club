@@ -89,6 +89,7 @@ You can check them out here <customLink>{{sequenceName}}</customLink>`,
         outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please <customLink>upgrade to a subscription</customLink> so we can continue searching more.`,
         expiredAccount:
             'Oh no, it looks like your account has expired. Please <customLink>upgrade your account</customLink> to continue using BoostBot',
+        insuficientProfileBalance: 'Uh oh! Your account is out of PROFILE credits.',
     },
     modal: {
         unlockDetailedReport: 'Unlock Detailed Analysis Report',

@@ -37,9 +37,14 @@ type TextMessage = {
     text: string;
 };
 
+type HtmlMessage = {
+    type: 'html';
+    html: string;
+};
+
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Neutral';
-} & (TranslationMessage | ProgressMessage | VideoMessage | TextMessage);
+} & (TranslationMessage | ProgressMessage | VideoMessage | TextMessage | HtmlMessage);
 
 const Translation = ({
     translationKey,
@@ -84,6 +89,8 @@ const Video = ({ videoUrl = '', eventToTrack = '' }: VideoMessage) => (
 const Progress = ({ progressData }: ProgressMessage) => <ChatProgress progress={progressData} />;
 
 const Text = ({ text }: TextMessage) => <>{text}</>;
+
+const Html = ({ html }: HtmlMessage) => <div dangerouslySetInnerHTML={{ __html: html }} />;
 
 interface MessageProps {
     message: MessageType;
@@ -133,6 +140,8 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         Content = <Progress {...message} />;
     } else if (type === 'text') {
         Content = <Text {...message} />;
+    } else if (type === 'html') {
+        Content = <Html {...message} />;
     }
 
     return (

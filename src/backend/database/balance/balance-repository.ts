@@ -42,7 +42,7 @@ export default class BalanceRepository extends BaseRepository<BalanceEntity> {
                     throw new NotFoundError('Balance not found');
                 }
                 if (balance[0]?.amount < amount) {
-                    throw new UnprocessableEntityError('insuficentbalance');
+                    throw new UnprocessableEntityError('insufficientBalance');
                 }
             }
             await manager.query(

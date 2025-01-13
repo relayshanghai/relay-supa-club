@@ -4,6 +4,8 @@ import { enUS } from 'src/constants';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
 import { serverLogger } from './logger-server';
+import { UNPROCESSABLE_ENTITY } from 'src/constants/httpCodes';
+import { t } from 'i18next';
 
 export const handleError = (error: any) => {
     if (!error || typeof error !== 'object') {
@@ -138,6 +140,14 @@ export const getFulfilledData = <T>(results: PromiseSettledResult<T>[]) => {
     return results.filter((r): r is PromiseFulfilledResult<T> => r.status === 'fulfilled').map((r) => r.value);
 };
 
+export const buildRejectedMessage = ({ status, message }: { status?: number; message?: string }) => {
+    if (status === UNPROCESSABLE_ENTITY || message === 'insufficientBalance') {
+        return t('boostbot.error.insuficientProfileBalance');
+    } else {
+        return `${status}: ${message}`;
+    }
+};
+
 /**
  * Filters an array of PromiseSettledResult objects to get only the rejected results and returns their reasons.
  * @param results - An array of PromiseSettledResult objects to filter.
@@ -147,11 +157,12 @@ export const getRejectedData = <T>(results: PromiseSettledResult<T>[]) => {
     return results
         .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
         .map((r: any) => {
-            return (
-                (r.reason.response?.data?.message &&
-                    `${r.reason.response.status}: ${r.reason.response?.data?.message}`) ||
-                r.reason?.message
-            );
+            return r.reason.response?.data?.message
+                ? buildRejectedMessage({
+                      status: r.reason?.response?.status,
+                      message: r.reason?.response?.data?.message,
+                  })
+                : r.reason?.message;
         });
 };
 
