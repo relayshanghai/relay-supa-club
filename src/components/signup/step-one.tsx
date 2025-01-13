@@ -124,7 +124,7 @@ export const StepOne = ({
                 <HCaptcha ref={captchaRef} sitekey={hcaptchaSiteKey} size="invisible" sentry={false} />
             </div>
             {isOtpSent && currentStep === 1 && (
-                <div className="mt-5 flex gap-2.5">
+                <div className="mt-5 flex flex-col-reverse gap-2.5 lg:flex-row">
                     <OtpInput value={code} onChange={setCode} />
                     <div>
                         <div className="w-[165px] font-['Poppins'] text-sm font-semibold text-gray-600 ">
