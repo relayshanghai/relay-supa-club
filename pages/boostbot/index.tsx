@@ -244,7 +244,7 @@ const Boostbot = () => {
                 addMessage({
                     sender: 'Bot',
                     type: 'html',
-                    html: 'Click Here to <a href="/upgrade" class="!underline">Upgrade</a>',
+                    html: 'Click Here to <a href="/topup" class="!underline">Top up</a>!',
                 });
             }
 
