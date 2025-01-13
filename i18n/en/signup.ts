@@ -1,6 +1,6 @@
 const signup = {
     step1title: 'Verify your number to get started',
-    step2title: 'Add an email and password to your account',
+    step2title: 'Complete your profile',
     step3title: 'Tell us about your Company',
     next: 'Next',
     back: 'Back',

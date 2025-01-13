@@ -3,7 +3,6 @@ import { Input } from '../input';
 import { Button } from '../button';
 import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
-import { isMissing } from 'src/utils/utils';
 import { useEffect, useRef, useState } from 'react';
 import PhoneNumberInput from '../phone-number-input';
 import { useOtp } from 'src/hooks/use-otp';
@@ -12,6 +11,8 @@ import Link from 'next/link';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import awaitToError from 'src/utils/await-to-error';
 import { clientLogger } from 'src/utils/logger-client';
+import { useFormWizard } from 'src/context/form-wizard-context';
+import { isMissing } from 'src/utils/utils';
 
 const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY as string;
 
@@ -27,7 +28,6 @@ export const StepOne = ({
     validationErrors,
     setAndValidate,
     loading,
-    onNext,
 }: {
     firstName: string;
     lastName: string;
@@ -35,18 +35,18 @@ export const StepOne = ({
     validationErrors: SignUpValidationErrors;
     setAndValidate: (type: SignupInputTypes, value: string) => void;
     loading: boolean;
-    onNext: any;
 }) => {
     const { t } = useTranslation();
-    const invalidFormInput =
-        isMissing(firstName, lastName) || validationErrors.firstName !== '' || validationErrors.lastName !== '';
     const lastNameRef = useRef<HTMLInputElement>(null);
     const phoneNumberRef = useRef<HTMLInputElement>(null);
     const { loading: otpLoading, sendOtp, verify, counter, isOtpSent, setIsOtpSent, error } = useOtp();
     const [code, setCode] = useState('');
     const captchaRef = useRef<HCaptcha>(null);
-
+    const { currentStep, setCurrentStep } = useFormWizard();
+    const invalidFormInput =
+        isMissing(firstName, lastName) || validationErrors.firstName !== '' || validationErrors.lastName !== '';
     const submitDisabled = invalidFormInput || loading || otpLoading || !isOtpSent || code.length !== 6;
+
     useEffect(() => {
         if (phoneNumber) setIsOtpSent(false);
     }, [phoneNumber, setIsOtpSent]);
@@ -62,7 +62,6 @@ export const StepOne = ({
         if (errSendOtp) {
             clientLogger(errSendOtp, 'error');
             captchaRef.current?.resetCaptcha();
-            return;
         }
     };
     const triggerVerify = async () => {
@@ -72,7 +71,7 @@ export const StepOne = ({
             return;
         }
         if (verified) {
-            onNext();
+            setCurrentStep(2);
         }
     };
 
@@ -124,8 +123,8 @@ export const StepOne = ({
             <div className="mt-5 flex w-full gap-2.5">
                 <HCaptcha ref={captchaRef} sitekey={hcaptchaSiteKey} size="invisible" sentry={false} />
             </div>
-            {isOtpSent && (
-                <div className="mt-5 flex gap-2.5">
+            {isOtpSent && currentStep === 1 && (
+                <div className="mt-5 flex flex-col-reverse gap-2.5 lg:flex-row">
                     <OtpInput value={code} onChange={setCode} />
                     <div>
                         <div className="w-[165px] font-['Poppins'] text-sm font-semibold text-gray-600 ">
@@ -153,9 +152,11 @@ export const StepOne = ({
                 </div>
             )}
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button disabled={submitDisabled} loading={loading} className="mt-12 w-full" onClick={triggerVerify}>
-                {t('signup.next')}
-            </Button>
+            {currentStep === 1 && (
+                <Button disabled={submitDisabled} loading={loading} className="mt-6 w-full" onClick={triggerVerify}>
+                    {t('signup.next')}
+                </Button>
+            )}
         </>
     );
 };

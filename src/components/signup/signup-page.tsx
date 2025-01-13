@@ -12,7 +12,7 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import Link from 'next/link';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { Button } from '../button';
-import { CompleteSignupStep, GoToLogin } from 'src/utils/analytics/events';
+import { GoToLogin } from 'src/utils/analytics/events';
 import type { SignupPostBody } from 'pages/api/signup';
 import { useUser } from 'src/hooks/use-user';
 import { truncatedText } from 'src/utils/outreach/helpers';
@@ -38,7 +38,6 @@ const signupErrors = {
 
 const PROFILE_FORM_STEP = 1;
 const EMAIL_FORM_STEP = 2;
-const COMPANY_FORM_STEP = 3;
 
 const steps = [
     {
@@ -48,10 +47,6 @@ const steps = [
     {
         title: 'signup.step2title',
         num: EMAIL_FORM_STEP,
-    },
-    {
-        title: 'signup.step3title',
-        num: COMPANY_FORM_STEP,
     },
 ];
 
@@ -66,14 +61,7 @@ const initialSignUpData = {
     companyWebsite: '',
 };
 
-const SignUpPage = ({
-    currentStep,
-    setCurrentStep,
-}: {
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-    selectedPriceId: string;
-}) => {
+const SignUpPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
@@ -156,6 +144,7 @@ const SignUpPage = ({
     const [confirmJoinToCompany, setConfirmJoinToCompany] = useState(false);
     const [needToJoinCompany, setNeedToJoinCompany] = useState(false);
     const [rewardfulReferral, setRewardfulReferral] = useState<string>();
+    const [currentStep, setCurrentStep] = useState<number>(1);
     const setFieldValue = useCallback(
         (type: SignupInputTypes, value: string) => {
             switch (type) {
@@ -301,13 +290,13 @@ const SignUpPage = ({
         if (currentStep === PROFILE_FORM_STEP) {
             logout(false);
         }
-        if (currentStep === COMPANY_FORM_STEP && !needToJoinCompany) {
+        if (currentStep === EMAIL_FORM_STEP && !needToJoinCompany) {
             const result = await handleSignup(formData);
             if (result === 'success') {
                 clearForm();
                 router.push('/payments/details');
             }
-        } else if (currentStep === COMPANY_FORM_STEP && needToJoinCompany) {
+        } else if (currentStep === EMAIL_FORM_STEP && needToJoinCompany) {
             const result = await handleSignup(formData, true);
             if (result === 'success') {
                 clearForm();
@@ -317,16 +306,6 @@ const SignUpPage = ({
         } else {
             setCurrentStep(currentStep + 1);
         }
-
-        track(CompleteSignupStep, {
-            current_step: currentStep,
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-            companyName,
-            companyWebsite,
-        });
     };
 
     useEffect(() => {
@@ -334,17 +313,9 @@ const SignUpPage = ({
         (window as any).rewardful('ready', function () {
             setRewardfulReferral((window as any).Rewardful.referral);
         });
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            // Custom message for the user
-            const message = 'Are you sure you want to leave? Your changes may not be saved.';
-            event.returnValue = message; // Standard way to set the message
-            return message; // Some browsers require this
-        };
 
-        window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
             (window as any).rewardful('destroy');
-            window.removeEventListener('beforeunload', handleBeforeUnload);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -368,50 +339,38 @@ const SignUpPage = ({
                 okButtonText={t('login.yesContinue') as string}
                 cancelButtonText={t('account.cancel') as string}
             />
-            {steps.map(
-                (step) =>
-                    step.num === currentStep && (
-                        <FormWizard title={t(step.title || '')} key={step.num} steps={steps} currentStep={currentStep}>
-                            {currentStep === PROFILE_FORM_STEP && (
-                                <StepOne
-                                    firstName={firstName}
-                                    lastName={lastName}
-                                    phoneNumber={phoneNumber}
-                                    validationErrors={validationErrors}
-                                    setAndValidate={setAndValidate}
-                                    loading={loading}
-                                    onNext={onNext}
-                                />
-                            )}
-
-                            {currentStep === EMAIL_FORM_STEP && (
-                                <StepTwo
-                                    email={email}
-                                    password={password}
-                                    confirmPassword={confirmPassword}
-                                    setAndValidate={setAndValidate}
-                                    validationErrors={validationErrors}
-                                    loading={loading}
-                                    onNext={onNext}
-                                />
-                            )}
-
-                            {currentStep === COMPANY_FORM_STEP && (
-                                <StepThree
-                                    companyName={companyName}
-                                    companyWebsite={companyWebsite}
-                                    currency={currency}
-                                    setAndValidate={setAndValidate}
-                                    validationErrors={validationErrors}
-                                    loading={loading}
-                                    onNext={() => {
-                                        setConfirmCurrencyModalOpen(true);
-                                    }}
-                                />
-                            )}
-                        </FormWizard>
-                    ),
-            )}
+            <FormWizard title={t(steps[currentStep - 1]?.title || '')} key={steps[0].num} steps={steps}>
+                <StepOne
+                    firstName={firstName}
+                    lastName={lastName}
+                    phoneNumber={phoneNumber}
+                    validationErrors={validationErrors}
+                    setAndValidate={setAndValidate}
+                    loading={loading}
+                />
+                <StepTwo
+                    email={email}
+                    password={password}
+                    confirmPassword={confirmPassword}
+                    setAndValidate={setAndValidate}
+                    validationErrors={validationErrors}
+                />
+                <StepThree
+                    // email, password and confirmPassword are for validation purpose
+                    email={email}
+                    password={password}
+                    confirmPassword={confirmPassword}
+                    companyName={companyName}
+                    companyWebsite={companyWebsite}
+                    currency={currency}
+                    setAndValidate={setAndValidate}
+                    validationErrors={validationErrors}
+                    loading={loading}
+                    onNext={() => {
+                        setConfirmCurrencyModalOpen(true);
+                    }}
+                />
+            </FormWizard>
             <div className="mb-2 mt-6 text-center">
                 <p className="inline text-sm text-gray-500">
                     {t('login.alreadyHaveAnAccount')}{' '}

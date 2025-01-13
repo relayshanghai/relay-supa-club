@@ -1,6 +1,6 @@
 const signup = {
     step1title: '请输入您的姓名和电话号码',
-    step2title: '向您的帐户添加电子邮件和密码',
+    step2title: '完善您的个人资料',
     step3title: '告诉我们关于你的公司',
     next: '下一步',
     back: '返回',

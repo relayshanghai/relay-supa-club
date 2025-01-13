@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import Select from '../form/select';
+import { useFormWizard } from 'src/context/form-wizard-context';
 
 const TermsModal = ({ setShowModal }: { setShowModal: (show: boolean) => void }) => {
     const { t } = useTranslation();
@@ -109,6 +110,9 @@ const TermsModal = ({ setShowModal }: { setShowModal: (show: boolean) => void })
 };
 
 export const StepThree = ({
+    email,
+    password,
+    confirmPassword,
     companyName,
     companyWebsite,
     currency,
@@ -117,6 +121,9 @@ export const StepThree = ({
     loading,
     onNext,
 }: {
+    email: string;
+    password: string;
+    confirmPassword: string;
     companyName: string;
     companyWebsite: string;
     currency: string;
@@ -129,7 +136,13 @@ export const StepThree = ({
     const { trackEvent } = useRudderstack();
 
     const invalidFormInput =
-        isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
+        isMissing(companyName) ||
+        isMissing(email, password, confirmPassword) ||
+        validationErrors.companyName !== '' ||
+        validationErrors.companyWebsite !== '' ||
+        validationErrors.email !== '' ||
+        validationErrors.password !== '' ||
+        validationErrors.confirmPassword !== '';
     const submitDisabled = invalidFormInput || loading;
     const websiteRef = useRef<HTMLInputElement>(null);
     const termsRef = useRef<HTMLInputElement>(null);
@@ -137,84 +150,89 @@ export const StepThree = ({
     const [termsChecked, setTermsChecked] = useState(false);
     const [showTermsModal, setShowTermsModal] = useState(false);
 
+    const { currentStep } = useFormWizard();
+
     return (
         <>
-            <Input
-                label={t('signup.company')}
-                value={companyName}
-                placeholder={t('signup.companyPlaceholder')}
-                required
-                onChange={async (e) => {
-                    setAndValidate('companyName', e.target.value);
-                }}
-                autoFocus
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        websiteRef?.current?.focus();
-                    }
-                }}
-            />
-            <Input
-                label={t('signup.website')}
-                value={companyWebsite}
-                placeholder="www.site.com"
-                onChange={(e) => setAndValidate('companyWebsite', e.target.value)}
-                ref={websiteRef}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        termsRef?.current?.focus();
-                    }
-                }}
-            />
-            <Select
-                onChange={(value) => setAndValidate('currency', value)}
-                value={currency}
-                hint={t('signup.currencyHint') ?? ''}
-                label={t('signup.currency')}
-                options={[
-                    {
-                        value: 'cny',
-                        label: 'RMB',
-                    },
-                    {
-                        value: 'usd',
-                        label: 'USD',
-                    },
-                ]}
-            />
-            <input
-                ref={termsRef}
-                type="checkbox"
-                className="text-primary-600"
-                checked={termsChecked}
-                onChange={() => {
-                    setTermsChecked(!termsChecked);
-                    trackEvent(SIGNUP('check Terms and Conditions'), { termsChecked: !termsChecked });
-                }}
-                id="terms"
-            />
-            <label htmlFor="terms" className="ml-2">
-                {t('signup.freeTrial.termsAndConditionCheckboxLabel')}
-                <b
-                    className="cursor-pointer"
-                    onClick={() => {
-                        setShowTermsModal(true);
-                        trackEvent(SIGNUP('open Terms and Conditions'));
-                    }}
-                >
-                    {t('signup.freeTrial.termsAndConditionClickableText')}
-                </b>
-            </label>
+            {currentStep !== 1 && (
+                <>
+                    <Input
+                        label={t('signup.company')}
+                        value={companyName}
+                        placeholder={t('signup.companyPlaceholder')}
+                        required
+                        onChange={async (e) => {
+                            setAndValidate('companyName', e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                websiteRef?.current?.focus();
+                            }
+                        }}
+                    />
+                    <Input
+                        label={t('signup.website')}
+                        value={companyWebsite}
+                        placeholder="www.site.com"
+                        onChange={(e) => setAndValidate('companyWebsite', e.target.value)}
+                        ref={websiteRef}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                termsRef?.current?.focus();
+                            }
+                        }}
+                    />
+                    <Select
+                        onChange={(value) => setAndValidate('currency', value)}
+                        value={currency}
+                        hint={t('signup.currencyHint') ?? ''}
+                        label={t('signup.currency')}
+                        options={[
+                            {
+                                value: 'cny',
+                                label: 'RMB',
+                            },
+                            {
+                                value: 'usd',
+                                label: 'USD',
+                            },
+                        ]}
+                    />
+                    <input
+                        ref={termsRef}
+                        type="checkbox"
+                        className="text-primary-600"
+                        checked={termsChecked}
+                        onChange={() => {
+                            setTermsChecked(!termsChecked);
+                            trackEvent(SIGNUP('check Terms and Conditions'), { termsChecked: !termsChecked });
+                        }}
+                        id="terms"
+                    />
+                    <label htmlFor="terms" className="ml-2">
+                        {t('signup.freeTrial.termsAndConditionCheckboxLabel')}
+                        <b
+                            className="cursor-pointer"
+                            onClick={() => {
+                                setShowTermsModal(true);
+                                trackEvent(SIGNUP('open Terms and Conditions'));
+                            }}
+                        >
+                            {t('signup.freeTrial.termsAndConditionClickableText')}
+                        </b>
+                    </label>
 
-            <Button
-                disabled={submitDisabled || !termsChecked}
-                type="submit"
-                className="mt-12 flex w-full justify-center"
-                onClick={onNext}
-            >
-                {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('pricing.startFreeTrial')}
-            </Button>
-            <div> {showTermsModal && <TermsModal setShowModal={setShowTermsModal} />}</div>
+                    <Button
+                        disabled={submitDisabled || !termsChecked}
+                        type="submit"
+                        className="mt-12 flex w-full justify-center"
+                        onClick={onNext}
+                    >
+                        {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('pricing.startFreeTrial')}
+                    </Button>
+                    <div> {showTermsModal && <TermsModal setShowModal={setShowTermsModal} />}</div>
+                </>
+            )}
         </>
     );
 };
