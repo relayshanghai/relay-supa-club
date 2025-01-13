@@ -355,6 +355,10 @@ const SignUpPage = () => {
                     validationErrors={validationErrors}
                 />
                 <StepThree
+                    // email, password and confirmPassword are for validation purpose
+                    email={email}
+                    password={password}
+                    confirmPassword={confirmPassword}
                     companyName={companyName}
                     companyWebsite={companyWebsite}
                     currency={currency}
