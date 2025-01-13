@@ -14,7 +14,7 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { SendInfluencersToOutreach } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import { clientLogger } from 'src/utils/logger-client';
-import { getFulfilledData, getRejectedData } from 'src/utils/utils';
+import { buildRejectedMessage, getFulfilledData, getRejectedData } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
 import { usePersistentState } from 'src/hooks/use-persistent-state';
@@ -108,7 +108,7 @@ const Boostbot = () => {
         if (Array.isArray(error)) {
             error.map((e) => toast.error(e));
         } else if (error) {
-            toast.error(error);
+            toast.error(buildRejectedMessage({ message: error }));
         }
     }, [error]);
     const {
@@ -233,13 +233,20 @@ const Boostbot = () => {
                 sequenceInfluencersResults,
             ) as unknown as SequenceInfluencerManagerPage[];
             const rejected = getRejectedData(sequenceInfluencersResults);
-            rejected.map((r: string) => {
+            rejected.forEach((r: string) => {
                 addMessage({
                     sender: 'Bot',
                     text: r,
                     type: 'text',
                 });
             });
+            if (rejected[rejected.length - 1] === t('boostbot.error.insuficientProfileBalance')) {
+                addMessage({
+                    sender: 'Bot',
+                    type: 'html',
+                    html: 'Click Here to <a href="/upgrade" class="!underline">Upgrade</a>',
+                });
+            }
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 

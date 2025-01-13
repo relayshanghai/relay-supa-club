@@ -106,7 +106,7 @@ export default class BalanceService {
             throw new NotFoundError('balance not found');
         }
 
-        if (balance.amount - cost < 0) throw new UnprocessableEntityError('insuficentbalance');
+        if (balance.amount - cost < 0) throw new UnprocessableEntityError('insufficientBalance');
     }
 
     @UseLogger()
