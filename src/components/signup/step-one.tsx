@@ -12,6 +12,7 @@ import HCaptcha from '@hcaptcha/react-hcaptcha';
 import awaitToError from 'src/utils/await-to-error';
 import { clientLogger } from 'src/utils/logger-client';
 import { useFormWizard } from 'src/context/form-wizard-context';
+import { isMissing } from 'src/utils/utils';
 
 const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY as string;
 
@@ -42,6 +43,9 @@ export const StepOne = ({
     const [code, setCode] = useState('');
     const captchaRef = useRef<HCaptcha>(null);
     const { currentStep, setCurrentStep } = useFormWizard();
+    const invalidFormInput =
+        isMissing(firstName, lastName) || validationErrors.firstName !== '' || validationErrors.lastName !== '';
+    const submitDisabled = invalidFormInput || loading || otpLoading || !isOtpSent || code.length !== 6;
 
     useEffect(() => {
         if (phoneNumber) setIsOtpSent(false);
@@ -119,7 +123,7 @@ export const StepOne = ({
             <div className="mt-5 flex w-full gap-2.5">
                 <HCaptcha ref={captchaRef} sitekey={hcaptchaSiteKey} size="invisible" sentry={false} />
             </div>
-            {isOtpSent && (
+            {isOtpSent && currentStep === 1 && (
                 <div className="mt-5 flex gap-2.5">
                     <OtpInput value={code} onChange={setCode} />
                     <div>
@@ -149,7 +153,7 @@ export const StepOne = ({
             )}
             {error && <p className="text-sm text-red-500">{error}</p>}
             {currentStep === 1 && (
-                <Button disabled={false} loading={loading} className="w-full" onClick={triggerVerify}>
+                <Button disabled={submitDisabled} loading={loading} className="mt-6 w-full" onClick={triggerVerify}>
                     {t('signup.next')}
                 </Button>
             )}

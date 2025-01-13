@@ -110,6 +110,9 @@ const TermsModal = ({ setShowModal }: { setShowModal: (show: boolean) => void })
 };
 
 export const StepThree = ({
+    email,
+    password,
+    confirmPassword,
     companyName,
     companyWebsite,
     currency,
@@ -118,6 +121,9 @@ export const StepThree = ({
     loading,
     onNext,
 }: {
+    email: string;
+    password: string;
+    confirmPassword: string;
     companyName: string;
     companyWebsite: string;
     currency: string;
@@ -130,7 +136,13 @@ export const StepThree = ({
     const { trackEvent } = useRudderstack();
 
     const invalidFormInput =
-        isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
+        isMissing(companyName) ||
+        isMissing(email, password, confirmPassword) ||
+        validationErrors.companyName !== '' ||
+        validationErrors.companyWebsite !== '' ||
+        validationErrors.email !== '' ||
+        validationErrors.password !== '' ||
+        validationErrors.confirmPassword !== '';
     const submitDisabled = invalidFormInput || loading;
     const websiteRef = useRef<HTMLInputElement>(null);
     const termsRef = useRef<HTMLInputElement>(null);
