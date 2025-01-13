@@ -338,7 +338,7 @@ const SignUpPage = () => {
                 okButtonText={t('login.yesContinue') as string}
                 cancelButtonText={t('account.cancel') as string}
             />
-            <FormWizard title={t(steps[0].title || '')} key={steps[0].num} steps={steps}>
+            <FormWizard title={t(steps[currentStep - 1]?.title || '')} key={steps[0].num} steps={steps}>
                 <StepOne
                     firstName={firstName}
                     lastName={lastName}
