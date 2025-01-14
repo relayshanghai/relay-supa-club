@@ -26,7 +26,8 @@ export const FormWizard = ({
     useEffect(() => {
         setCurrentStep(currentStepProp);
         getCurrentStep && getCurrentStep(currentStepProp);
-    }, [currentStepProp, getCurrentStep]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentStepProp]);
     return (
         <FormWizardContext.Provider value={contextValue}>
             {/* The width is to match the exact design on Figma */}

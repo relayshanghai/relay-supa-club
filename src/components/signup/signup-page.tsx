@@ -65,7 +65,7 @@ const SignUpPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
     const { track } = useRudderstackTrack();
-    const { login, logout, signup } = useUser();
+    const { login, signup } = useUser();
     const [signUpData, setSignUpData] = useLocalStorage('userSignUpData', initialSignUpData);
     const { firstName, lastName, email, password, confirmPassword, phoneNumber, companyName, companyWebsite } =
         signUpData;
@@ -286,25 +286,20 @@ const SignUpPage = () => {
         [signup, email, login, password, t],
     );
 
-    const onNext = async () => {
-        if (currentStep === PROFILE_FORM_STEP) {
-            logout(false);
-        }
-        if (currentStep === EMAIL_FORM_STEP && !needToJoinCompany) {
+    const onRegister = async () => {
+        if (!needToJoinCompany) {
             const result = await handleSignup(formData);
             if (result === 'success') {
                 clearForm();
                 router.push('/payments/details');
             }
-        } else if (currentStep === EMAIL_FORM_STEP && needToJoinCompany) {
+        } else if (needToJoinCompany) {
             const result = await handleSignup(formData, true);
             if (result === 'success') {
                 clearForm();
                 toast.success(t('login.joinRequestSent', { companyName }));
                 router.push('/login');
             }
-        } else {
-            setCurrentStep(currentStep + 1);
         }
     };
 
@@ -323,7 +318,7 @@ const SignUpPage = () => {
     return (
         <div>
             <ConfirmModal
-                positiveHandler={() => onNext()}
+                positiveHandler={() => onRegister()}
                 setShow={(show) => setConfirmCurrencyModalOpen(show)}
                 show={confirmCurrencyModalOpen}
                 title={t(`login.confirm${currency.toUpperCase()}Currency`) as string}
@@ -332,14 +327,19 @@ const SignUpPage = () => {
             />
             <ConfirmModal
                 cancelHandler={() => setNeedToJoinCompany(false)}
-                positiveHandler={() => onNext()}
+                positiveHandler={() => onRegister()}
                 setShow={(show) => setConfirmJoinToCompany(show)}
                 show={confirmJoinToCompany}
                 title={t(`login.confirmJoinToCompany`, { companyName }) as string}
                 okButtonText={t('login.yesContinue') as string}
                 cancelButtonText={t('account.cancel') as string}
             />
-            <FormWizard title={t(steps[currentStep - 1]?.title || '')} key={steps[0].num} steps={steps}>
+            <FormWizard
+                title={t(steps[currentStep - 1]?.title || '')}
+                key={steps[0].num}
+                steps={steps}
+                getCurrentStep={(step) => setCurrentStep(step)}
+            >
                 <StepOne
                     firstName={firstName}
                     lastName={lastName}
