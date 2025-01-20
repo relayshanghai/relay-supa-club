@@ -459,7 +459,7 @@ export const InfluencerDetailsModal = ({
                 {setSelectedInfluencerIds && (
                     <div className="mt-8 box-border flex w-full justify-end font-semibold">
                         <AddToSequenceButton
-                            buttonText={t('boostbot.modal.addToSequence')}
+                            buttonText={t('boostbot.modal.addToCampaign')}
                             outReachDisabled={outReachDisabled}
                             handleAddToSequenceButton={() => handleAddToSequence(user_id)}
                             textClassName="px-12"
