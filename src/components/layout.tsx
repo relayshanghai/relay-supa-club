@@ -29,6 +29,7 @@ const pageNameMap: { [key: string]: string } = {
     clients: 'clients',
     'onboard-outreach': 'onboard-outreach',
     plans: 'plans',
+    trials: 'trials',
 };
 
 export interface LayoutProps {

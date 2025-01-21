@@ -17,6 +17,7 @@ const navbar = {
     clients: 'Clients',
     'onboard-outreach': 'Onboard Outreach',
     plans: 'Plans',
+    trials: 'Trial Customers',
 };
 
 export default navbar;

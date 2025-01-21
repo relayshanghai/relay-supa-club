@@ -351,6 +351,26 @@ export default class StripeService {
         return subscriptions;
     }
 
+    async getTrialSubscriptions() {
+        const subscriptions: Stripe.Subscription[] = [];
+        let lastId: string | undefined = undefined;
+        while (true) {
+            const subs = (await StripeService.client.subscriptions.list({
+                limit: 100,
+                starting_after: lastId,
+                status: 'trialing',
+                expand: ['data.customer'],
+            })) as Stripe.ApiList<Stripe.Subscription>;
+            subscriptions.push(...subs.data);
+            if (!subs.has_more) {
+                break;
+            } else {
+                lastId = subs.data[subs.data.length - 1].id;
+            }
+        }
+        return subscriptions;
+    }
+
     async getAllCustomers() {
         const customers: Stripe.Customer[] = [];
 

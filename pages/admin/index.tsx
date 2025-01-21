@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Layout } from 'src/components/layout';
 
 const AdminPage = () => {
-    const pages = ['clients', 'onboard-outreach', 'plans'];
+    const pages = ['clients', 'onboard-outreach', 'plans', 'trials'];
     return (
         <Layout>
             <div className="mx-2 my-2 flex gap-2">
