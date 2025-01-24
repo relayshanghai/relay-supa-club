@@ -6,12 +6,9 @@ import {
     type ActiveSubscriptionTier,
 } from 'src/hooks/use-prices';
 import { PriceCard } from './price-card';
-import { Button } from '../button';
-import { useRouter } from 'next/router';
 import { screenshots } from 'public/assets/imgs/screenshots';
 import Image from 'next/image';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
 import Link from 'next/link';
 import { LanguageToggle } from '../common/language-toggle';
 import { ToggleGroup, ToggleGroupItem } from 'shadcn/components/ui/toggle-group';
@@ -36,7 +33,6 @@ const ImageBackground = () => {
 export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing' }) => {
     const landingPage = page === 'landing';
     const { t } = useTranslation();
-    const router = useRouter();
     const { trackEvent } = useRudderstack();
     const { company } = useCompany();
     const { prices, loading: priceLoading } = usePricesV2(company?.currency || 'cny');
@@ -46,11 +42,6 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const options: ActiveSubscriptionTier[] = Object.keys(prices ?? {}).filter(
         (d) => d !== 'addPayment',
     ) as ActiveSubscriptionTier[];
-
-    const handleStartFreeTrialClicked = () => {
-        trackEvent(LANDING_PAGE('clicked on start free trial'));
-        router.push('/signup');
-    };
 
     useEffect(() => {
         if (landingPage) {
@@ -135,11 +126,6 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             />
                         ))}
                     </div>
-                    {landingPage && (
-                        <Button onClick={handleStartFreeTrialClicked} className="mt-2 !text-xl">
-                            {t('pricing.startFreeTrial')}
-                        </Button>
-                    )}
                 </div>
             </main>
         </>
