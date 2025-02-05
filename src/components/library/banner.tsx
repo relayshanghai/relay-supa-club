@@ -42,7 +42,7 @@ export const Banner = ({
                     )}
                     {message}
                 </p>
-                {buttonText && (
+                {false && buttonText && (
                     <Link
                         href="/upgrade"
                         className="flex flex-row items-center rounded-full bg-white px-3.5 py-1 text-sm font-semibold text-primary-500 shadow-sm"
