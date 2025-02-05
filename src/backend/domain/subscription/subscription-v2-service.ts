@@ -697,6 +697,7 @@ export default class SubscriptionV2Service {
     }
 
     async getPrices() {
+        return {}
         const companyId = RequestContext.getContext().companyId as string;
         // check if company is loyal or we can say they are using old prices
         let loyalCompany = false;

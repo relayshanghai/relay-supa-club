@@ -416,7 +416,7 @@ export const SubscriptionDetails = () => {
                                         </>
                                     )}
                                 </section>
-                                {subscription?.status === SubscriptionStatus.ACTIVE && (
+                                {false && subscription?.status === SubscriptionStatus.ACTIVE && (
                                     <section className="flex justify-end">
                                         <Link
                                             href={'/topup'}
@@ -476,7 +476,7 @@ export const SubscriptionDetails = () => {
                                     </Button>
                                 </Link>
                             )}
-                        {!isAboutToCanceled() && subscription?.status !== SubscriptionStatus.TRIAL_CANCELLED && (
+                        {false && !isAboutToCanceled() && subscription?.status !== SubscriptionStatus.TRIAL_CANCELLED && (
                             <Link className="" href="javascript:void(0)" onClick={() => onUpgrdeSubscription()}>
                                 <Button className="w-full bg-accent-500 font-semibold text-white hover:bg-accent-300">
                                     <Rocket className="mr-2 h-4 w-4 text-white" />

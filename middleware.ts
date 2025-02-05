@@ -240,6 +240,11 @@ export async function middleware(req: NextRequest) {
     }
 
     if (authData.session?.user?.email) {
+        if (req.nextUrl.pathname === '/upgrade' || req.nextUrl.pathname === '/topup') {
+            const redirect = req.nextUrl.clone();
+            redirect.pathname = '/account';
+            return NextResponse.redirect(redirect);
+        }
         return await checkOnboardingStatus(req, res, authData.session, supabase);
     }
 
