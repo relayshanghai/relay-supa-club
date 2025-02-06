@@ -10,6 +10,7 @@ import BalanceService from 'src/backend/domain/balance/balance-service';
 import { type BalanceType } from 'src/backend/database/balance/balance-entity';
 import awaitToError from 'src/utils/await-to-error';
 import SequenceInfluencerService from 'src/backend/domain/sequence/sequence-influencer-service';
+import { RequestContext } from 'src/utils/request-context/request-context';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
     let subscription = null;
@@ -86,9 +87,10 @@ const recordUsage = async ({
     const now = new Date();
 
     let _subscriptionStartDate = startDate.toISOString();
+    const bypassSubscriptionCheck = RequestContext.getContext().bypassSubscriptionCheck;
 
     // if end date is in the past, we need to query stripe for latest subscription info and update the subscription current period end date
-    if (endDate < now) {
+    if (endDate < now && !bypassSubscriptionCheck) {
         const result = await handleCurrentPeriodExpired(company_id);
         if (result.error || !result.subscription_current_period_start || !result.subscription_current_period_end) {
             return { error: result.error };

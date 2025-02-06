@@ -21,6 +21,7 @@ export interface Context {
     manager?: EntityManager;
     repositories: Record<string, BaseRepository<ObjectLiteral>>;
     logContext?: Record<string, any>;
+    bypassSubscriptionCheck?: boolean;
 }
 const initialContext = (): Context => ({
     session: undefined,

@@ -25,6 +25,7 @@ import { generateUrlIfTiktok } from 'src/utils/outreach/helpers';
 import awaitToError from 'src/utils/await-to-error';
 import BalanceService from 'src/backend/domain/balance/balance-service';
 import { BalanceType } from 'src/backend/database/balance/balance-entity';
+import { RequestContext } from 'src/utils/request-context/request-context';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -132,6 +133,10 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
             },
         });
     };
+
+    RequestContext.setContext({
+        bypassSubscriptionCheck: true,
+    });
 
     const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
     if (recordError) {
