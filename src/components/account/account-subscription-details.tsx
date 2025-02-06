@@ -416,7 +416,7 @@ export const SubscriptionDetails = () => {
                                         </>
                                     )}
                                 </section>
-                                {false && subscription?.status === SubscriptionStatus.ACTIVE && (
+                                {subscription?.status === SubscriptionStatus.ACTIVE && (
                                     <section className="flex justify-end">
                                         <Link
                                             href={'/topup'}
