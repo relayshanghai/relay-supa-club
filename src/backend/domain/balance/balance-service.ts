@@ -219,9 +219,9 @@ export default class BalanceService {
                 : credit.export + '',
         );
         return {
-            profile: profileLimit - usage.profile,
-            search: searchLimit - usage.search,
-            export: exportLimit - usage.export,
+            profile: profileLimit - parseInt(usage.profile + ''),
+            search: searchLimit - parseInt(usage.search + ''),
+            export: exportLimit - parseInt(usage.export + ''),
         };
     }
 }
