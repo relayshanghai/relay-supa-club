@@ -211,14 +211,14 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(redirectUrl);
     }
 
-    // ending our service
-    const timeToClose = process.env.CLOSING_TIME == 'true';
-    const currentUrl = new URL(req.url);
-    if (timeToClose && currentUrl.pathname !== '/end-of-service') {
-        const redirect = req.nextUrl.clone();
-        redirect.pathname = '/end-of-service';
-        return NextResponse.redirect(redirect);
-    }
+    // // ending our service
+    // const timeToClose = process.env.CLOSING_TIME == 'true';
+    // const currentUrl = new URL(req.url);
+    // if (timeToClose && currentUrl.pathname !== '/end-of-service') {
+    //     const redirect = req.nextUrl.clone();
+    //     redirect.pathname = '/end-of-service';
+    //     return NextResponse.redirect(redirect);
+    // }
 
     const { data: authData } = await supabase.auth.getSession();
 
