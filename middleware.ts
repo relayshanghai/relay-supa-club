@@ -211,6 +211,15 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(redirectUrl);
     }
 
+    // ending our service
+    const timeToClose = process.env.CLOSING_TIME == 'true';
+    const currentUrl = new URL(req.url);
+    if (timeToClose && currentUrl.pathname !== '/end-of-service') {
+        const redirect = req.nextUrl.clone();
+        redirect.pathname = '/end-of-service';
+        return NextResponse.redirect(redirect);
+    }
+
     const { data: authData } = await supabase.auth.getSession();
 
     if (authData.session && BANNED_USERS.includes(authData.session.user.id)) {
@@ -287,6 +296,7 @@ export async function middleware(req: NextRequest) {
     // unauthenticated pages requests, send to signup
     if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/login') return res;
+    if (req.nextUrl.pathname === '/end-of-service') return res;
     redirectUrl.pathname = '/login';
     return NextResponse.redirect(redirectUrl);
 }
