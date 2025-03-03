@@ -214,7 +214,7 @@ export async function middleware(req: NextRequest) {
     // ending our service
     const timeToClose = process.env.CLOSING_TIME == 'true';
     const currentUrl = new URL(req.url);
-    if (req.nextUrl.pathname.includes('api') && timeToClose && currentUrl.pathname !== '/end-of-service') {
+    if (!req.nextUrl.pathname.includes('api') && timeToClose && currentUrl.pathname !== '/end-of-service') {
         const redirect = req.nextUrl.clone();
         redirect.pathname = '/end-of-service';
         return NextResponse.redirect(redirect);
