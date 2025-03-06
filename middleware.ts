@@ -291,7 +291,7 @@ export async function middleware(req: NextRequest) {
 
     const redirectUrl = req.nextUrl.clone();
 
-    if (req.nextUrl.pathname === '/signup') return NextResponse.redirect('https://www.boostbot.ai');
+    if (timeToClose && req.nextUrl.pathname === '/signup') return NextResponse.redirect('https://www.boostbot.ai');
 
     // unauthenticated pages requests, send to signup
     if (req.nextUrl.pathname === '/') return res;

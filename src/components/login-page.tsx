@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -9,6 +10,7 @@ import { useUser } from 'src/hooks/use-user';
 import { FormWizard } from './signup/form-wizard';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { PasswordReset } from 'src/utils/analytics/events';
+import { SignupStarted } from 'src/utils/analytics/events';
 import { clientLogger } from 'src/utils/logger-client';
 import { useHostname } from 'src/utils/get-host';
 import { nextFetch } from 'src/utils/fetcher';
@@ -41,7 +43,7 @@ const LoginPage = () => {
         try {
             setLoggingIn(true);
             await login(email, password).then((data) => {
-                const { user, hasDefaultPaymentMethod } = data;
+                const { user } = data;
 
                 // @note if for some reason we cannot get the user after logging in
                 if (!user) {
@@ -50,7 +52,9 @@ const LoginPage = () => {
                 }
 
                 toast.success(t('login.loginSuccess'));
-                if (!hasDefaultPaymentMethod) {
+                // @note if the user does not have a default payment method, redirect to the payment details page
+                // if (!hasDefaultPaymentMethod) {
+                if (false) {
                     router.push('/payments/details');
                     return;
                 }
@@ -116,7 +120,20 @@ const LoginPage = () => {
                     {t('login.logIn')}
                 </Button>
             </FormWizard>
-            <div className="mb-2 mt-6 text-center" />
+            <div className="mb-2 mt-6 text-center">
+                <p className="inline text-sm text-gray-500">
+                    {t('login.dontHaveAnAccount')}{' '}
+                    <Link
+                        onClick={() => track(SignupStarted)}
+                        href="/signup"
+                        className="inline cursor-pointer text-primary-500 hover:text-primary-700"
+                    >
+                        <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
+                            {t('login.signUp')}
+                        </Button>
+                    </Link>
+                </p>
+            </div>
             <button type="button" onClick={handleResetPassword} disabled={generatingResetEmail} className="w-full">
                 <p className="mt-4 inline pb-4 text-sm text-gray-500 ">
                     {t('login.forgotPassword')}{' '}
