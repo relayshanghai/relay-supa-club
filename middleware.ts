@@ -295,6 +295,7 @@ export async function middleware(req: NextRequest) {
 
     // unauthenticated pages requests, send to signup
     if (req.nextUrl.pathname === '/') return res;
+    if (req.nextUrl.pathname === '/signup') return res;
     if (req.nextUrl.pathname === '/login') return res;
     if (req.nextUrl.pathname === '/end-of-service') return res;
     redirectUrl.pathname = '/login';
