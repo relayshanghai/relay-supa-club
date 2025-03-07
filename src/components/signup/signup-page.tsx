@@ -291,7 +291,7 @@ const SignUpPage = () => {
             const result = await handleSignup(formData);
             if (result === 'success') {
                 clearForm();
-                router.push('/payments/details');
+                // router.push('/payments/details');
             }
         } else if (needToJoinCompany) {
             const result = await handleSignup(formData, true);
