@@ -152,17 +152,7 @@ export const PaymentMethodDetails = () => {
                             );
                         })}
                     </div>
-                    <section className="flex items-center gap-3">
-                        <Button
-                            onClick={() => {
-                                setNewPaymentModalOpenState(true);
-                            }}
-                            className="w-full bg-navy-50 font-semibold text-navy-500 hover:bg-navy-100 disabled:bg-gray-100 disabled:text-gray-500"
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            {t('account.paymentMethodCard.addPaymentMethod')}
-                        </Button>
-                    </section>
+                    <section className="flex items-center gap-3" />
                 </section>
             </section>
         </section>
